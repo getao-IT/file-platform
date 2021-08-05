@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.image.dao.ImageMapper">
+
+    <resultMap type="cn.aircas.fileManager.image.entity.Image" id="ImageMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="imageName" column="image_name" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="batchNumber" column="batch_number" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="thumb" column="thumb" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+   
+    <insert id="batchInsertImageInfo" parameterType="java.util.List">
+        insert into file_image_info (image_name,path,user_id,source,thumb,width,height,projection,min_lon,min_lat,
+                                     max_lon,max_lat,batch_number,user_name,is_public,bands,bit,create_time,keywords,size,
+                                     resolution,min_projection_x,min_projection_y,max_projection_x,max_projection_y,
+                                     coordinate_system_type,file_length)
+        values
+        <foreach collection="imageInfoList" item="imageInfo" separator=",">
+            (#{imageInfo.imageName},#{imageInfo.path},#{imageInfo.userId},#{imageInfo.source},#{imageInfo.thumb}
+            ,#{imageInfo.width},#{imageInfo.height},#{imageInfo.projection},#{imageInfo.minLat},#{imageInfo.minLon}
+            ,#{imageInfo.maxLon},#{imageInfo.maxLat},#{imageInfo.batchNumber},#{imageInfo.userName},#{imageInfo.isPublic}
+            ,#{imageInfo.bands},#{imageInfo.bit},#{imageInfo.createTime},#{imageInfo.keywords},#{imageInfo.size}
+            ,#{imageInfo.resolution},#{imageInfo.minProjectionX},#{imageInfo.minProjectionY},#{imageInfo.maxProjectionX}
+            ,#{imageInfo.maxProjectionY},#{imageInfo.coordinateSystemType},#{imageInfo.fileLength})
+        </foreach>
+    </insert>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listImageInfosByPage" resultMap="ImageMap" parameterType="cn.aircas.fileManager.image.entity.ImageSearchParam">
+        select * from file_image_info
+        <where>
+            (user_id = #{imageSearchParam.userId} or is_public = TRUE)
+            <if test="imageSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                    CONCAT(image_name,source,user_name,keywords) ilike '%${searchParam}%'
+                </foreach>
+            </if>
+
+            <!--            <if test="imageSearchParam.searchParam != null and imageSearchParam.searchParam != ''">-->
+            <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${imageSearchParam.searchParam}%'-->
+            <!--            </if>-->
+            <if test="imageSearchParam.source != null and imageSearchParam.source != ''">
+                and source like '%${imageSearchParam.source}%'
+            </if>
+            <if test="imageSearchParam.startTime != null and imageSearchParam.endTime !=null">
+                and create_time between #{imageSearchParam.startTime} and #{imageSearchParam.endTime}
+            </if>
+            <if test="imageSearchParam.batchNumber > 0">
+                and batch_number = #{imageSearchParam.batchNumber}
+            </if>
+<!--            <if test="imageSearchParam.sortOrder != null and imageSearchParam.orderBy !=null">-->
+<!--                order by ${imageSearchParam.sortOrder}  ${imageSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
+                and lower(keywords) like '%${imageSearchParam.keywords}%'
+            </if>
+        </where>
+        order by create_time DESC, id DESC
+    </select>
+
+    <select id="listDeleteImageInfos" resultType="cn.aircas.fileManager.image.entity.Image">
+        select id, path from file_image_info
+        <where>
+            <if test="imageDeleteParam.batchNumber > 0">
+                and batch_number = #{imageDeleteParam.batchNumber}
+            </if>
+            <if test="imageDeleteParam.imageIdList!=null">
+                and id in
+                <foreach collection="imageDeleteParam.imageIdList" item="imageId" open="(" close=")" separator=",">
+                    #{imageId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listImageIdBySearchParam" resultType="java.lang.Integer">
+        select id from file_image_info
+        <where>
+            (user_id = #{imageSearchParam.userId} or is_public = TRUE)
+            <if test="imageSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                    CONCAT(image_name,source,user_name,keywords) ilike '%${searchParam}%'
+                </foreach>
+            </if>
+
+            <!--            <if test="imageSearchParam.searchParam != null and imageSearchParam.searchParam != ''">-->
+            <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${imageSearchParam.searchParam}%'-->
+            <!--            </if>-->
+            <if test="imageSearchParam.source != null and imageSearchParam.source != ''">
+                and source like '%${imageSearchParam.source}%'
+            </if>
+            <if test="imageSearchParam.startTime != null and imageSearchParam.endTime !=null">
+                and create_time between #{imageSearchParam.startTime} and #{imageSearchParam.endTime}
+            </if>
+            <if test="imageSearchParam.batchNumber > 0">
+                and batch_number = #{imageSearchParam.batchNumber}
+            </if>
+<!--            <if test="imageSearchParam.sortOrder != null and imageSearchParam.orderBy !=null">-->
+<!--                order by ${imageSearchParam.sortOrder}  ${imageSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
+                and lower(keywords) like '%${imageSearchParam.keywords}%'
+            </if>
+        </where>
+        order by create_time DESC
+    </select>
+
+</mapper>

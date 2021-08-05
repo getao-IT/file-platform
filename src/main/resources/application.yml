@@ -1,0 +1,69 @@
+---
+#server配置
+server:
+  port: 8088
+  servlet:
+    context-path: /geoai/v1
+---
+#数据源配置
+spring:
+  servlet:
+    multipart:
+      # 单个文件的最大值
+      max-file-size: 2GB
+      # 上传文件总的最大值
+      max-request-size: 10GB
+
+  datasource:
+    password: 123456
+    url: jdbc:postgresql://192.168.30.25:31189/geodl_iecas?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    username: iecas
+    driver-class-name: org.postgresql.Driver
+
+#mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    logging:
+      level:
+        com.iecas.geoai.mapper: debug
+    debug: false
+  #  log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+---
+sys:
+  #  拿到哪
+  rootPath: D:\\数据\\
+  #  从哪拿
+  uploadRootPath: D:\\数据\\
+value:
+  api:
+    user-info: http://192.168.2.156:31151/api/v1/users/token_check
+    user-register: http://192.168.2.156:31151/api/v1/users/login
+    create-dataset-url: http://127.0.0.1:8082/geoai/V1/label-platform/dataset/createDatasetAndProject
+  static:
+    path-pattern: /static/file/**
+    static-locations: file:c:/
+  database:
+    dbName: geodl_iecas
+    tables:
+      - file_image_info
+      - file_text_info
+      - file_audio_info
+      - file_video_info
+      - file_transfer_info
+      - file_transfer_progress_info
+
+auth:
+  enabled: true
+  user-info-url: http://192.168.2.156:31151/api/v1/users/token_check
+  ignore-url-list:
+    - /geoai/v1/swagger-ui.html
+    - /geoai/v1/webjars/**
+    - /geoai/v1/swagger-resources/**
+    - /geoai/v1/v2/**
+swagger:
+  enabled: true
+  base-package: cn.aircas.fileManager.web.controller
+  title: 文件管理平台接口文档
