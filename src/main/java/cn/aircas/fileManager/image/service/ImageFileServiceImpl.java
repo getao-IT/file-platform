@@ -113,7 +113,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
     private ImageSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         ImageSearchParam imageSearchParam = new ImageSearchParam();
         BeanUtils.copyProperties(fileSearchParam,imageSearchParam);
-
+        imageSearchParam.setImageIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){
             List<String> params = Arrays.asList(searchParam.split(" "));

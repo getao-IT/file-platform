@@ -62,6 +62,9 @@ public class FileSearchParam {
      */
     private String searchParam;
 
+    private List<Integer> fileIdList;
+
     private List<String> searchParamList;
+
 
 }

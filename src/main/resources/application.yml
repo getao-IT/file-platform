@@ -56,7 +56,7 @@ value:
       - file_transfer_progress_info
 
 auth:
-  enabled: true
+  enabled: false
   user-info-url: http://192.168.2.156:31151/api/v1/users/token_check
   ignore-url-list:
     - /geoai/v1/swagger-ui.html

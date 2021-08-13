@@ -37,6 +37,13 @@
                 </foreach>
             </if>
 
+            <if test="textSearchParam.textIdList!=null">
+                AND id in
+                <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                    #{textId}
+                </foreach>
+            </if>
+
 <!--            <if test="textSearchParam.searchParam != null and textSearchParam.searchParam != ''">-->
 <!--                and CONCAT(text_name,source,user_name,keywords) ilike '%${textSearchParam.searchParam}%'-->
 <!--            </if>-->

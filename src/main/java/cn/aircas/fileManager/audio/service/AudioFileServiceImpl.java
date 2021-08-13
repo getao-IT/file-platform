@@ -109,7 +109,7 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
     private AudioSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         AudioSearchParam audioSearchParam = new AudioSearchParam();
         BeanUtils.copyProperties(fileSearchParam,audioSearchParam);
-
+        audioSearchParam.setAudioIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){
             List<String> params = Arrays.asList(searchParam.split(" "));

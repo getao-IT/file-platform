@@ -109,7 +109,7 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
     private TextSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         TextSearchParam textSearchParam = new TextSearchParam();
         BeanUtils.copyProperties(fileSearchParam,textSearchParam);
-
+        textSearchParam.setTextIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){
             List<String> params = Arrays.asList(searchParam.split(" "));

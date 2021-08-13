@@ -76,6 +76,9 @@ public class AudioSearchParam {
      */
     private String searchParam;
 
+    private List<Integer> audioIdList;
+
     private List<String> searchParamList;
+
 
 }

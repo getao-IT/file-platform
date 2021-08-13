@@ -76,6 +76,8 @@ public class VideoSearchParam {
      */
     private String searchParam;
 
+    private List<Integer> videoIdList;
+
     private List<String> searchParamList;
 
 }

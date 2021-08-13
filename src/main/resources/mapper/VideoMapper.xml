@@ -37,6 +37,13 @@
                 </foreach>
             </if>
 
+            <if test="videoSearchParam.videoIdList!=null">
+                AND id in
+                <foreach collection="videoSearchParam.videoIdList" item="videoId" open="(" close=")" separator=",">
+                    #{textId}
+                </foreach>
+            </if>
+
 <!--            <if test="videoSearchParam.searchParam != null and videoSearchParam.searchParam != ''">-->
 <!--                and CONCAT(video_name,source,user_name,keywords) ilike '%${videoSearchParam.searchParam}%'-->
 <!--            </if>-->

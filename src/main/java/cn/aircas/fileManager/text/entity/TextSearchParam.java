@@ -76,6 +76,9 @@ public class TextSearchParam {
      */
     private String searchParam;
 
+    private List<Integer> textIdList;
+
     private List<String> searchParamList;
+
 
 }

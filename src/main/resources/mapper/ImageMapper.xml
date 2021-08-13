@@ -44,6 +44,13 @@
                 </foreach>
             </if>
 
+            <if test="imageSearchParam.imageIdList!=null">
+                AND id in
+                <foreach collection="imageSearchParam.imageIdList" item="imageId" open="(" close=")" separator=",">
+                    #{imageId}
+                </foreach>
+            </if>
+
             <!--            <if test="imageSearchParam.searchParam != null and imageSearchParam.searchParam != ''">-->
             <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${imageSearchParam.searchParam}%'-->
             <!--            </if>-->

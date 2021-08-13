@@ -108,6 +108,7 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
     private VideoSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         VideoSearchParam videoSearchParam = new VideoSearchParam();
         BeanUtils.copyProperties(fileSearchParam,videoSearchParam);
+        videoSearchParam.setVideoIdList(fileSearchParam.getFileIdList());
 
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){

@@ -36,6 +36,13 @@
                 </foreach>
             </if>
 
+            <if test="audioSearchParam.audioIdList!=null">
+                AND id in
+                <foreach collection="audioSearchParam.audioIdList" item="audioId" open="(" close=")" separator=",">
+                    #{audioId}
+                </foreach>
+            </if>
+
 <!--            <if test="audioSearchParam.searchParam != null and audioSearchParam.searchParam != ''">-->
 <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${audioSearchParam.searchParam}%'-->
 <!--            </if>-->
