@@ -27,9 +27,9 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     logging:
       level:
-        com.iecas.geoai.mapper: debug
+        cn.aircas.fileManager.text.dao: debug
     debug: false
-  #  log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 ---
 sys:

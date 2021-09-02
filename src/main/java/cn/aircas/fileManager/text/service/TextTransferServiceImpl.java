@@ -1,6 +1,8 @@
 package cn.aircas.fileManager.text.service;
 
+import cn.aircas.fileManager.text.dao.TextContentMapper;
 import cn.aircas.fileManager.text.dao.TextMapper;
+import cn.aircas.fileManager.text.entity.TextContentInfo;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.service.impl.AbstractFileTypeTransferService;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,18 +23,26 @@ public class TextTransferServiceImpl extends AbstractFileTypeTransferService<Tex
     @Autowired
     private TextMapper textMapper;
 
+    @Autowired
+    private TextFileContentServiceImpl textFileContentService;
+
     @Override
     public void transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
         String filePath = FileUtils.getStringPath(this.rootPath,fileRelativePath);
         TextInfo text = parseFileInfo(filePath);
         BeanUtils.copyProperties(fileTransferInfo,text,"id");
         this.textMapper.insert(text);
+        this.textFileContentService.parseTextContent(text);
     }
 
     @Override
     public void transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
         List<TextInfo> textInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
         this.textMapper.batchInsertTextInfo(textInfoList);
+        this.textFileContentService.parseTextContent(textInfoList);
+
+
+
 //        if (imageUploadParam.isCreateDataset()){
 //            List<Integer> imageIdList = imageList.stream().map(Image::getId).collect(Collectors.toList());
 //            labelPlatFormService.createDataset(new File(absolutePath),imageIdList,token);

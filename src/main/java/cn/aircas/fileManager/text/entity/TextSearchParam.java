@@ -28,6 +28,7 @@ public class TextSearchParam {
      */
     private int pageNo =1;
 
+
     /**
      * 来源
      */
@@ -49,6 +50,12 @@ public class TextSearchParam {
      * 标签
      */
     private String keywords;
+
+
+    /**
+     * 是否是获取文件内容信息
+     */
+    private boolean content;
 
 
     /**
@@ -75,6 +82,8 @@ public class TextSearchParam {
      * 模糊查询输入字段，可通过影像名称，来源，关键字，用户名进行模糊查询
      */
     private String searchParam;
+
+
 
     private List<Integer> textIdList;
 

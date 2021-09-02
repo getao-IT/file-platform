@@ -17,5 +17,4 @@ public interface TextMapper extends BaseMapper<TextInfo> {
     void batchInsertTextInfo(@Param("textInfoList") List<TextInfo> textInfoList);
     List<Integer> listTextIdBySearchParam(@Param(value = "textSearchParam") TextSearchParam textSearchParam);
     IPage<TextInfo> listTextInfos(Page<TextInfo> pageInfo, @Param(value = "textSearchParam") TextSearchParam textSearchParam);
-
 }

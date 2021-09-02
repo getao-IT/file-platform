@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.text.dao.TextContentMapper">
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listTextContents" parameterType="cn.aircas.fileManager.text.entity.TextSearchParam"
+            resultType="cn.aircas.fileManager.text.entity.TextContentInfo">
+        select * from file_text_content
+        <where>
+            <if test="textSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="OR">
+                        CONCAT(content) ilike '%${searchParam}%'
+                </foreach>
+            </if>
+
+            <if test="textSearchParam.textIdList!=null and textSearchParam.textIdList.size()!=0">
+                AND id in
+                <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                    #{textId}
+                </foreach>
+            </if>
+        </where>
+        order by line_number ASC
+    </select>
+
+</mapper>

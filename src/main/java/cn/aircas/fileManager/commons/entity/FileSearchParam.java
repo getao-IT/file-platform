@@ -4,6 +4,8 @@ import cn.aircas.fileManager.web.entity.enums.FileType;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +50,12 @@ public class FileSearchParam {
     private String fileName;
 
     /**
+     * 是否获取文件内容
+     */
+    private boolean content;
+
+
+    /**
      * 查询页数量
      */
     private int pageSize = 10;
@@ -62,9 +70,16 @@ public class FileSearchParam {
      */
     private String searchParam;
 
-    private List<Integer> fileIdList;
-
     private List<String> searchParamList;
+
+    private List<Integer> fileIdList = new ArrayList<>();
+
+
+
+    public void setFileIdList(String fileIdListStr){
+        List<String> fileList = Arrays.asList(fileIdListStr.split(","));
+        fileList.forEach(str->fileIdList.add(Integer.valueOf(str.trim())));
+    }
 
 
 }

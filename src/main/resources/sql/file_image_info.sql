@@ -49,7 +49,9 @@ CREATE TABLE "public"."file_image_info" (
   "max_projection_x" float4,
   "max_projection_y" float4,
   "coordinate_system_type" varchar(255) COLLATE "pg_catalog"."default",
-  "file_length" int8
+  "file_length" int8,
+  "satellite" varchar(255) COLLATE "pg_catalog"."default",
+  "sensor" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."file_image_info"."id" IS 'id';

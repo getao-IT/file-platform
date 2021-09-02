@@ -10,9 +10,12 @@ import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.image.entity.ImageSearchParam;
 import cn.aircas.utils.file.FileUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +27,7 @@ import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service("IMAGE-SERVICE")
@@ -123,4 +127,30 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
         imageSearchParam.setImageName(fileSearchParam.getFileName());
         return imageSearchParam;
     }
+
+    /**
+     * 列出所有影像的中心坐标点
+     * @return
+     */
+    public JSONArray listImageCoordinate() {
+        JSONArray result = new JSONArray();
+        QueryWrapper<Image> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("min_lon", "min_lat", "max_lon", "max_lat", "id", "image_name");
+        List<Image> imageList = this.list(queryWrapper);
+
+        for (Image image : imageList) {
+            JSONObject imageInfo = new JSONObject();
+            double centerLat = (image.getMinLat() + image.getMaxLat()) / 2;
+            double centerLon = (image.getMinLon() + image.getMaxLon()) / 2;
+
+            imageInfo.put("id", image.getId());
+            imageInfo.put("centerLat", centerLat);
+            imageInfo.put("centerLon", centerLon);
+            imageInfo.put("name", image.getImageName());
+            result.add(imageInfo);
+        }
+
+        return result;
+    }
+
 }

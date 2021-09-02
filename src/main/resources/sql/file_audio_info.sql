@@ -35,7 +35,9 @@ CREATE TABLE "public"."file_audio_info" (
   "duration" int8,
   "file_length" int8,
   "batch_number" int4,
-  "duration_str" varchar(255) COLLATE "pg_catalog"."default"
+  "duration_str" varchar(255) COLLATE "pg_catalog"."default",
+  "format" varchar(255) COLLATE "pg_catalog"."default"
+
 )
 ;
 COMMENT ON COLUMN "public"."file_audio_info"."id" IS 'id';

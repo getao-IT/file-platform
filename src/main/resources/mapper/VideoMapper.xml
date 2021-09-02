@@ -37,10 +37,10 @@
                 </foreach>
             </if>
 
-            <if test="videoSearchParam.videoIdList!=null">
+            <if test="videoSearchParam.videoIdList!=null and videoSearchParam.videoIdList.size()!=0">
                 AND id in
                 <foreach collection="videoSearchParam.videoIdList" item="videoId" open="(" close=")" separator=",">
-                    #{textId}
+                    #{videoId}
                 </foreach>
             </if>
 

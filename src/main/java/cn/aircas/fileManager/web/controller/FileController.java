@@ -1,5 +1,6 @@
 package cn.aircas.fileManager.web.controller;
 
+import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
@@ -7,6 +8,7 @@ import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileService;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +26,9 @@ public class FileController {
 
     @Autowired
     FileService fileService;
+
+    @Autowired
+    ImageFileServiceImpl imageFileService;
 
     /**
      * 查询文件信息
@@ -64,7 +69,7 @@ public class FileController {
     //@OperationLog(value = "根据id单个或者批量获取影像信息")
     @GetMapping("/{fileIdList}")
     @ApiOperation("根据id单个或者批量获取文件信息")
-    public CommonResult<List<JSONObject>> getImageById(@PathVariable("fileIdList") List<Integer> fileIdList, FileType fileType) {
+    public CommonResult<List<JSONObject>> getFileInfoByIdList(@PathVariable("fileIdList") List<Integer> fileIdList, FileType fileType) {
         List<JSONObject> imageList = fileService.getFileInfoByIds(fileIdList,fileType);
         return new CommonResult<List<JSONObject>>().data(imageList).success().message("根据id获取影像数据成功");
     }
@@ -74,7 +79,7 @@ public class FileController {
     @Log(value = "根据条件查询全部影像ID")
     @GetMapping("/listId")
     @ApiOperation("根据条件查询全部影像ID")
-    public CommonResult<List<Integer>> listImageBySearchParam(FileSearchParam fileSearchParam) {
+    public CommonResult<List<Integer>> listFileInfoBySearchParam(FileSearchParam fileSearchParam) {
         List<Integer> fileIdList = this.fileService.listFileIdBySearchParam(fileSearchParam);
         return new CommonResult<List<Integer>>().data(fileIdList).success().message("根据条件查询全部文件ID");
     }
@@ -121,6 +126,20 @@ public class FileController {
     public CommonResult<List<String>> getFileType(){
         List<String> fileTypeList = this.fileService.getFileType();
         return new CommonResult<List<String>>().data(fileTypeList).success().message("获取支持的文件类型列表");
+    }
+
+    /**
+     * 查询所有影像坐标信息
+     * @param
+     * @return
+     */
+    @Log(value = "查询所有影像坐标信息")
+    //@OperationLog(value = "分页查询影像信息")
+    @GetMapping("/image/coordinate")
+    @ApiOperation("查询所有影像坐标信息")
+    public CommonResult<JSONArray> listImageCoordinate() {
+        JSONArray result = this.imageFileService.listImageCoordinate();
+        return new CommonResult<JSONArray>().success().data(result).message("查询所有影像坐标信息信息成功");
     }
 
 }

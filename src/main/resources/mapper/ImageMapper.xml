@@ -44,7 +44,7 @@
                 </foreach>
             </if>
 
-            <if test="imageSearchParam.imageIdList!=null">
+            <if test="imageSearchParam.imageIdList!=null and imageSearchParam.imageIdList.size()!=0">
                 AND id in
                 <foreach collection="imageSearchParam.imageIdList" item="imageId" open="(" close=")" separator=",">
                     #{imageId}

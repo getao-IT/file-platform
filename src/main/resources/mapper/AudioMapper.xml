@@ -36,7 +36,7 @@
                 </foreach>
             </if>
 
-            <if test="audioSearchParam.audioIdList!=null">
+            <if test="audioSearchParam.audioIdList!=null and audioSearchParam.audioIdList.size()!=0">
                 AND id in
                 <foreach collection="audioSearchParam.audioIdList" item="audioId" open="(" close=")" separator=",">
                     #{audioId}

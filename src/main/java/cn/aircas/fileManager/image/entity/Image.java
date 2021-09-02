@@ -161,6 +161,17 @@ public class Image {
     private long fileLength;
 
     /**
+     * 传感器类型
+     */
+    private String sensor;
+
+    /**
+     * 卫星名称
+     */
+    private String satellite;
+
+
+    /**
      * 坐标系统
      */
     private CoordinateSystemType coordinateSystemType;
@@ -191,6 +202,8 @@ public class Image {
                 ", projection='" + projection + '\'' +
                 ", source='" + size + '\'' +
                 ", coordinateSystemType='" + coordinateSystemType + '\'' +
+                ", sensor='" + sensor + '\'' +
+                ", satellite='" + satellite + '\'' +
                 '}';
     }
 }

@@ -7,6 +7,7 @@ import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.commons.service.FileTypeService;
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,4 +115,5 @@ public class FileServiceImpl implements FileService {
         FileTypeService fileTypeService = fileType.getService();
         return fileTypeService.listFileInfosByIds(idList);
     }
+
 }

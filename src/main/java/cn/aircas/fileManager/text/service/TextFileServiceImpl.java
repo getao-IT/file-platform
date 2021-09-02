@@ -5,10 +5,12 @@ import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.commons.service.FileTypeService;
 import cn.aircas.fileManager.text.dao.TextMapper;
+import cn.aircas.fileManager.text.entity.TextContentInfo;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.text.entity.TextSearchParam;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,6 +22,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +37,9 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
 
     @Autowired
     TextMapper textMapper;
+
+    @Autowired
+    private TextFileContentServiceImpl textFileContentService;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -83,6 +90,17 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
     @Override
     public List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam) {
         TextSearchParam textSearchParam = convertSearchParam(fileSearchParam);
+        if (textSearchParam.isContent()) {
+            List<Integer> textContentIdList = new ArrayList<>();
+            List<Integer> fileIdList = fileSearchParam.getFileIdList();
+            if (fileIdList.isEmpty())
+                return textContentIdList;
+            QueryWrapper<TextContentInfo> queryWrapper = new QueryWrapper<>();
+            queryWrapper.select("id").eq("text_file_id",fileIdList.get(0));
+            List<TextContentInfo> textContentInfoList = this.textFileContentService.list(queryWrapper);
+            textContentIdList = textContentInfoList.stream().map(TextContentInfo::getId).collect(Collectors.toList());
+            return textContentIdList;
+        }
         return this.textMapper.listTextIdBySearchParam(textSearchParam);
     }
 
@@ -93,12 +111,73 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
      */
     @Override
     public PageResult<JSONObject> listFileInfoByPage(FileSearchParam fileSearchParam) {
+        long totalPage;
+        long currentPage;
+
+        List<JSONObject> result;
         TextSearchParam textSearchParam = convertSearchParam(fileSearchParam);
         Page<TextInfo> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
-        IPage<TextInfo> textIPage = this.textMapper.listTextInfos(page, textSearchParam);
-        List<TextInfo> imageList = textIPage.getRecords();
-        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
-        return new PageResult<>(textIPage.getCurrent(), result, textIPage.getTotal());
+        if (fileSearchParam.isContent()){
+            PageResult<TextContentInfo> textContentInfoPageResult = this.textFileContentService.getContentByPage(textSearchParam);
+            List<TextContentInfo> textContentInfoList = textContentInfoPageResult.getResult();
+            currentPage = textContentInfoPageResult.getPageNo();
+            totalPage = textContentInfoPageResult.getTotalCount();
+            result = textContentInfoList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        }else {
+            IPage<TextInfo> textIPage = this.textMapper.listTextInfos(page, textSearchParam);
+            List<TextInfo> imageList = textIPage.getRecords();
+            currentPage = textIPage.getCurrent();
+            totalPage = textIPage.getTotal();
+            result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        }
+
+        return new PageResult<>(currentPage, result, totalPage);
+    }
+
+    /**
+     * 分页获取文件内容
+     * @param fileSearchParam
+     * @return
+     */
+    private PageResult<JSONObject> getFileContentByPage(FileSearchParam fileSearchParam){
+        List<JSONObject> result = new ArrayList<>();
+        PageResult<JSONObject> pageResult = new PageResult<>(fileSearchParam.getPageNo(),new ArrayList<>(),0);
+        List<Integer> fileIdList = fileSearchParam.getFileIdList();
+        if (fileIdList.isEmpty())
+            return pageResult;
+
+        int textFileId = fileSearchParam.getFileIdList().get(0);
+        TextInfo textInfo = this.getById(textFileId);
+        File textFile = FileUtils.getFile(this.rootPath,textInfo.getPath());
+
+        int totalCount = textInfo.getLineCount();
+        int beginLine = Math.min(fileSearchParam.getPageSize() * (fileSearchParam.getPageNo() - 1),totalCount);
+        int endLine = Math.min(beginLine + fileSearchParam.getPageSize(), totalCount);
+        if ( !textFile.exists() || (beginLine == endLine))
+            return pageResult;
+
+        try {
+            int skipLineCount = 0;
+            LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(textFile));
+            while (skipLineCount < beginLine){
+                lineNumberReader.readLine();
+                skipLineCount++;
+            }
+
+            while(beginLine < endLine){
+                JSONObject content = new JSONObject();
+                String lineContent = lineNumberReader.readLine();
+                content.put("data",lineContent);
+                result.add(content);
+                beginLine++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pageResult.setResult(result);
+        pageResult.setTotalCount(textInfo.getLineCount());
+        return pageResult;
     }
 
     /**

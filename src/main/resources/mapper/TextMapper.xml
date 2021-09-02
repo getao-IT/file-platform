@@ -37,7 +37,7 @@
                 </foreach>
             </if>
 
-            <if test="textSearchParam.textIdList!=null">
+            <if test="textSearchParam.textIdList!=null and textSearchParam.textIdList.size()!=0">
                 AND id in
                 <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
                     #{textId}
@@ -65,6 +65,7 @@
         </where>
         order by create_time DESC, id DESC
     </select>
+
 
     <select id="listDeleteTextInfos" resultType="cn.aircas.fileManager.text.entity.TextInfo">
         select id, path from file_text_info
