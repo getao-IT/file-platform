@@ -62,7 +62,7 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
      * @return
      */
     @Override
-    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList) {
+    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
         List<AudioInfo> textList = this.audioMapper.selectBatchIds(fileIdList);
         return textList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }

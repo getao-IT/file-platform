@@ -10,10 +10,11 @@ import java.util.List;
 public interface FileTypeService {
     String downloadFileById(int fileId);
     void deleteFileByIds(List<Integer> idList);
-    List<JSONObject> listFileInfosByIds(List<Integer> fileIdList);
     void updateFileInfoByIds(List<Integer> fileIdList, FileInfo fileInfo);
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileInfoByPage(FileSearchParam searchParam);
+    List<JSONObject> listFileInfosByIds(List<Integer> fileIdList,boolean content);
+
 
 
 }

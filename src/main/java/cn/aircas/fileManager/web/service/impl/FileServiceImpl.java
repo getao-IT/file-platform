@@ -111,9 +111,9 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public List<JSONObject> getFileInfoByIds(List<Integer> idList, FileType fileType) {
+    public List<JSONObject> getFileInfoByIds(List<Integer> idList, FileType fileType, boolean content) {
         FileTypeService fileTypeService = fileType.getService();
-        return fileTypeService.listFileInfosByIds(idList);
+        return fileTypeService.listFileInfosByIds(idList,content);
     }
 
 }

@@ -23,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("TEXT-SERVICE")
@@ -69,7 +67,17 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
      * @return
      */
     @Override
-    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList) {
+    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
+        if (content){
+            Set<Integer> idList = new HashSet<>();
+            List<TextContentInfo> textContentInfoList = (List<TextContentInfo>) this.textFileContentService.listByIds(fileIdList);
+            for (TextContentInfo textContentInfo : textContentInfoList) {
+                int fileId = textContentInfo.getTextFileId();
+                idList.add(fileId);
+            }
+            fileIdList = new ArrayList<>(idList);
+        }
+
         List<TextInfo> textList = this.textMapper.selectBatchIds(fileIdList);
         return textList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
