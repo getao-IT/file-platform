@@ -61,7 +61,7 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
      * @return
      */
     @Override
-    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList) {
+    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
         List<VideoInfo> videoInfoList = this.videoMapper.selectBatchIds(fileIdList);
         return videoInfoList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }

@@ -69,8 +69,8 @@ public class FileController {
     //@OperationLog(value = "根据id单个或者批量获取影像信息")
     @GetMapping("/{fileIdList}")
     @ApiOperation("根据id单个或者批量获取文件信息")
-    public CommonResult<List<JSONObject>> getFileInfoByIdList(@PathVariable("fileIdList") List<Integer> fileIdList, FileType fileType) {
-        List<JSONObject> imageList = fileService.getFileInfoByIds(fileIdList,fileType);
+    public CommonResult<List<JSONObject>> getFileInfoByIdList(@PathVariable("fileIdList") List<Integer> fileIdList, FileType fileType, @RequestParam(defaultValue = "false") boolean content) {
+        List<JSONObject> imageList = fileService.getFileInfoByIds(fileIdList,fileType,content);
         return new CommonResult<List<JSONObject>>().data(imageList).success().message("根据id获取影像数据成功");
     }
 

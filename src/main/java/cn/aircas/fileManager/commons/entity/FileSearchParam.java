@@ -77,6 +77,8 @@ public class FileSearchParam {
 
 
     public void setFileIdList(String fileIdListStr){
+        if(fileIdListStr.equals(""))
+            return;
         List<String> fileList = Arrays.asList(fileIdListStr.split(","));
         fileList.forEach(str->fileIdList.add(Integer.valueOf(str.trim())));
     }

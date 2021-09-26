@@ -15,7 +15,8 @@ public interface FileService {
     void deleteFilesByIds(List<Integer> idList, FileType fileType);
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileByPage(FileSearchParam fileSearchParam);
-    List<JSONObject> getFileInfoByIds(List<Integer> idList,FileType fileType);
     void updateFileInfo(List<Integer> fileIdList, FileType fileType, FileInfo fileInfo);
+    List<JSONObject> getFileInfoByIds(List<Integer> idList,FileType fileType, boolean content);
+
 
 }

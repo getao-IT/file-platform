@@ -68,7 +68,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
      * @return
      */
     @Override
-    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList) {
+    public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
         List<Image> imageList = this.imageMapper.selectBatchIds(fileIdList);
         return imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
