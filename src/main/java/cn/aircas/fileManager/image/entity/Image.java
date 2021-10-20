@@ -4,7 +4,6 @@ import cn.aircas.utils.image.emun.CoordinateSystemType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -163,12 +162,13 @@ public class Image {
     /**
      * 传感器类型
      */
-    private String sensor;
+    private String sensorType;
 
     /**
      * 卫星名称
      */
-    private String satellite;
+    private String sensorName;
+
 
 
     /**
@@ -202,8 +202,8 @@ public class Image {
                 ", projection='" + projection + '\'' +
                 ", source='" + size + '\'' +
                 ", coordinateSystemType='" + coordinateSystemType + '\'' +
-                ", sensor='" + sensor + '\'' +
-                ", satellite='" + satellite + '\'' +
+                ", sensor='" + sensorType + '\'' +
+                ", satellite='" + sensorName + '\'' +
                 '}';
     }
 }

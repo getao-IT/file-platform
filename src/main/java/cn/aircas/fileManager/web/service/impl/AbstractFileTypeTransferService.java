@@ -68,7 +68,7 @@ public abstract class AbstractFileTypeTransferService<T> implements FileTypeTran
             }
 
             T fileInfo = parseFileInfo(fileSavePath);
-            BeanUtils.copyProperties(fileTransferInfo,fileInfo);
+            BeanUtils.copyProperties(fileTransferInfo,fileInfo,"createTime");
             fileInfoList.add(fileInfo);
             count++;
 

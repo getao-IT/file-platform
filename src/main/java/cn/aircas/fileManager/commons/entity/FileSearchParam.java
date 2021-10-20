@@ -66,6 +66,16 @@ public class FileSearchParam {
     private FileType fileType;
 
     /**
+     * 传感器类型
+     */
+    private String sensorType;
+
+    /**
+     * 传感器名称
+     */
+    private String sensorName;
+
+    /**
      * 模糊查询输入字段，可通过影像名称，来源，关键字，用户名进行模糊查询
      */
     private String searchParam;

@@ -69,6 +69,12 @@
             <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
                 and lower(keywords) like '%${imageSearchParam.keywords}%'
             </if>
+            <if test="imageSearchParam.sensorType !=null and imageSearchParam.sensorType != ''">
+                and sensor_type like '%${imageSearchParam.sensorType}%'
+            </if>
+            <if test="imageSearchParam.sensorName !=null and imageSearchParam.sensorName != ''">
+                and sensor_name like '%${imageSearchParam.sensorName}%'
+            </if>
         </where>
         order by create_time DESC, id DESC
     </select>

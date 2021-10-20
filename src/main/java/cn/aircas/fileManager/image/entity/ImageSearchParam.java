@@ -50,6 +50,17 @@ public class ImageSearchParam {
      */
     private int batchNumber;
 
+
+    /**
+     * 传感器类型
+     */
+    private String sensorType;
+
+    /**
+     * 传感器名称
+     */
+    private String sensorName;
+
     /**
      * 查询页数量
      */
