@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -100,6 +97,7 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public PageResult<JSONObject> listFileByPage(FileSearchParam fileSearchParam) {
+        addEndTimeOneDay(fileSearchParam);
         FileTypeService fileTypeService = fileSearchParam.getFileType().getService();
         return fileTypeService.listFileInfoByPage(fileSearchParam);
     }
@@ -115,5 +113,17 @@ public class FileServiceImpl implements FileService {
         FileTypeService fileTypeService = fileType.getService();
         return fileTypeService.listFileInfosByIds(idList,content);
     }
+
+    public void addEndTimeOneDay(FileSearchParam fileSearchParam){
+        Date endTime = fileSearchParam.getEndTime();
+        if (endTime == null)
+            return;
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(endTime);
+        calendar.add(Calendar.DATE,1);
+        fileSearchParam.setEndTime(calendar.getTime());
+    }
+
+
 
 }
