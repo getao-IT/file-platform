@@ -36,7 +36,7 @@
     <select id="listImageInfosByPage" resultMap="ImageMap" parameterType="cn.aircas.fileManager.image.entity.ImageSearchParam">
         select * from file_image_info
         <where>
-            (user_id = #{imageSearchParam.userId} or is_public = TRUE)
+            (user_id = #{imageSearchParam.userId} or is_public = TRUE) and delete = False
             <if test="imageSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
@@ -74,6 +74,15 @@
             </if>
             <if test="imageSearchParam.sensorName !=null and imageSearchParam.sensorName != ''">
                 and sensor_name like '%${imageSearchParam.sensorName}%'
+            </if>
+<!--            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">-->
+<!--                and (min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon})-->
+<!--            </if>-->
+            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">
+                and ((min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}) or (max_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}))
+            </if>
+            <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
+                and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
             </if>
         </where>
         order by create_time DESC, id DESC

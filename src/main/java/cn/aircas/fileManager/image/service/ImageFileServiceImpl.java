@@ -54,12 +54,14 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
     public void deleteFileByIds(List<Integer> idList) {
         List<Image> imageInfoList = this.imageMapper.selectBatchIds(idList);
         Assert.notEmpty(imageInfoList, String.format("影像的路径列表:%s为空", imageInfoList.toString()));
-        for (Image imageInfo : imageInfoList) {
-            String filePath = FileUtils.getStringPath(this.rootPath, imageInfo.getPath());
-            FileUtils.forceDelete(filePath);
-        }
-        List<Integer> imageIdList = imageInfoList.stream().map(Image::getId).collect(Collectors.toList());
-        this.imageMapper.deleteBatchIds(imageIdList);
+        imageInfoList.forEach(image -> image.setDelete(true));
+        this.updateBatchById(imageInfoList);
+//        for (Image imageInfo : imageInfoList) {
+//            String filePath = FileUtils.getStringPath(this.rootPath, imageInfo.getPath());
+//            FileUtils.forceDelete(filePath);
+//        }
+//        List<Integer> imageIdList = imageInfoList.stream().map(Image::getId).collect(Collectors.toList());
+//        this.imageMapper.deleteBatchIds(imageIdList);
     }
 
     /**

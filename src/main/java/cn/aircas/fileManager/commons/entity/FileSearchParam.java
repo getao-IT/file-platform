@@ -17,6 +17,27 @@ public class FileSearchParam {
     private int userId;
 
     /**
+     * 最小经度
+     */
+    private double minLon;
+
+    /**
+     * 最小纬度
+     */
+    private double minLat;
+
+    /**
+     * 最大经度
+     */
+    private double maxLon;
+
+    /**
+     * 最大纬度
+     */
+    private double maxLat;
+
+
+    /**
      * 用户名称
      */
     private String userName;
@@ -55,6 +76,7 @@ public class FileSearchParam {
     private boolean content;
 
 
+
     /**
      * 查询页数量
      */
@@ -74,6 +96,7 @@ public class FileSearchParam {
      * 传感器名称
      */
     private String sensorName;
+
 
     /**
      * 模糊查询输入字段，可通过影像名称，来源，关键字，用户名进行模糊查询

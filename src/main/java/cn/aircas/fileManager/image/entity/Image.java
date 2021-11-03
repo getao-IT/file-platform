@@ -49,6 +49,7 @@ public class Image {
      */
     private int userId;
 
+
     /**
      * 保存路径
      */
@@ -83,6 +84,12 @@ public class Image {
      * 音箱来源
      */
     private String source;
+
+    /**
+     * 是否删除
+     */
+    private boolean delete;
+
 
     /**
      * 标签
@@ -168,7 +175,6 @@ public class Image {
      * 卫星名称
      */
     private String sensorName;
-
 
 
     /**
