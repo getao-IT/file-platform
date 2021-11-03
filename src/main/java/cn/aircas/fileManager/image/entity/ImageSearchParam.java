@@ -14,6 +14,26 @@ public class ImageSearchParam {
     private int userId;
 
     /**
+     * 最小经度
+     */
+    private double minLon;
+
+    /**
+     * 最小纬度
+     */
+    private double minLat;
+
+    /**
+     * 最大经度
+     */
+    private double maxLon;
+
+    /**
+     * 最大纬度
+     */
+    private double maxLat;
+
+    /**
      * 來源
      */
     private String source;

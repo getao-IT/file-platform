@@ -75,6 +75,15 @@
             <if test="imageSearchParam.sensorName !=null and imageSearchParam.sensorName != ''">
                 and sensor_name like '%${imageSearchParam.sensorName}%'
             </if>
+<!--            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">-->
+<!--                and (min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon})-->
+<!--            </if>-->
+            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">
+                and ((min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}) or (max_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}))
+            </if>
+            <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
+                and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
+            </if>
         </where>
         order by create_time DESC, id DESC
     </select>
