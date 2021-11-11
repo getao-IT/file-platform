@@ -27,20 +27,21 @@ public class TextTransferServiceImpl extends AbstractFileTypeTransferService<Tex
     private TextFileContentServiceImpl textFileContentService;
 
     @Override
-    public void transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
+    public TextInfo transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
         String filePath = FileUtils.getStringPath(this.rootPath,fileRelativePath);
         TextInfo text = parseFileInfo(filePath);
         BeanUtils.copyProperties(fileTransferInfo,text,"id");
         this.textMapper.insert(text);
         this.textFileContentService.parseTextContent(text);
+        return text;
     }
 
     @Override
-    public void transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
+    public List<TextInfo> transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
         List<TextInfo> textInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
         this.textMapper.batchInsertTextInfo(textInfoList);
         this.textFileContentService.parseTextContent(textInfoList);
-
+        return textInfoList;
 
 
 //        if (imageUploadParam.isCreateDataset()){

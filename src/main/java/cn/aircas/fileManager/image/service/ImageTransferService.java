@@ -1,31 +1,21 @@
 package cn.aircas.fileManager.image.service;
 
-import cn.aircas.fileManager.web.entity.FileTransferInfo;
-import cn.aircas.fileManager.web.entity.FileTransferParam;
-import cn.aircas.fileManager.web.service.FileBackendTransferProgressService;
-import cn.aircas.fileManager.web.service.FileTypeTransferService;
 import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
+import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.service.impl.AbstractFileTypeTransferService;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
 import cn.aircas.utils.image.ImageInfo;
 import cn.aircas.utils.image.ParseImageInfo;
 import cn.aircas.utils.image.slice.CreateThumbnail;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -39,18 +29,20 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
     ImageMapper imageMapper;
 
     @Override
-    public void transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
+    public Image transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
         String filePath = FileUtils.getStringPath(this.rootPath, fileRelativePath);
 
         Image image = parseFileInfo(filePath);
         BeanUtils.copyProperties(fileTransferInfo,image,"id");
         this.imageMapper.insert(image);
+        return image;
     }
 
     @Override
-    public void transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo){
+    public List<Image> transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo){
         List<Image> imageInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
         this.imageMapper.batchInsertImageInfo(imageInfoList);
+        return imageInfoList;
     }
 
     @Override

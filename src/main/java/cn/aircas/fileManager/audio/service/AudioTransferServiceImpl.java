@@ -25,21 +25,23 @@ public class AudioTransferServiceImpl extends AbstractFileTypeTransferService<Au
 
 
     @Override
-    public void transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
+    public AudioInfo transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
         String filePath = FileUtils.getStringPath(this.rootPath,fileRelativePath);
         AudioInfo audioInfo = parseFileInfo(filePath);
         BeanUtils.copyProperties(fileTransferInfo,audioInfo,"id");
         this.audioMapper.insert(audioInfo);
+        return audioInfo;
     }
 
     @Override
-    public void transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
+    public List<AudioInfo> transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
         List<AudioInfo> audioInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
         this.audioMapper.batchInsertAudioInfo(audioInfoList);
 //        if (imageUploadParam.isCreateDataset()){
 //            List<Integer> imageIdList = imageList.stream().map(Image::getId).collect(Collectors.toList());
 //            labelPlatFormService.createDataset(new File(absolutePath),imageIdList,token);
 //        }
+        return audioInfoList;
     }
 
 

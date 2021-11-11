@@ -35,21 +35,23 @@ public class VideoTransferService extends AbstractFileTypeTransferService<VideoI
     private VideoMapper videoMapper;
 
     @Override
-    public void transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
+    public VideoInfo transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
         String filePath = FileUtils.getStringPath(this.rootPath, fileRelativePath);
         VideoInfo videoInfo = parseFileInfo(filePath);
         BeanUtils.copyProperties(fileTransferInfo,videoInfo);
         this.videoMapper.insert(videoInfo);
+        return videoInfo;
     }
 
     @Override
-    public void transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
+    public List<VideoInfo> transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo) {
         List<VideoInfo> videoInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
         this.videoMapper.batchInsertVideoInfo(videoInfoList);
 //        if (imageUploadParam.isCreateDataset()){
 //            List<Integer> imageIdList = imageList.stream().map(Image::getId).collect(Collectors.toList());
 //            labelPlatFormService.createDataset(new File(absolutePath),imageIdList,token);
 //        }
+        return videoInfoList;
     }
 
 

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public abstract class AbstractFileTypeTransferService<T> implements FileTypeTransferService {
+public abstract class AbstractFileTypeTransferService<T> implements FileTypeTransferService<T> {
     @Value("${sys.rootPath}")
     public String rootPath;
 
