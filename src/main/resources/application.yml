@@ -55,6 +55,9 @@ value:
       - file_transfer_info
       - file_transfer_progress_info
 
+lab:
+  lab-service-url: http://192.168.14.11:33133/api
+
 auth:
   enabled: false
   user-info-url: http://192.168.2.156:31151/api/v1/users/token_check
