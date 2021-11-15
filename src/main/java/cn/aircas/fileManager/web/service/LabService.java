@@ -1,9 +1,11 @@
 package cn.aircas.fileManager.web.service;
 
 import cn.aircas.fileManager.image.entity.Image;
+import cn.aircas.fileManager.web.entity.lab.ImageRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.TextRetrieveParam;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -33,5 +35,10 @@ public interface LabService {
      */
     void retrieveImage(TextRetrieveParam textRetrieveParam);
 
+    /**
+     * 以图搜图
+     * @param imageRetrieveParam
+     */
+    void retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException;
 
 }
