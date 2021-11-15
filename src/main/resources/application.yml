@@ -57,6 +57,7 @@ value:
 
 lab:
   lab-service-url: http://192.168.14.11:33133/api
+  enable: true
 
 auth:
   enabled: false

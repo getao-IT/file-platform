@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/lab")
-@Slf4j
 public class LabController {
 
     @Autowired
@@ -27,4 +26,6 @@ public class LabController {
         this.labService.retrieveImage(textRetrieveParam);
         return new CommonResult<String>().success().message("以文搜图");
     }
+
+
 }
