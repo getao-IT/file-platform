@@ -19,6 +19,6 @@ public class StatusController {
     @ApiOperation("服务")
     public CommonResult<String> status() {
 
-        return new CommonResult<String>().success().message("***服务运行正常");
+        return new CommonResult<String>().data("文件服务运行正常").success().message("文件服务运行正常");
     }
 }
