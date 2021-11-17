@@ -17,6 +17,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <catalog.sdk.version>J20210802</catalog.sdk.version>
     </properties>
 
     <dependencies>
@@ -88,6 +89,11 @@
             <groupId>it.sauronsoftware</groupId>
             <artifactId>jave</artifactId>
             <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.aircas.catalog</groupId>
+            <artifactId>aircas-catalog-client</artifactId>
+            <version>${catalog.sdk.version}</version>
         </dependency>
     </dependencies>
 
