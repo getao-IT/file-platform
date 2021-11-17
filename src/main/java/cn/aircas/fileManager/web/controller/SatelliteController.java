@@ -1,9 +1,7 @@
 package cn.aircas.fileManager.web.controller;
 
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
-import cn.aircas.fileManager.satellite.entity.FileSatelliteInfo;
-import cn.aircas.fileManager.satellite.entity.SatelliteFullParam;
-import cn.aircas.fileManager.satellite.entity.SatelliteParam;
+import cn.aircas.fileManager.satellite.entity.*;
 import cn.aircas.fileManager.satellite.service.IFileSatelliteInfoService;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import io.swagger.annotations.Api;
@@ -69,6 +67,20 @@ public class SatelliteController {
         satelliteInfo.setCreateTime(new Date());
         satelliteInfo.setUpdateTime(new Date());
         return new CommonResult().success().data(satelliteInfoService.saveFullSatellite(satelliteInfo,param.getSensorList()));
+    }
+
+
+    @Log(value = "添加給衛星添加傳感器關係信息")
+    //@OperationLog(value = "分页查询影像信息")
+    @PostMapping("/addsensorRelation")
+    @ApiOperation("添加完整的衛星信息")
+    public CommonResult addSensorRelation(@RequestBody SatelliteSensorRelationParam param){
+        FileSatelliteSensorRelation relation = new FileSatelliteSensorRelation();
+        relation.setSensorId(param.getSensorId());
+        relation.setSatelliteId(param.getSatelliteId());
+        relation.setCreateTime(new Date());
+        relation.setUpdateTime(new Date());
+        return satelliteInfoService.saveRelation(relation)?new CommonResult().success():new CommonResult().fail();
     }
 
     @Log(value = "更新衛星信息")

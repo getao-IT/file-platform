@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,9 +39,15 @@ public class FileSatelliteInfoServiceImpl extends ServiceImpl<FileSatelliteInfoM
             FileSatelliteSensorRelation relation = new FileSatelliteSensorRelation();
             relation.setSatelliteId(fileSatelliteInfo.getId());
             relation.setSensorId(sensorId);
+            relation.setCreateTime(new Date());
+            relation.setUpdateTime(new Date());
             relationMapper.insert(relation);
         }
         return true;
+    }
+
+    public boolean saveRelation(FileSatelliteSensorRelation relation){
+        return this.relationMapper.insert(relation)>0?true:false;
     }
 
     @Override
