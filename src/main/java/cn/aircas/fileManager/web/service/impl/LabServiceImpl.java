@@ -4,10 +4,10 @@ import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.web.entity.lab.ImageRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.TextRetrieveParam;
 import cn.aircas.fileManager.web.service.LabService;
+import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -97,11 +97,11 @@ public class LabServiceImpl implements LabService {
     @Override
     public void retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException {
         File imagePath = FileUtils.getFile(this.rootPath,"file-data","lab","tmp");
+        String path = FileUtils.getStringPath("file-data", "lab", "tmp", imageRetrieveParam.getFile().getOriginalFilename());
         if (!imagePath.exists()){
             imagePath.mkdirs();
         }
         FileUtils.copyFileToDirectory((File) imageRetrieveParam.getFile(),imagePath);
-        String path = "file-data"+"lab"+"tmp"+ imageRetrieveParam.getFile().getOriginalFilename();
 
         JSONObject imageObject = new JSONObject();
         imageObject.put("image_path",path);
