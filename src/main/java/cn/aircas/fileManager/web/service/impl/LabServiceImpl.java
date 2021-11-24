@@ -40,6 +40,10 @@ public class LabServiceImpl implements LabService {
         this.encodeImage(imageList);
     }
 
+    /**
+     * 对上传完成的影像进行编码
+     * @param imageList
+     */
     @Override
     public void encodeImage(List<Image> imageList) {
         JSONArray imageArray = new JSONArray();
@@ -58,6 +62,10 @@ public class LabServiceImpl implements LabService {
         //System.out.println(object);
     }
 
+    /**
+     * 对上传完成的影像进行解码，删除原有影像
+     * @param imageList
+     */
     @Override
     public void decodeImage(List<Integer> imageList) {
         JSONObject imageObject = new JSONObject();
@@ -80,6 +88,10 @@ public class LabServiceImpl implements LabService {
         //System.out.println(object);
     }
 
+    /**
+     * 以文搜图
+     * @param textRetrieveParam
+     */
     @Override
     public void retrieveImage(TextRetrieveParam textRetrieveParam) {
         JSONObject imageObject = new JSONObject();
@@ -94,6 +106,11 @@ public class LabServiceImpl implements LabService {
         //System.out.println(object);
     }
 
+    /**
+     * 以图搜图
+     * @param imageRetrieveParam
+     * @throws IOException
+     */
     @Override
     public void retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException {
         File imagePath = FileUtils.getFile(this.rootPath,"file-data","lab","tmp");
