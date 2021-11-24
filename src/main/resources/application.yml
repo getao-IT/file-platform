@@ -54,6 +54,13 @@ value:
       - file_video_info
       - file_transfer_info
       - file_transfer_progress_info
+      - file_satellite_info
+      - file_satellite_sensor_info
+      - file_satellite_sensor_relation
+
+lab:
+  lab-service-url: http://192.168.14.11:33133/api
+  enable: true
 
 auth:
   enabled: true
