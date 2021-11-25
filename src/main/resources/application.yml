@@ -37,7 +37,12 @@ sys:
   rootPath: D:\\数据\\
   #  从哪拿
   uploadRootPath: D:\\数据\\
+
 value:
+  app:
+    version: '@project.version@'
+    build:
+      time: '@timestamp@'
   api:
     user-info: http://192.168.2.156:31151/api/v1/users/token_check
     user-register: http://192.168.2.156:31151/api/v1/users/login
@@ -70,6 +75,7 @@ auth:
     - /geoai/v1/webjars/**
     - /geoai/v1/swagger-resources/**
     - /geoai/v1/v2/**
+    - /geoai/v1/status/**
 swagger:
   enabled: true
   base-package: cn.aircas.fileManager.web.controller
