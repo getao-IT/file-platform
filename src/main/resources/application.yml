@@ -37,6 +37,7 @@ sys:
   rootPath: D:\\数据\\
   #  从哪拿
   uploadRootPath: D:\\数据\\
+
 value:
   api:
     user-info: http://192.168.2.156:31151/api/v1/users/token_check
@@ -70,11 +71,8 @@ auth:
     - /geoai/v1/webjars/**
     - /geoai/v1/swagger-resources/**
     - /geoai/v1/v2/**
+    - /geoai/v1/status/**
 swagger:
   enabled: true
   base-package: cn.aircas.fileManager.web.controller
   title: 文件管理平台接口文档
-
-
-catalog:
-  host: 192.168.7.20:11096
