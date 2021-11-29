@@ -1,18 +1,18 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.30.25
+ Source Server         : 9.64
  Source Server Type    : PostgreSQL
- Source Server Version : 90515
- Source Host           : 192.168.30.25:31189
+ Source Server Version : 120003
+ Source Host           : 192.168.9.64:32189
  Source Catalog        : geodl_iecas
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 90515
+ Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 02/08/2021 10:42:47
+ Date: 29/11/2021 15:17:52
 */
 
 CREATE SEQUENCE file_image_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
@@ -50,8 +50,9 @@ CREATE TABLE "public"."file_image_info" (
   "max_projection_y" float4,
   "coordinate_system_type" varchar(255) COLLATE "pg_catalog"."default",
   "file_length" int8,
-  "satellite" varchar(255) COLLATE "pg_catalog"."default",
-  "sensor" varchar(255) COLLATE "pg_catalog"."default"
+  "sensor_type" varchar(255) COLLATE "pg_catalog"."default",
+  "sensor_name" varchar(255) COLLATE "pg_catalog"."default",
+  "delete" bool
 )
 ;
 COMMENT ON COLUMN "public"."file_image_info"."id" IS 'id';
@@ -72,3 +73,4 @@ COMMENT ON COLUMN "public"."file_image_info"."bit" IS '数据类型';
 COMMENT ON COLUMN "public"."file_image_info"."keywords" IS '标签';
 COMMENT ON COLUMN "public"."file_image_info"."resolution" IS '分辨率';
 COMMENT ON COLUMN "public"."file_image_info"."file_length" IS '文件长度';
+COMMENT ON COLUMN "public"."file_image_info"."delete" IS '是否删除字段';

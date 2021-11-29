@@ -1,18 +1,18 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.30.25
+ Source Server         : 9.64
  Source Server Type    : PostgreSQL
- Source Server Version : 90515
- Source Host           : 192.168.30.25:31189
+ Source Server Version : 120003
+ Source Host           : 192.168.9.64:32189
  Source Catalog        : geodl_iecas
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 90515
+ Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 02/08/2021 10:43:03
+ Date: 29/11/2021 15:25:21
 */
 
 CREATE SEQUENCE file_transfer_progress_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;

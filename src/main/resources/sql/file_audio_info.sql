@@ -1,18 +1,18 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.30.25
+ Source Server         : 9.64
  Source Server Type    : PostgreSQL
- Source Server Version : 90515
- Source Host           : 192.168.30.25:31189
+ Source Server Version : 120003
+ Source Host           : 192.168.9.64:32189
  Source Catalog        : geodl_iecas
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 90515
+ Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 02/08/2021 10:42:40
+ Date: 29/11/2021 15:16:12
 */
 
 CREATE SEQUENCE file_audio_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
@@ -37,7 +37,6 @@ CREATE TABLE "public"."file_audio_info" (
   "batch_number" int4,
   "duration_str" varchar(255) COLLATE "pg_catalog"."default",
   "format" varchar(255) COLLATE "pg_catalog"."default"
-
 )
 ;
 COMMENT ON COLUMN "public"."file_audio_info"."id" IS 'id';
@@ -51,6 +50,7 @@ COMMENT ON COLUMN "public"."file_audio_info"."duration" IS '音频时长';
 COMMENT ON COLUMN "public"."file_audio_info"."file_length" IS '文件长度';
 COMMENT ON COLUMN "public"."file_audio_info"."batch_number" IS '上传批次';
 COMMENT ON COLUMN "public"."file_audio_info"."duration_str" IS '字符串格式时长';
+COMMENT ON COLUMN "public"."file_audio_info"."format" IS '格式';
 
 -- ----------------------------
 -- Primary Key structure for table file_audio_info

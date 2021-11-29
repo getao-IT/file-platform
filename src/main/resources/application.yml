@@ -39,6 +39,10 @@ sys:
   uploadRootPath: D:\\数据\\
 
 value:
+  app:
+    version: '@project.version@'
+    build:
+      time: '@timestamp@'
   api:
     user-info: http://192.168.2.156:31151/api/v1/users/token_check
     user-register: http://192.168.2.156:31151/api/v1/users/login
