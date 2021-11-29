@@ -12,7 +12,7 @@
  Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 16/11/2021 15:37:04
+ Date: 29/11/2021 15:20:05
 */
 
 CREATE SEQUENCE file_satellite_sensor_relation_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
@@ -30,10 +30,6 @@ CREATE TABLE "public"."file_satellite_sensor_relation" (
 ;
 COMMENT ON COLUMN "public"."file_satellite_sensor_relation"."satellite_id" IS '卫星id';
 COMMENT ON COLUMN "public"."file_satellite_sensor_relation"."sensor_id" IS '传感器id';
-
--- ----------------------------
--- Records of file_satellite_sensor_relation
--- ----------------------------
 
 -- ----------------------------
 -- Primary Key structure for table file_satellite_sensor_relation

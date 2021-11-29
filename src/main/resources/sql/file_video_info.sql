@@ -1,18 +1,18 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.30.25
+ Source Server         : 9.64
  Source Server Type    : PostgreSQL
- Source Server Version : 90515
- Source Host           : 192.168.30.25:31189
+ Source Server Version : 120003
+ Source Host           : 192.168.9.64:32189
  Source Catalog        : geodl_iecas
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 90515
+ Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 02/08/2021 10:43:08
+ Date: 29/11/2021 15:25:51
 */
 
 CREATE SEQUENCE file_video_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
@@ -33,9 +33,14 @@ CREATE TABLE "public"."file_video_info" (
   "keywords" varchar(255) COLLATE "pg_catalog"."default",
   "size" varchar(50) COLLATE "pg_catalog"."default",
   "duration" int8,
-  "file_length" int8 ,
+  "file_length" int8,
   "resolution" float4,
-  "batch_number" int4
+  "batch_number" int4,
+  "format" varchar(255) COLLATE "pg_catalog"."default",
+  "frame_rate" varchar(255) COLLATE "pg_catalog"."default",
+  "width" int4,
+  "height" int4,
+  "duration_str" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."file_video_info"."id" IS 'id';

@@ -12,8 +12,9 @@
  Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 16/11/2021 15:32:02
+ Date: 29/11/2021 15:18:48
 */
+
 CREATE SEQUENCE file_satellite_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
 
 -- ----------------------------
@@ -29,10 +30,6 @@ CREATE TABLE "public"."file_satellite_info" (
 )
 ;
 COMMENT ON COLUMN "public"."file_satellite_info"."satellite_no" IS '卫星编号';
-
--- ----------------------------
--- Records of file_satellite_info
--- ----------------------------
 
 -- ----------------------------
 -- Uniques structure for table file_satellite_info
