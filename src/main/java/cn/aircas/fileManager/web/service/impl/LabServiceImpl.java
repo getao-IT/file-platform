@@ -1,5 +1,7 @@
 package cn.aircas.fileManager.web.service.impl;
 
+import cn.aircas.fileManager.commons.entity.common.PageResult;
+import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.web.entity.lab.ImageRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.TextRetrieveParam;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,6 +35,12 @@ public class LabServiceImpl implements LabService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private ImageMapper imageMapper;
+
+    @Autowired
+    LabService labService;
 
     @Override
     public void encodeImage(Image image) {
@@ -91,9 +100,10 @@ public class LabServiceImpl implements LabService {
     /**
      * 以文搜图
      * @param textRetrieveParam
+     * @return
      */
     @Override
-    public void retrieveImage(TextRetrieveParam textRetrieveParam) {
+    public PageResult<JSONObject> retrieveImage(TextRetrieveParam textRetrieveParam) {
         JSONObject imageObject = new JSONObject();
         imageObject.put("text",textRetrieveParam.getText());
         imageObject.put("user_id",textRetrieveParam.getUserId());
@@ -102,7 +112,12 @@ public class LabServiceImpl implements LabService {
         HttpHeaders httpHeaders = new HttpHeaders();
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(imageObject,httpHeaders);
         JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/text_search/", httpEntity, JSONObject.class).getBody();
-        log.info("以文搜图完成");
+
+        List<Integer> messageList = JSONArray.parseObject(String.valueOf(object.getJSONArray("message")), List.class);
+        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
+        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        Integer totalCount = this.imageMapper.getImageTotalCount();
+        return new PageResult<>(textRetrieveParam.getPageNo(), result, totalCount);
         //System.out.println(object);
     }
 
@@ -110,9 +125,10 @@ public class LabServiceImpl implements LabService {
      * 以图搜图
      * @param imageRetrieveParam
      * @throws IOException
+     * @return
      */
     @Override
-    public void retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException {
+    public PageResult<JSONObject> retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException {
         File imagePath = FileUtils.getFile(this.rootPath,"file-data","lab","tmp");
         String path = FileUtils.getStringPath("file-data", "lab", "tmp", imageRetrieveParam.getFile().getOriginalFilename());
         if (!imagePath.exists()){
@@ -128,7 +144,14 @@ public class LabServiceImpl implements LabService {
         HttpHeaders httpHeaders = new HttpHeaders();
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(imageObject,httpHeaders);
         JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/image_search/", httpEntity, JSONObject.class).getBody();
-        log.info("以图搜图完成");
+
+        List<Integer> messageList = JSONArray.parseObject(String.valueOf(object.getJSONArray("message")), List.class);
+        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
+        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        Integer totalCount = this.imageMapper.getImageTotalCount();
+        return new PageResult<>(imageRetrieveParam.getPageNo(), result, totalCount);
         //System.out.println(object);
     }
+
+
 }
