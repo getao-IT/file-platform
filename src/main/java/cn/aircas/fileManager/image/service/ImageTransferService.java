@@ -4,6 +4,7 @@ import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.service.impl.AbstractFileTypeTransferService;
+import cn.aircas.fileManager.web.service.impl.LabelPlatFormServiceImpl;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
 import cn.aircas.utils.image.ImageInfo;
@@ -13,10 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author vanishrain
@@ -27,6 +31,14 @@ import java.util.List;
 public class ImageTransferService extends AbstractFileTypeTransferService<Image>{
     @Autowired
     ImageMapper imageMapper;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+    @Value("${value.createDataset}")
+    private boolean createDataset;
+
+    @Autowired
+    LabelPlatFormServiceImpl labelPlatFormService;
 
     @Override
     public Image transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
@@ -42,6 +54,11 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
     public List<Image> transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo){
         List<Image> imageInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
         this.imageMapper.batchInsertImageInfo(imageInfoList);
+
+        if (createDataset){
+            List<Integer> imageIdList = imageInfoList.stream().map(Image::getId).collect(Collectors.toList());
+            labelPlatFormService.createDataset(FileUtils.getFile(this.rootPath,srcDir),imageIdList,fileTransferInfo.getToken());
+        }
         return imageInfoList;
     }
 

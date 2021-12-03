@@ -39,6 +39,7 @@ sys:
   uploadRootPath: D:\\数据\\
 
 value:
+  createDataset: false
   app:
     version: '@project.version@'
     build:

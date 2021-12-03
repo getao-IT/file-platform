@@ -15,7 +15,7 @@
 
 
    
-    <insert id="batchInsertImageInfo" parameterType="java.util.List">
+    <insert id="batchInsertImageInfo" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
         insert into file_image_info (image_name,path,user_id,source,thumb,width,height,projection,min_lon,min_lat,
                                      max_lon,max_lat,batch_number,user_name,is_public,bands,bit,create_time,keywords,size,
                                      resolution,min_projection_x,min_projection_y,max_projection_x,max_projection_y,

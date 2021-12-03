@@ -7,14 +7,14 @@ import org.springframework.http.HttpStatus;
 public class CommonResult<T> {
     private T data;
 
-    private HttpStatus code;
+    private int code;
 
     private String message;
 
     private static final long serialVersionUID = -4683516289108960739L;
 
     private void code(HttpStatus httpStatus){
-        this.code = httpStatus;
+        this.code = httpStatus.value();
     }
 
     public CommonResult<T> message(String message){
@@ -43,8 +43,13 @@ public class CommonResult<T> {
         return this;
     }
 
+    public CommonResult<T> setCode(int code){
+        this.code = code;
+        return this;
+    }
+
     public CommonResult<T> setCode(HttpStatus httpStatus){
-        this.code = httpStatus;
+        this.code = httpStatus.value();
         return this;
     }
 }

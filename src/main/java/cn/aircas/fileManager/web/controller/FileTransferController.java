@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 public class FileTransferController {
 
     @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
     FileTransferService fileTransferService;
 
     /**
@@ -39,6 +42,8 @@ public class FileTransferController {
     @ApiOperation("后台上传文件")
     @PostMapping("/backend")
     public CommonResult<String> transferFromBackend(@RequestBody FileTransferInfo fileTransferInfo) {
+        String token = request.getHeader("token");
+        fileTransferInfo.setToken(token);
         fileTransferService.backendTransfer(fileTransferInfo);
         return new CommonResult<String>().success().message("上传影像成功");
     }

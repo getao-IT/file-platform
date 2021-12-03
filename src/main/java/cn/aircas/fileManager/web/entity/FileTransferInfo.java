@@ -35,6 +35,10 @@ public class FileTransferInfo {
     private boolean copy = true;
     @TableField(exist = false)
     private String transferToken;
+    @TableField(exist = false)
+    private boolean createDataset;
+    @TableField(exist = false)
+    private String token;
     /**
      * 是否公开
      */
