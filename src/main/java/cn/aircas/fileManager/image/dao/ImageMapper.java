@@ -17,5 +17,4 @@ public interface ImageMapper extends BaseMapper<Image> {
     List<Integer> listImageIdBySearchParam(@Param(value = "imageSearchParam") ImageSearchParam imageSearchParam);
     IPage<Image> listImageInfosByPage(Page<Image> pageInfo, @Param(value = "imageSearchParam") ImageSearchParam imageSearchParam);
     List<Image> listImageByMessage(@Param("messageList") List<Integer> messageList);
-    Integer getImageTotalCount();
 }

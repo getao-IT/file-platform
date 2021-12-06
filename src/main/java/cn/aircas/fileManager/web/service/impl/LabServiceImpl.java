@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class LabServiceImpl implements LabService {
 
-    @Value("${sys.rootPath}")
+    @Value("${lab.prefix}")
     String rootPath;
 
     @Value("${lab.lab-service-url}")
@@ -113,12 +113,12 @@ public class LabServiceImpl implements LabService {
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(imageObject,httpHeaders);
         JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/text_search/", httpEntity, JSONObject.class).getBody();
 
-        List<Integer> messageList = JSONArray.parseObject(String.valueOf(object.getJSONArray("message")), List.class);
+        List<Integer> messageList =JSONArray.parseObject(String.valueOf(object.getJSONObject("message").getJSONArray("results")), List.class) ;
         List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
         List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
-        Integer totalCount = this.imageMapper.getImageTotalCount();
+        Integer totalCount = object.getJSONObject("message").getInteger("total");
         return new PageResult<>(textRetrieveParam.getPageNo(), result, totalCount);
-        //System.out.println(object);
+
     }
 
     /**
@@ -129,12 +129,16 @@ public class LabServiceImpl implements LabService {
      */
     @Override
     public PageResult<JSONObject> retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException {
-        File imagePath = FileUtils.getFile(this.rootPath,"file-data","lab","tmp");
-        String path = FileUtils.getStringPath("file-data", "lab", "tmp", imageRetrieveParam.getFile().getOriginalFilename());
-        if (!imagePath.exists()){
-            imagePath.mkdirs();
+
+        String originalFilename = imageRetrieveParam.getFile().getOriginalFilename();
+        String path = FileUtils.getStringPath("file-data", "lab", "tmp",System.currentTimeMillis(),originalFilename);
+        if (!FileUtils.getFile(this.rootPath,path).getParentFile().exists()){
+            FileUtils.getFile(this.rootPath,path).getParentFile().mkdirs();
         }
-        FileUtils.copyFileToDirectory((File) imageRetrieveParam.getFile(),imagePath);
+        File file = FileUtils.getFile(this.rootPath,path);
+        imageRetrieveParam.getFile().transferTo(file);
+        file.deleteOnExit();
+        FileUtils.copyFileToDirectory(file, FileUtils.getFile(path));
 
         JSONObject imageObject = new JSONObject();
         imageObject.put("image_path",path);
@@ -145,12 +149,12 @@ public class LabServiceImpl implements LabService {
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(imageObject,httpHeaders);
         JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/image_search/", httpEntity, JSONObject.class).getBody();
 
-        List<Integer> messageList = JSONArray.parseObject(String.valueOf(object.getJSONArray("message")), List.class);
+        List<Integer> messageList =JSONArray.parseObject(String.valueOf(object.getJSONObject("message").getJSONArray("results")), List.class) ;
         List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
         List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
-        Integer totalCount = this.imageMapper.getImageTotalCount();
+        Integer totalCount = object.getJSONObject("message").getInteger("total");
         return new PageResult<>(imageRetrieveParam.getPageNo(), result, totalCount);
-        //System.out.println(object);
+
     }
 
 

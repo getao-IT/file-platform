@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StatusController {
 
-    @Autowired
-    BuildProperties buildProperties;
+//    @Autowired
+//    BuildProperties buildProperties;
 
     @GetMapping()
     @ApiOperation("获取服务状态")
@@ -28,12 +28,12 @@ public class StatusController {
         return new CommonResult<String>().data("文件服务运行正常").success().message("文件服务运行正常");
     }
 
-    @GetMapping("/version")
+/*    @GetMapping("/version")
     @ApiOperation("获取服务版本号")
     public CommonResult<JSONObject> version(){
         JSONObject result = new JSONObject();
         result.put("version",this.buildProperties.getVersion());
         result.put("buildTime",this.buildProperties.getArtifact());
         return new CommonResult<JSONObject>().data(result).success().message("服务运行正常");
-    }
+    }*/
 }

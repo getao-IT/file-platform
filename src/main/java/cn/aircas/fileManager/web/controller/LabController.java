@@ -27,20 +27,20 @@ public class LabController {
     @Log(value = "以文搜图")
     @GetMapping("/textRetrieve")
     @ApiOperation("以文搜图")
-    public CommonResult<PageResult<JSONObject>> textRetrieve(@RequestBody TextRetrieveParam textRetrieveParam) {
-        this.labService.retrieveImage(textRetrieveParam);
-        return new CommonResult<PageResult<JSONObject>>().success().message("以文搜图完成");
+    public CommonResult<PageResult<JSONObject>> textRetrieve(TextRetrieveParam textRetrieveParam) {
+        PageResult<JSONObject> pageResult = this.labService.retrieveImage(textRetrieveParam);
+        return new CommonResult<PageResult<JSONObject>>().success().data(pageResult).message("以文搜图完成");
     }
 
     @Log(value = "以图搜图")
     @PostMapping(value = "/imageRetrieve")
     @ApiOperation("以图搜图")
-    public CommonResult<PageResult<JSONObject>> imageRetrieve(@RequestBody ImageRetrieveParam imageRetrieveParam) throws IOException { ;
+    public CommonResult<PageResult<JSONObject>> imageRetrieve(ImageRetrieveParam imageRetrieveParam) throws IOException { ;
         if (imageRetrieveParam.getFile().isEmpty())
             return new CommonResult<PageResult<JSONObject>>().data(null).fail().message("请选择上传文件");
 
-        this.labService.retrieveImageByImage(imageRetrieveParam);
-        return new CommonResult<PageResult<JSONObject>>().success().message("以图搜图完成");
+        PageResult<JSONObject> pageResult = this.labService.retrieveImageByImage(imageRetrieveParam);
+        return new CommonResult<PageResult<JSONObject>>().success().data(pageResult).message("以图搜图完成");
     }
 
 }
