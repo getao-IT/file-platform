@@ -149,8 +149,5 @@
         </where>
     </select>
 
-    <select id="getImageTotalCount" resultType="java.lang.Integer">
-        select count(1) from file_image_info
-    </select>
 
 </mapper>

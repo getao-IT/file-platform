@@ -65,8 +65,10 @@ value:
       - file_satellite_sensor_relation
 
 lab:
-  lab-service-url: http://192.168.14.11:33133/api
   enable: true
+  prefix: /home/lab/data
+  lab-service-url: http://192.168.14.11:33133/api
+
 
 auth:
   enabled: true
