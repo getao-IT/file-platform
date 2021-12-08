@@ -137,17 +137,6 @@
         order by create_time DESC
     </select>
 
-    <select id="listImageByMessage" resultType="cn.aircas.fileManager.image.entity.Image">
-        select * from file_image_info
-        <where>
-            <if test="messageList!=null">
-                and id in
-                <foreach collection="messageList" item="imageId" open="(" close=")" separator=",">
-                    #{imageId}
-                </foreach>
-            </if>
-        </where>
-    </select>
 
 
 </mapper>
