@@ -39,6 +39,7 @@ public class LabServiceImpl implements LabService {
     @Autowired
     private ImageMapper imageMapper;
 
+
     @Autowired
     LabService labService;
 
@@ -59,9 +60,9 @@ public class LabServiceImpl implements LabService {
         JSONObject imageObject = new JSONObject();
         for(int i=0; i<imageList.size(); i++ ){
             imageObject.put("image_id",imageList.get(i).getId());
-            imageObject.put("image_path",imageList.get(i).getPath());
+            imageObject.put("image_path",imageList.get(i).getPath().substring(1));
             imageObject.put("user_id",imageList.get(i).getUserId());
-            imageObject.put("privilege",imageList.get(i).isPublic());
+            imageObject.put("privilege",(imageList.get(i).isPublic()) ? 1:0);
             imageArray.add(imageObject);
         }
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -114,8 +115,15 @@ public class LabServiceImpl implements LabService {
         JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/text_search/", httpEntity, JSONObject.class).getBody();
 
         List<Integer> messageList =JSONArray.parseObject(String.valueOf(object.getJSONObject("message").getJSONArray("results")), List.class) ;
-        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
-        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        List<Image> imageList = this.imageMapper.selectBatchIds(messageList);
+        List<JSONObject> result =  new ArrayList<>();
+        for (Integer id : messageList) {
+            Image image = imageList.stream().filter(imageTemp->imageTemp.getId()==id).findFirst().get();
+            if (image!=null)
+                result.add(JSONObject.parseObject(JSONObject.toJSONString(image)));
+        }
+//        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
+//        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
         Integer totalCount = object.getJSONObject("message").getInteger("total");
         return new PageResult<>(textRetrieveParam.getPageNo(), result, totalCount);
 
@@ -150,8 +158,16 @@ public class LabServiceImpl implements LabService {
         JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/image_search/", httpEntity, JSONObject.class).getBody();
 
         List<Integer> messageList =JSONArray.parseObject(String.valueOf(object.getJSONObject("message").getJSONArray("results")), List.class) ;
-        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
-        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        List<Image> imageList = this.imageMapper.selectBatchIds(messageList);
+        List<JSONObject> result =  new ArrayList<>();
+        for (Integer id : messageList) {
+            Image image = imageList.stream().filter(imageTemp->imageTemp.getId()==id).findFirst().get();
+            if (image!=null)
+                result.add(JSONObject.parseObject(JSONObject.toJSONString(image)));
+        }
+        //List<JSONObject> result  = this.imageFileService.listFileInfosByIds(messageList,false);
+//        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
+//        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
         Integer totalCount = object.getJSONObject("message").getInteger("total");
         return new PageResult<>(imageRetrieveParam.getPageNo(), result, totalCount);
 

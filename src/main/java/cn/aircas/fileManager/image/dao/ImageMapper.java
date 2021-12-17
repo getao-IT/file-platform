@@ -16,5 +16,4 @@ public interface ImageMapper extends BaseMapper<Image> {
     void batchInsertImageInfo(@Param("imageInfoList") List<Image> imageInfoList);
     List<Integer> listImageIdBySearchParam(@Param(value = "imageSearchParam") ImageSearchParam imageSearchParam);
     IPage<Image> listImageInfosByPage(Page<Image> pageInfo, @Param(value = "imageSearchParam") ImageSearchParam imageSearchParam);
-    List<Image> listImageByMessage(@Param("messageList") List<Integer> messageList);
 }
