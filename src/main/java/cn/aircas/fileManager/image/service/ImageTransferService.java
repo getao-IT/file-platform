@@ -77,6 +77,8 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
         String thumbnail = CreateThumbnail.createBase64Thumbnail(filePath, thumbnailPath, 256);
 
         String relativeFilePath = filePath.substring(this.rootPath.length());
+        if (relativeFilePath.startsWith("/"))
+            relativeFilePath = relativeFilePath.substring(1);
         ImageInfo imageInfo = ParseImageInfo.parseInfo(filePath);
         Image image = Image.builder().imageName(imageFile.getName()).createTime(DateUtils.nowDate()).path(relativeFilePath)
                 .thumb(thumbnail).size(fileSize).fileLength(imageFile.length()).minProjectionX(imageInfo.getProjectionRange()[0])
