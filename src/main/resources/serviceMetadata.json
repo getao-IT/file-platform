@@ -12,10 +12,11 @@
   "serviceDeveloperInformation": "中科院空天信息创新研究院",
   "serviceInstanceList": [
     {
+      "ip": "192.168.9.64",
       "portInfoList": [
         {
-          "originalPort": 18082,
-          "port": 18082,
+          "originalPort": 18081,
+          "port": 18081,
           "type": "http"
         }
       ]
