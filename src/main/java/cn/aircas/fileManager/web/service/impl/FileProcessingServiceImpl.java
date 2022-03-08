@@ -26,7 +26,7 @@ public class FileProcessingServiceImpl implements FileProcessingService {
     ImageTransferService imageTransferService;
 
     @Override
-    public void formatConventor(int fileId, String format) {
+    public void formatConverter(int fileId, String format) {
         Image srcimage = this.imageMapper.selectById(fileId);
         String inputPath = srcimage.getPath();
 

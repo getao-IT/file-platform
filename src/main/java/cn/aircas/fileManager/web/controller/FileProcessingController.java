@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api(tags = "文件转换接口")
-@RequestMapping("/formatConventor")
+@RequestMapping("/formatConverter")
 @Slf4j
 public class FileProcessingController {
 
@@ -27,8 +27,8 @@ public class FileProcessingController {
     @Log(value = "图片格式转换")
     @ApiOperation("图片格式转换")
     @PostMapping()
-    public CommonResult<String> formatConventor(int fileId, String format) {
-        this.fileProcessingService.formatConventor(fileId,format);
+    public CommonResult<String> formatConverter(int fileId, String format) {
+        this.fileProcessingService.formatConverter(fileId,format);
         return new CommonResult<String>().success().message("格式转换成功");
     }
 }
