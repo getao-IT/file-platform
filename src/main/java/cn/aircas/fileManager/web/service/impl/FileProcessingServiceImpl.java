@@ -30,12 +30,14 @@ public class FileProcessingServiceImpl implements FileProcessingService {
         Image srcimage = this.imageMapper.selectById(fileId);
         String inputPath = srcimage.getPath();
 
-        String outputPath = srcimage.isPublic() ? FileUtils.getStringPath("file-data","image", System.currentTimeMillis()) :
-                FileUtils.getStringPath("user", srcimage.getUserId(), "file-data", "image",System.currentTimeMillis());
+        String outputPath = srcimage.isPublic() ? FileUtils.getStringPath(this.rootPath, "file-data","image", System.currentTimeMillis()) :
+                FileUtils.getStringPath(this.rootPath, "user", srcimage.getUserId(), "file-data", "image",System.currentTimeMillis());
+
+        //解决： 看数据库 把时间戳当成了图片名 但是写到1.jpg 代码还认成是创建目录
 
         gdal.AllRegister();
         gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "YES");
-        Dataset ds = gdal.Open(inputPath, gdalconstConstants.GA_ReadOnly);
+        Dataset ds = gdal.Open(FileUtils.getStringPath(this.rootPath,inputPath), gdalconstConstants.GA_ReadOnly);
         if(ds == null){
             System.err.println("GDALOpen failed-"+gdal.VSIGetLastErrorNo());
             System.err.println(gdal.GetLastErrorMsg());
@@ -48,7 +50,7 @@ public class FileProcessingServiceImpl implements FileProcessingService {
         ds.delete();
         hDriver.delete();
 
-        String filePath = FileUtils.getStringPath(this.rootPath, outputPath);
+        String filePath = FileUtils.getStringPath(outputPath);
         Image image = this.imageTransferService.parseFileInfo(filePath);
         this.imageMapper.insert(image);
         log.info("影像格式转换成功");
