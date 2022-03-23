@@ -25,7 +25,7 @@ public class FileProcessingServiceImpl implements FileProcessingService {
     ImageTransferService imageTransferService;
 
     @Override
-    public void formatConverter(int fileId, String format) {
+    public void formatConverter(int fileId, String format,String source,String keywords, boolean isPublic) {
         Image srcimage = this.imageMapper.selectById(fileId);
         String inputPath = FileUtils.getStringPath(this.rootPath,srcimage.getPath());
         File outputParentPath = srcimage.isPublic() ? FileUtils.getFile(this.rootPath, "file-data","image", System.currentTimeMillis()) :
@@ -36,6 +36,10 @@ public class FileProcessingServiceImpl implements FileProcessingService {
         String path = ImageFormat.formatConvertor(inputPath, outputParentPath.getPath(), format);
         String filePath = FileUtils.getStringPath(path);
         Image image = this.imageTransferService.parseFileInfo(filePath);
+        image.setKeywords(keywords);
+        image.setSource(source);
+        image.setPublic(isPublic);
+
         this.imageMapper.insert(image);
         log.info("影像格式转换成功");
 
