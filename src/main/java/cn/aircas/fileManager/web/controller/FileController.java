@@ -1,5 +1,6 @@
 package cn.aircas.fileManager.web.controller;
 
+import cn.aircas.fileManager.elec.service.ElecFileServiceImpl;
 import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.commons.entity.FileInfo;
@@ -7,6 +8,7 @@ import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
+import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -42,6 +44,22 @@ public class FileController {
     public CommonResult<PageResult<JSONObject>> getFileInfoByPage(FileSearchParam fileSearchParam) {
         PageResult<JSONObject> pageResult = this.fileService.listFileByPage(fileSearchParam);
         return new CommonResult<PageResult<JSONObject>>().success().data(pageResult).message("分页查询文件信息成功");
+    }
+
+    /**
+     * 查询文件详情信息
+     * @param pageSize
+     * @param pageNo
+     * @param fileType
+     * @param fileId
+     * @return
+     */
+    @Log(value = "查询文件详情信息")
+    @GetMapping("/getFileContent")
+    @ApiOperation("查询文件详情信息")
+    public CommonResult<PageResult<JSONObject>> getFileContent(int pageSize, int pageNo,FileType fileType, int fileId) {
+        PageResult<JSONObject> pageResult = this.fileService.getContent(pageSize, pageNo, fileType, fileId);
+        return new CommonResult<PageResult<JSONObject>>().success().data(pageResult).message("查询文件详情信息成功");
     }
 
     /**

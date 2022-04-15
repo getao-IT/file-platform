@@ -93,6 +93,16 @@ public class ImageSearchParam {
     private String imageName;
 
     /**
+     * 是否公开
+     */
+    private boolean isPublic;
+
+    /**
+     * 是否公开查询用
+     */
+    private String ispub ;
+
+    /**
      * 影像id列表
      */
     private List<Integer> imageIdList;

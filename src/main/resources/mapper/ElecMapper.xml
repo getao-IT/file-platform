@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.elec.dao.ElecMapper">
+
+    <resultMap type="cn.aircas.fileManager.elec.entity.ElecInfo" id="ElecMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="elecName" column="elec_name" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="batchNumber" column="batch_number" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="batchInsertElecInfo">
+        insert into file_elec_info (elec_name,path,user_id,source,user_name,is_public,create_time,keywords,size,
+        batch_number)
+        values
+        <foreach collection="videoInfoList" item="elecInfo" separator=",">
+            (#{elecInfo.videoName},#{elecInfo.path},#{elecInfo.userId},#{elecInfo.source},#{elecInfo.userName}
+            ,#{elecInfo.isPublic},#{elecInfo.createTime},#{elecInfo.keywords},#{elecInfo.size}
+            ,#{elecInfo.batchNumber})
+        </foreach>
+    </insert>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listElecInfos" resultMap="ElecMap" parameterType="cn.aircas.fileManager.elec.entity.ElecSearchParam">
+        select * from file_elec_info
+        <where>
+            user_id = #{elecSearchParam.userId}
+            <if test="elecSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="elecSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                        CONCAT(elec_name,source,user_name,keywords) ilike '%${searchParam}%'
+                </foreach>
+            </if>
+
+            <if test="elecSearchParam.elecIdList!=null and elecSearchParam.elecIdList.size()!=0">
+                AND id in
+                <foreach collection="elecSearchParam.elecIdList" item="elecId" open="(" close=")" separator=",">
+                    #{elecId}
+                </foreach>
+            </if>
+            <if test="elecSearchParam.source != null and elecSearchParam.source != ''">
+                and source like '%${elecSearchParam.source}%'
+            </if>
+            <if test="elecSearchParam.startTime != null and elecSearchParam.endTime !=null">
+                and create_time between #{elecSearchParam.startTime} and #{elecSearchParam.endTime}
+            </if>
+            <if test="elecSearchParam.batchNumber > 0">
+                and batch_number = #{elecSearchParam.batchNumber}
+            </if>
+            <if test="elecSearchParam.keywords != null and elecSearchParam.keywords != ''">
+                and lower(keywords) like '%${elecSearchParam.keywords}%'
+            </if>
+            <if test="lecSearchParam.ispub != null and lecSearchParam.ispub != ''">
+                and is_public = #{elecSearchParam.ispub}
+            </if>
+        </where>
+        order by create_time DESC, id DESC
+    </select>
+
+    <select id="listDeleteElecInfos" resultType="cn.aircas.fileManager.elec.entity.ElecInfo">
+        select id, path from file_elec_info
+        <where>
+            <if test="elecDeleteParam.batchNumber > 0">
+                and batch_number = #{elecDeleteParam.batchNumber}
+            </if>
+            <if test="elecDeleteParam.elecIdList!=null">
+                and id in
+                <foreach collection="elecDeleteParam.elecIdList" item="elecId" open="(" close=")" separator=",">
+                    #{elecId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listElecIdBySearchParam" resultType="java.lang.Integer">
+        select id from file_elec_info
+        <where>
+            (user_id = #{elecSearchParam.userId} or is_public = TRUE)
+            <if test="elecSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="elecSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                    CONCAT(video_name,source,user_name,keywords) ilike '%${searchParam}%'
+                </foreach>
+            </if>
+            <if test="elecSearchParam.source != null and elecSearchParam.source != ''">
+                and source like '%${videoSearchParam.source}%'
+            </if>
+            <if test="elecSearchParam.startTime != null and elecSearchParam.endTime !=null">
+                and create_time between #{elecSearchParam.startTime} and #{elecSearchParam.endTime}
+            </if>
+            <if test="elecSearchParam.batchNumber > 0">
+                and batch_number = #{elecSearchParam.batchNumber}
+            </if>
+            <if test="elecSearchParam.keywords  and elecSearchParam.keywords != ''">
+                and lower(keywords) like '%${elecSearchParam.keywords}%'
+            </if>
+        </where>
+        order by create_time DESC
+    </select>
+
+</mapper>
