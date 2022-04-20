@@ -39,9 +39,11 @@ public class FileProcessingServiceImpl implements FileProcessingService {
         image.setKeywords(keywords);
         image.setSource(source);
         image.setPublic(isPublic);
+        image.setDelete(false);
+        image.setUserId(srcimage.getUserId());
+        image.setUserName(srcimage.getUserName());
 
         this.imageMapper.insert(image);
         log.info("影像格式转换成功");
-
     }
 }

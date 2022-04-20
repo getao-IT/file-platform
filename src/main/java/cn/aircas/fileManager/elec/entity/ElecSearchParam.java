@@ -1,4 +1,4 @@
-package cn.aircas.fileManager.audio.entity;
+package cn.aircas.fileManager.elec.entity;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class AudioSearchParam {
+public class ElecSearchParam {
     /**
      * 查询用户id
      */
@@ -59,7 +59,7 @@ public class AudioSearchParam {
     /**
      * 查询影像名称
      */
-    private String audioName;
+    private String elecName;
 
     /**
      * 查询排序顺序
@@ -74,7 +74,7 @@ public class AudioSearchParam {
     /**
      * 是否公开
      */
-    private boolean isPublic;
+    private boolean isPublic = true;
 
     /**
      * 是否公开查询用
@@ -86,7 +86,7 @@ public class AudioSearchParam {
      */
     private String searchParam;
 
-    private List<Integer> audioIdList;
+    private List<Integer> elecIdList;
 
     private List<String> searchParamList;
 
@@ -99,5 +99,4 @@ public class AudioSearchParam {
             this.isPublic = false;
         }
     }
-
 }

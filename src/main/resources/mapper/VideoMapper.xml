@@ -62,6 +62,9 @@
             <if test="videoSearchParam.keywords  and videoSearchParam.keywords != ''">
                 and lower(keywords) like '%${videoSearchParam.keywords}%'
             </if>
+            <if test="videoSearchParam.ispub != null and videoSearchParam.ispub != ''">
+                and is_public = #{videoSearchParam.isPublic}
+            </if>
         </where>
         order by create_time DESC, id DESC
     </select>
