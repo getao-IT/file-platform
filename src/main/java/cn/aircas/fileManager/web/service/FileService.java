@@ -7,6 +7,7 @@ import cn.aircas.fileManager.commons.entity.common.PageResult;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.models.auth.In;
 
+import java.io.File;
 import java.util.List;
 
 public interface FileService {
@@ -15,8 +16,8 @@ public interface FileService {
     void deleteFilesByIds(List<Integer> idList, FileType fileType);
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileByPage(FileSearchParam fileSearchParam);
+    PageResult<JSONObject> getContent(int pageSize, int pageNo,FileType fileType, int fileId);
     void updateFileInfo(List<Integer> fileIdList, FileType fileType, FileInfo fileInfo);
     List<JSONObject> getFileInfoByIds(List<Integer> idList,FileType fileType, boolean content);
-
-
+    int getFileLineCount(File source);
 }

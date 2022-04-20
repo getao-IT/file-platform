@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan({"cn.aircas.fileManager.audio.dao","cn.aircas.fileManager.image.dao",
+@MapperScan({"cn.aircas.fileManager.audio.dao","cn.aircas.fileManager.image.dao","cn.aircas.fileManager.elec.dao",
         "cn.aircas.fileManager.video.dao","cn.aircas.fileManager.text.dao","cn.aircas.fileManager.web.dao"})
 public class MyBatisPlusConfig {
     @Bean

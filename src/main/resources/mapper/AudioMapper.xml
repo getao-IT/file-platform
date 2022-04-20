@@ -28,7 +28,7 @@
     <select id="listAudioInfos" resultMap="AudioMap" parameterType="cn.aircas.fileManager.audio.entity.AudioSearchParam">
         select * from file_audio_info
         <where>
-            (user_id = #{audioSearchParam.userId} or is_public = TRUE)
+            (user_id = #{audioSearchParam.userId})
             <if test="audioSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="audioSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
@@ -60,6 +60,9 @@
 <!--            </if>-->
             <if test="audioSearchParam.keywords  and audioSearchParam.keywords != ''">
                 and lower(keywords) like '%${audioSearchParam.keywords}%'
+            </if>
+            <if test="audioSearchParam.ispub != null and audioSearchParam.ispub != ''">
+                and is_public = #{audioSearchParam.isPublic}
             </if>
         </where>
         order by create_time DESC, id DESC

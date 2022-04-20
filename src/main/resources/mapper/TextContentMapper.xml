@@ -15,7 +15,7 @@
             </if>
 
             <if test="textSearchParam.textIdList!=null and textSearchParam.textIdList.size()!=0">
-                AND id in
+                AND text_file_id in
                 <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
                     #{textId}
                 </foreach>

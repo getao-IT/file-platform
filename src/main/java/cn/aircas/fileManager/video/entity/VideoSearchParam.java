@@ -72,6 +72,16 @@ public class VideoSearchParam {
     private int pageSize = 10;
 
     /**
+     * 是否公开
+     */
+    private boolean isPublic;
+
+    /**
+     * 是否公开查询用
+     */
+    private String ispub = "";
+
+    /**
      * 模糊查询输入字段，可通过影像名称，来源，关键字，用户名进行模糊查询
      */
     private String searchParam;
@@ -79,5 +89,15 @@ public class VideoSearchParam {
     private List<Integer> videoIdList;
 
     private List<String> searchParamList;
+
+    public void setIspub(String ispub) {
+        this.ispub = ispub;
+        if (ispub.toLowerCase().equals("t")) {
+            this.isPublic = true;
+        }
+        if (ispub.toLowerCase().equals("f"))  {
+            this.isPublic = false;
+        }
+    }
 
 }

@@ -4,6 +4,7 @@ import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
+import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.commons.service.FileTypeService;
 import com.alibaba.fastjson.JSONObject;
@@ -14,7 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +39,12 @@ public class FileServiceImpl implements FileService {
             fileTypeList.add(fileType.getValue().toUpperCase());
         }
         return fileTypeList;
+    }
+
+    @Override
+    public PageResult<JSONObject> getContent(int pageSize, int pageNo,FileType fileType, int fileId) {
+        FileContentService fileContentService = fileType.getContentService();
+        return fileContentService.getContent(pageSize, pageNo,fileId);
     }
 
     /**
@@ -112,6 +122,30 @@ public class FileServiceImpl implements FileService {
     public List<JSONObject> getFileInfoByIds(List<Integer> idList, FileType fileType, boolean content) {
         FileTypeService fileTypeService = fileType.getService();
         return fileTypeService.listFileInfosByIds(idList,content);
+    }
+
+    /**
+     * 获取文件条数
+     * @param source
+     * @return
+     */
+    @Override
+    public int getFileLineCount(File source) {
+        int count = 0;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(source);
+            InputStreamReader streamReader = new InputStreamReader(fileInputStream);
+            BufferedReader reader = new BufferedReader(streamReader);
+            String line;
+            while ((line=reader.readLine()) != null) {
+                count++;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     public void addEndTimeOneDay(FileSearchParam fileSearchParam){

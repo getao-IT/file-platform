@@ -29,7 +29,7 @@ mybatis-plus:
       level:
         cn.aircas.fileManager.text.dao: debug
     debug: false
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 ---
 sys:
@@ -63,6 +63,7 @@ value:
       - file_satellite_info
       - file_satellite_sensor_info
       - file_satellite_sensor_relation
+      - file_elec_info
 
 lab:
   enable: true
