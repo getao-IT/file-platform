@@ -52,7 +52,9 @@ CREATE TABLE "public"."file_image_info" (
   "file_length" int8,
   "sensor_type" varchar(255) COLLATE "pg_catalog"."default",
   "sensor_name" varchar(255) COLLATE "pg_catalog"."default",
-  "delete" bool
+  "delete" bool,
+  "country" varchar(255) COLLATE "pg_catalog"."default"
+
 )
 ;
 COMMENT ON COLUMN "public"."file_image_info"."id" IS 'id';
