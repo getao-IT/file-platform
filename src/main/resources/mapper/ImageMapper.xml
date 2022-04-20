@@ -84,8 +84,8 @@
             <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
                 and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
             </if>
-            <if test="mageSearchParam.ispub != null and mageSearchParam.ispub != ''">
-                and is_public = #{imageSearchParam.ispub}
+            <if test="imageSearchParam.ispub != null and imageSearchParam.ispub != ''">
+                and is_public = #{imageSearchParam.isPublic}
             </if>
         </where>
         order by create_time DESC, id DESC

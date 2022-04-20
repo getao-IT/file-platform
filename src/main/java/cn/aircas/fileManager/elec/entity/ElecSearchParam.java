@@ -90,4 +90,13 @@ public class ElecSearchParam {
 
     private List<String> searchParamList;
 
+    public void setIspub(String ispub) {
+        this.ispub = ispub;
+        if (ispub.toLowerCase().equals("t")) {
+            this.isPublic = true;
+        }
+        if (ispub.toLowerCase().equals("f"))  {
+            this.isPublic = false;
+        }
+    }
 }

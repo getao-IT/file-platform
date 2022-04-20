@@ -54,8 +54,8 @@
             <if test="elecSearchParam.keywords != null and elecSearchParam.keywords != ''">
                 and lower(keywords) like '%${elecSearchParam.keywords}%'
             </if>
-            <if test="lecSearchParam.ispub != null and lecSearchParam.ispub != ''">
-                and is_public = #{elecSearchParam.ispub}
+            <if test="elecSearchParam.ispub != null and elecSearchParam.ispub != ''">
+                and is_public = #{elecSearchParam.isPublic}
             </if>
         </where>
         order by create_time DESC, id DESC

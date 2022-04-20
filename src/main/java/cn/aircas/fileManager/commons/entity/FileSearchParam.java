@@ -96,11 +96,11 @@ public class FileSearchParam {
      * 传感器名称
      */
     private String sensorName;
-
+    private boolean isPublic = true;
     /**
      * 是否公开
      */
-    private boolean isPublic = true;
+
 
     /**
      * 是否公开查询用
@@ -126,6 +126,7 @@ public class FileSearchParam {
     }
 
     public void setIspub(String ispub) {
+        this.ispub = ispub;
         if (ispub.toLowerCase().equals("t")) {
             this.isPublic = true;
         }

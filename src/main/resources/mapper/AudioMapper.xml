@@ -62,7 +62,7 @@
                 and lower(keywords) like '%${audioSearchParam.keywords}%'
             </if>
             <if test="audioSearchParam.ispub != null and audioSearchParam.ispub != ''">
-                and is_public = #{audioSearchParam.ispub}
+                and is_public = #{audioSearchParam.isPublic}
             </if>
         </where>
         order by create_time DESC, id DESC
