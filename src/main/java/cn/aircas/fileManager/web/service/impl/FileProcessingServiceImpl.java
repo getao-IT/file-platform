@@ -5,14 +5,13 @@ import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.image.service.ImageTransferService;
 import cn.aircas.fileManager.web.service.FileProcessingService;
 import cn.aircas.utils.file.FileUtils;
+import cn.aircas.utils.image.ImageFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.gdal.gdal.Dataset;
-import org.gdal.gdal.Driver;
-import org.gdal.gdal.gdal;
-import org.gdal.gdalconst.gdalconstConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 
 @Slf4j
 @Service
@@ -26,32 +25,21 @@ public class FileProcessingServiceImpl implements FileProcessingService {
     ImageTransferService imageTransferService;
 
     @Override
-    public void formatConverter(int fileId, String format) {
+    public void formatConverter(int fileId, String format,String source,String keywords, boolean isPublic) {
         Image srcimage = this.imageMapper.selectById(fileId);
-        String inputPath = srcimage.getPath();
-
-        String outputPath = srcimage.isPublic() ? FileUtils.getStringPath(this.rootPath, "file-data","image", System.currentTimeMillis()) :
-                FileUtils.getStringPath(this.rootPath, "user", srcimage.getUserId(), "file-data", "image",System.currentTimeMillis());
-
-        //解决： 看数据库 把时间戳当成了图片名 但是写到1.jpg 代码还认成是创建目录
-
-        gdal.AllRegister();
-        gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "YES");
-        Dataset ds = gdal.Open(FileUtils.getStringPath(this.rootPath,inputPath), gdalconstConstants.GA_ReadOnly);
-        if(ds == null){
-            System.err.println("GDALOpen failed-"+gdal.VSIGetLastErrorNo());
-            System.err.println(gdal.GetLastErrorMsg());
-            System.exit(1);
+        String inputPath = FileUtils.getStringPath(this.rootPath,srcimage.getPath());
+        File outputParentPath = srcimage.isPublic() ? FileUtils.getFile(this.rootPath, "file-data","image", System.currentTimeMillis()) :
+                FileUtils.getFile(this.rootPath, "user", srcimage.getUserId(), "file-data", "image",System.currentTimeMillis());
+        if (!outputParentPath.exists()){
+            outputParentPath.mkdirs();
         }
-
-        Driver hDriver = gdal.GetDriverByName(format);
-        System.out.println("Driver:"+hDriver.getShortName()+"/"+hDriver.getLongName());
-        hDriver.CreateCopy(outputPath,ds);
-        ds.delete();
-        hDriver.delete();
-
-        String filePath = FileUtils.getStringPath(outputPath);
+        String path = ImageFormat.formatConvertor(inputPath, outputParentPath.getPath(), format);
+        String filePath = FileUtils.getStringPath(path);
         Image image = this.imageTransferService.parseFileInfo(filePath);
+        image.setKeywords(keywords);
+        image.setSource(source);
+        image.setPublic(isPublic);
+
         this.imageMapper.insert(image);
         log.info("影像格式转换成功");
 
