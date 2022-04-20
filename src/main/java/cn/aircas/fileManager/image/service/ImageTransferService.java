@@ -83,7 +83,7 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
         Image image = Image.builder().imageName(imageFile.getName()).createTime(DateUtils.nowDate()).path(relativeFilePath)
                 .thumb(thumbnail).size(fileSize).fileLength(imageFile.length()).minProjectionX(imageInfo.getProjectionRange()[0])
                 .minProjectionY(imageInfo.getProjectionRange()[1]).maxProjectionX(imageInfo.getProjectionRange()[2])
-                .maxProjectionY(imageInfo.getProjectionRange()[3]).build();
+                .maxProjectionY(imageInfo.getProjectionRange()[3]).delete(false).build();
         BeanUtils.copyProperties(imageInfo,image);
 
         return image;
