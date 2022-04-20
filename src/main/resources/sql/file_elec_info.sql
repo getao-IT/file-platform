@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 9.64
+ Source Server         : 192.168.9.64
  Source Server Type    : PostgreSQL
  Source Server Version : 120003
  Source Host           : 192.168.9.64:32189
@@ -12,9 +12,10 @@
  Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 20/04/2022 10:21:21
+ Date: 20/04/2022 10:49:43
 */
 
+CREATE SEQUENCE file_elec_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
 
 -- ----------------------------
 -- Table structure for file_elec_info
