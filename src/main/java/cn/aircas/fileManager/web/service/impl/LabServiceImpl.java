@@ -118,8 +118,11 @@ public class LabServiceImpl implements LabService {
         List<Image> imageList = this.imageMapper.selectBatchIds(messageList);
         List<JSONObject> result =  new ArrayList<>();
         for (Integer id : messageList) {
-            Image image = imageList.stream().filter(imageTemp->imageTemp.getId()==id).findFirst().get();
-            result.add(JSONObject.parseObject(JSONObject.toJSONString(image)));
+            for (Image ob :imageList) {
+                if (ob.getId() == id){
+                    result.add(JSONObject.parseObject(JSONObject.toJSONString(ob)));
+                }
+            }
         }
 //        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
 //        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
@@ -160,8 +163,11 @@ public class LabServiceImpl implements LabService {
         List<Image> imageList = this.imageMapper.selectBatchIds(messageList);
         List<JSONObject> result =  new ArrayList<>();
         for (Integer id : messageList) {
-            Image image = imageList.stream().filter(imageTemp->imageTemp.getId()==id).findFirst().get();
-            result.add(JSONObject.parseObject(JSONObject.toJSONString(image)));
+            for (Image ob :imageList) {
+                if (ob.getId() == id){
+                    result.add(JSONObject.parseObject(JSONObject.toJSONString(ob)));
+                }
+            }
         }
         //List<JSONObject> result  = this.imageFileService.listFileInfosByIds(messageList,false);
 //        List<Image> imageList = this.imageMapper.listImageByMessage(messageList);
