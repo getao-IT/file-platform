@@ -3,6 +3,7 @@ package cn.aircas.fileManager.web.service.impl;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
+import cn.aircas.fileManager.web.entity.lab.AudioRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.ImageRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.TextRetrieveParam;
 import cn.aircas.fileManager.web.service.LabService;
@@ -175,6 +176,41 @@ public class LabServiceImpl implements LabService {
         Integer totalCount = object.getJSONObject("message").getInteger("total");
         return new PageResult<>(imageRetrieveParam.getPageNo(), result, totalCount);
 
+    }
+
+    @Override
+    public PageResult<JSONObject> retrieveImageByAudio(AudioRetrieveParam audioRetrieveParam) throws IOException {
+        String originalFilename = audioRetrieveParam.getFile().getOriginalFilename();
+        String path = FileUtils.getStringPath("file-data", "lab", "tmp",System.currentTimeMillis(),originalFilename);
+        if (!FileUtils.getFile(this.rootPath,path).getParentFile().exists()){
+            FileUtils.getFile(this.rootPath,path).getParentFile().mkdirs();
+        }
+        File file = FileUtils.getFile(this.rootPath,path);
+        audioRetrieveParam.getFile().transferTo(file);
+        file.deleteOnExit();
+        FileUtils.copyFileToDirectory(file, FileUtils.getFile(path));
+
+        JSONObject imageObject = new JSONObject();
+        imageObject.put("audio_path",path);
+        imageObject.put("user_id",audioRetrieveParam.getUserId());
+        imageObject.put("page_no",audioRetrieveParam.getPageNo());
+        imageObject.put("page_size",audioRetrieveParam.getPageSize());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        HttpEntity<JSONObject> httpEntity = new HttpEntity<>(imageObject,httpHeaders);
+        JSONObject object = restTemplate.postForEntity(this.labServiceUrl +"/audio_search/", httpEntity, JSONObject.class).getBody();
+
+        List<Integer> messageList =JSONArray.parseObject(String.valueOf(object.getJSONObject("message").getJSONArray("results")), List.class) ;
+        List<Image> imageList = this.imageMapper.selectBatchIds(messageList);
+        List<JSONObject> result =  new ArrayList<>();
+        for (Integer id : messageList) {
+            for (Image ob :imageList) {
+                if (ob.getId() == id){
+                    result.add(JSONObject.parseObject(JSONObject.toJSONString(ob)));
+                }
+            }
+        }
+        Integer totalCount = object.getJSONObject("message").getInteger("total");
+        return new PageResult<>(audioRetrieveParam.getPageNo(), result, totalCount);
     }
 
 
