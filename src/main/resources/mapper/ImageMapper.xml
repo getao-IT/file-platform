@@ -19,7 +19,7 @@
         insert into file_image_info (image_name,path,user_id,source,thumb,width,height,projection,min_lon,min_lat,
                                      max_lon,max_lat,batch_number,user_name,is_public,bands,bit,create_time,keywords,size,
                                      resolution,min_projection_x,min_projection_y,max_projection_x,max_projection_y,
-                                     coordinate_system_type,file_length)
+                                     coordinate_system_type,file_length,delete)
         values
         <foreach collection="imageInfoList" item="imageInfo" separator=",">
             (#{imageInfo.imageName},#{imageInfo.path},#{imageInfo.userId},#{imageInfo.source},#{imageInfo.thumb}
@@ -27,7 +27,7 @@
             ,#{imageInfo.maxLon},#{imageInfo.maxLat},#{imageInfo.batchNumber},#{imageInfo.userName},#{imageInfo.isPublic}
             ,#{imageInfo.bands},#{imageInfo.bit},#{imageInfo.createTime},#{imageInfo.keywords},#{imageInfo.size}
             ,#{imageInfo.resolution},#{imageInfo.minProjectionX},#{imageInfo.minProjectionY},#{imageInfo.maxProjectionX}
-            ,#{imageInfo.maxProjectionY},#{imageInfo.coordinateSystemType},#{imageInfo.fileLength})
+            ,#{imageInfo.maxProjectionY},#{imageInfo.coordinateSystemType},#{imageInfo.fileLength},#{imageInfo.delete})
         </foreach>
     </insert>
 
