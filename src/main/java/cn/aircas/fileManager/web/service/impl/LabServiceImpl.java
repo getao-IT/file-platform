@@ -191,7 +191,7 @@ public class LabServiceImpl implements LabService {
         FileUtils.copyFileToDirectory(file, FileUtils.getFile(path));
 
         JSONObject imageObject = new JSONObject();
-        imageObject.put("audio_path",path);
+        imageObject.put("text",path);
         imageObject.put("user_id",audioRetrieveParam.getUserId());
         imageObject.put("page_no",audioRetrieveParam.getPageNo());
         imageObject.put("page_size",audioRetrieveParam.getPageSize());
