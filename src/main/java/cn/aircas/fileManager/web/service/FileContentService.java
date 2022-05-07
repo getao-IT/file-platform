@@ -8,5 +8,5 @@ import java.util.List;
 public interface FileContentService {
 
 
-    PageResult<JSONObject> getContent(int pageSize, int pageNo, int fileId);
+    PageResult<JSONObject> getContent(int pageSize, long pageNo, int fileId);
 }

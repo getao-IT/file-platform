@@ -52,7 +52,7 @@ public class ImageSearchParam {
     /**
      * 查询页码
      */
-    private int pageNo =1;
+    private long pageNo =1;
 
     /**
      * 关键字
@@ -74,7 +74,12 @@ public class ImageSearchParam {
     /**
      * 传感器类型
      */
-    private String sensorType;
+    private String[] sensorType;
+
+    /**
+     * 卫星名称
+     */
+    private String[] satelliteName;
 
     /**
      * 传感器名称
@@ -106,6 +111,26 @@ public class ImageSearchParam {
      * 影像id列表
      */
     private List<Integer> imageIdList;
+
+    /**
+     * 影像最小宽度
+     */
+    private int minWidth;
+
+    /**
+     * 影像最大宽度
+     */
+    private int maxWidth;
+
+    /**
+     * 影像最小高度
+     */
+    private int minHeight;
+
+    /**
+     * 影像最大高度
+     */
+    private int maxHeight;
 
 
     /**

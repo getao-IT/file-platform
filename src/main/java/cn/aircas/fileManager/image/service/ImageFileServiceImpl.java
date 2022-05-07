@@ -28,6 +28,8 @@ import org.springframework.util.Assert;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service("IMAGE-SERVICE")
@@ -110,6 +112,36 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
         List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
         return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
     }
+
+//    /**
+//     * 分页查询影像信息
+//     * @param fileSearchParam
+//     * @return
+//     */
+//    @Override
+//    public PageResult<JSONObject> listFileInfoByPage(FileSearchParam fileSearchParam) {
+//        if (fileSearchParam.) {
+//
+//        }
+//        long totalCount = 100000000300l;
+//        Integer selectCount = this.imageMapper.selectCount(new QueryWrapper<Image>()
+//                .select("id").eq("delete", false).and(qw->{
+//                    qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true);
+//                }));
+//        int pages = selectCount % fileSearchParam.getPageSize() == 0 ? selectCount / fileSearchParam.getPageSize()
+//                : selectCount / fileSearchParam.getPageSize() + 1;
+//        if (fileSearchParam.getPageNo() > pages) {
+//            fileSearchParam.setPageNo(fileSearchParam.getPageNo()%pages);
+//        }
+//        ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
+//        Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
+//        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+//        List<Image> imageList = imageIPage.getRecords();
+//        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+//        imageIPage.setTotal(totalCount);
+//
+//        return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
+//    }
 
     /**
      * 转换查询参数

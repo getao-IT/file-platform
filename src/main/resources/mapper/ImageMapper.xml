@@ -69,12 +69,12 @@
             <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
                 and lower(keywords) like '%${imageSearchParam.keywords}%'
             </if>
-            <if test="imageSearchParam.sensorType !=null and imageSearchParam.sensorType != ''">
+            <!--<if test="imageSearchParam.sensorType !=null and imageSearchParam.sensorType != ''">
                 and sensor_type like '%${imageSearchParam.sensorType}%'
             </if>
             <if test="imageSearchParam.sensorName !=null and imageSearchParam.sensorName != ''">
                 and sensor_name like '%${imageSearchParam.sensorName}%'
-            </if>
+            </if>-->
 <!--            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">-->
 <!--                and (min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon})-->
 <!--            </if>-->
@@ -84,8 +84,26 @@
             <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
                 and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
             </if>
+            <if test="imageSearchParam.minWidth!=0 and imageSearchParam.maxWidth !=0">
+                and width between #{imageSearchParam.minWidth} and #{imageSearchParam.maxWidth}
+            </if>
+            <if test="imageSearchParam.minHeight!=0 and imageSearchParam.maxHeight !=0">
+                and height between #{imageSearchParam.minHeight} and #{imageSearchParam.maxHeight}
+            </if>
             <if test="imageSearchParam.ispub != null and imageSearchParam.ispub != ''">
                 and is_public = #{imageSearchParam.isPublic}
+            </if>
+            <if test="imageSearchParam.sensorType!=null and imageSearchParam.sensorType.length != 0">
+                and sensor_type in
+                <foreach collection="imageSearchParam.sensorType" item="sensorType" separator="," open="(" close=")">
+                    #{sensorType}
+                </foreach>
+            </if>
+            <if test="imageSearchParam.satelliteName != null and imageSearchParam.satelliteName.length != 0">
+                and satellite_name in
+                <foreach collection="imageSearchParam.satelliteName" item="satelliteName" separator="," open="(" close=")">
+                    #{satelliteName}
+                </foreach>
             </if>
         </where>
         order by create_time DESC, id DESC

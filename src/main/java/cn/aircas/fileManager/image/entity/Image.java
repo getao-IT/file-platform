@@ -174,7 +174,7 @@ public class Image {
     /**
      * 卫星名称
      */
-    private String sensorName;
+    private String satelliteName;
 
 
     /**
@@ -209,7 +209,7 @@ public class Image {
                 ", source='" + size + '\'' +
                 ", coordinateSystemType='" + coordinateSystemType + '\'' +
                 ", sensor='" + sensorType + '\'' +
-                ", satellite='" + sensorName + '\'' +
+                ", satellite='" + satelliteName + '\'' +
                 '}';
     }
 }

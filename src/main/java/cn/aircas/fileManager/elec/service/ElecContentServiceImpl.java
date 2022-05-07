@@ -25,13 +25,13 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
     private String rootPath;
 
     @Override
-    public PageResult<JSONObject> getContent(int pageSize, int pageNo, int fileId) {
+    public PageResult<JSONObject> getContent(int pageSize, long pageNo, int fileId) {
         List<JSONObject> result = new ArrayList<>();
 
         ElecInfo elecInfo = this.getById(fileId);
         int lineCount = elecInfo.getCount();
-        int beginLine = (pageNo - 1) * pageSize + 1;
-        int endLineNum = Math.min(beginLine + pageSize, lineCount);
+        long beginLine = (pageNo - 1) * pageSize + 1;
+        long endLineNum = Math.min(beginLine + pageSize, lineCount);
         if (pageNo<=0 || pageSize<=0)
             return null;
 
@@ -45,7 +45,7 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
             LineNumberReader lineNumberReader = new LineNumberReader(fileReader)){
             String header = lineNumberReader.readLine().replace(",,","");
 
-            int readCount = 0;
+            long readCount = 0;
             while(readCount < beginLine){
                 lineNumberReader.readLine();
                 readCount++;
