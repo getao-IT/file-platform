@@ -28,7 +28,7 @@ public class FileProcessingController {
     @ApiOperation("图片格式转换")
     @PostMapping()
     public CommonResult<String> formatConverter(int fileId, String format,String source,String keywords, boolean isPublic) {
-        this.fileProcessingService.formatConverter(fileId,format,source,keywords,isPublic);
-        return new CommonResult<String>().success().message("格式转换成功");
+        Integer code = this.fileProcessingService.formatConverter(fileId,format,source,keywords,isPublic);
+        return new CommonResult<String>().success().data(String.valueOf(code)).message("格式转换成功");
     }
 }
