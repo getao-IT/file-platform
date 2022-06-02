@@ -26,7 +26,7 @@ public class FileProcessingServiceImpl implements FileProcessingService {
 
     @Override
     public Integer formatConverter(int fileId, String format, String source, String keywords, boolean isPublic) {
-        Integer code = 0;
+        int code = 0;
         Image srcimage = this.imageMapper.selectById(fileId);
         String inputPath = FileUtils.getStringPath(this.rootPath,srcimage.getPath());
         File outputParentPath = srcimage.isPublic() ? FileUtils.getFile(this.rootPath, "file-data","image", System.currentTimeMillis()) :
