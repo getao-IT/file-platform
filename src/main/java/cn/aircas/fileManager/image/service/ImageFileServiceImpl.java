@@ -25,9 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -99,12 +98,26 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
     }
 
     /**
-     * 分页查询影像信息
+     * 分页查询影像信息-真实查询
      * @param fileSearchParam
      * @return
      */
-    @Override
+    /*@Override
     public PageResult<JSONObject> listFileInfoByPage(FileSearchParam fileSearchParam) {
+        ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
+        Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
+        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+        List<Image> imageList = imageIPage.getRecords();
+        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+        return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
+    }*/
+
+    /**
+     * 分页查询影像信息-真实查询
+     * @param fileSearchParam
+     * @return
+     */
+    public PageResult<JSONObject> relateFind(FileSearchParam fileSearchParam) {
         ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
         Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
         IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
@@ -113,35 +126,40 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
         return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
     }
 
-//    /**
-//     * 分页查询影像信息
-//     * @param fileSearchParam
-//     * @return
-//     */
-//    @Override
-//    public PageResult<JSONObject> listFileInfoByPage(FileSearchParam fileSearchParam) {
-//        if (fileSearchParam.) {
-//
-//        }
-//        long totalCount = 100000000300l;
-//        Integer selectCount = this.imageMapper.selectCount(new QueryWrapper<Image>()
-//                .select("id").eq("delete", false).and(qw->{
-//                    qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true);
-//                }));
-//        int pages = selectCount % fileSearchParam.getPageSize() == 0 ? selectCount / fileSearchParam.getPageSize()
-//                : selectCount / fileSearchParam.getPageSize() + 1;
-//        if (fileSearchParam.getPageNo() > pages) {
-//            fileSearchParam.setPageNo(fileSearchParam.getPageNo()%pages);
-//        }
-//        ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
-//        Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
-//        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
-//        List<Image> imageList = imageIPage.getRecords();
-//        List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
-//        imageIPage.setTotal(totalCount);
-//
-//        return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
-//    }
+    /**
+     * 分页查询影像信息-j查询
+     * @param fileSearchParam
+     * @return
+     */
+    @Override
+    public PageResult<JSONObject> listFileInfoByPage(FileSearchParam fileSearchParam) {
+        IPage<Image> imageIPage = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
+        List<JSONObject> result = new ArrayList<>();
+        if (!fileSearchParam.isIstest()) {
+            return this.relateFind(fileSearchParam);
+        } else {
+            long totalCount = 10000000030l;
+            Integer selectCount = this.imageMapper.selectCount(new QueryWrapper<Image>()
+                    .select("id").eq("delete", false).and(qw->{
+                        qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true);
+                    }));
+            int pages = selectCount % fileSearchParam.getPageSize() == 0 ? selectCount / fileSearchParam.getPageSize()
+                    : selectCount / fileSearchParam.getPageSize() + 1;
+            if (fileSearchParam.getPageNo() > pages) {
+                fileSearchParam.setPageNo(fileSearchParam.getPageNo()%pages == 0 ? pages : fileSearchParam.getPageNo()%pages);
+            }
+            ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
+            Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
+            imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+            List<Image> imageList = imageIPage.getRecords();
+            result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+            if (imageIPage.getTotal() == selectCount) {
+                imageIPage.setTotal(totalCount);
+            }
+        }
+
+        return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
+    }
 
     /**
      * 转换查询参数
@@ -186,5 +204,19 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
 
         return result;
     }
+/*    public static void main(String[] args) {
+        String dateTime="2020-01-13T16:00:00.000Z";
+        dateTime=dateTime.replace("Z","UTC");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date parse = format.parse(dateTime);
+            //Date time = format.parse(dateTime);
+            String result = dateFormat.format(parse);
+            System.out.println(result);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }*/
 
 }

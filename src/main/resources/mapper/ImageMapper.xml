@@ -84,11 +84,13 @@
             <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
                 and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
             </if>
-            <if test="imageSearchParam.minWidth!=0 and imageSearchParam.maxWidth !=0">
-                and width between #{imageSearchParam.minWidth} and #{imageSearchParam.maxWidth}
+            <if test="imageSearchParam.minWidth!=-1 and imageSearchParam.maxWidth !=-1">
+                and width between #{imageSearchParam.minWidth}
+                and #{imageSearchParam.maxWidth}
             </if>
-            <if test="imageSearchParam.minHeight!=0 and imageSearchParam.maxHeight !=0">
-                and height between #{imageSearchParam.minHeight} and #{imageSearchParam.maxHeight}
+            <if test="imageSearchParam.minHeight!=-1 and imageSearchParam.maxHeight !=-1">
+                and height between #{imageSearchParam.minHeight}
+                and #{imageSearchParam.maxHeight}
             </if>
             <if test="imageSearchParam.ispub != null and imageSearchParam.ispub != ''">
                 and is_public = #{imageSearchParam.isPublic}

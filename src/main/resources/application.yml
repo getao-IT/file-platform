@@ -39,6 +39,12 @@ sys:
   uploadRootPath: D:\\数据\\
 
 value:
+  service:
+    port: 18082
+    name: 文件管理
+    url: http://192.168.3.13:18086/geoai/v1/service/register
+    status: http://192.168.3.13:18082/geoai/v1/status
+    prefix: /vi/file
   createDataset: false
   app:
     version: '@project.version@'
@@ -87,3 +93,6 @@ swagger:
 
 catalog:
   host: 192.168.7.20:11096
+
+configtask:
+  cron: 0 */10 * * * ?

@@ -123,22 +123,27 @@ public class FileSearchParam {
     /**
      * 影像最小宽度
      */
-    private int minWidth;
+    private int minWidth = -1;
 
     /**
      * 影像最大宽度
      */
-    private int maxWidth;
+    private int maxWidth = -1;
 
     /**
      * 影像最小高度
      */
-    private int minHeight;
+    private int minHeight = -1;
 
     /**
      * 影像最大高度
      */
-    private int maxHeight;
+    private int maxHeight = -1;
+
+    /**
+     * 是否测试
+     */
+    private boolean istest;
 
     public void setFileIdList(String fileIdListStr){
         if(fileIdListStr.equals(""))
