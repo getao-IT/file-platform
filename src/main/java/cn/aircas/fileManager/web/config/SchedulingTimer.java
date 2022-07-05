@@ -49,6 +49,7 @@ public class SchedulingTimer {
         jsonObject.put("serviceIp",hostAddress);
         jsonObject.put("servicePort",servicePort);
         jsonObject.put("serviceStatusUrl",serviceStatusUrl);
+        jsonObject.put("prefix",prefix);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

@@ -31,7 +31,9 @@ CREATE TABLE "public"."file_transfer_info" (
   "batch_number" int4,
   "create_time" timestamp(0),
   "user_name" varchar(255) COLLATE "pg_catalog"."default",
-  "file_type" varchar(255) COLLATE "pg_catalog"."default"
+  "file_type" varchar(255) COLLATE "pg_catalog"."default",
+  "sensor_type" varchar(255) COLLATE "pg_catalog"."default",
+  "satellite_name" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 
