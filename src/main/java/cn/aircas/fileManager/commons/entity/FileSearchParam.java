@@ -19,22 +19,22 @@ public class FileSearchParam {
     /**
      * 最小经度
      */
-    private double minLon;
+    private double minLon = 181;
 
     /**
      * 最小纬度
      */
-    private double minLat;
+    private double minLat = 181;
 
     /**
      * 最大经度
      */
-    private double maxLon;
+    private double maxLon = 181;
 
     /**
      * 最大纬度
      */
-    private double maxLat;
+    private double maxLat = 181;
 
 
     /**

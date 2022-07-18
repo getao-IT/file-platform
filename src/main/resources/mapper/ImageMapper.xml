@@ -78,11 +78,29 @@
 <!--            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">-->
 <!--                and (min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon})-->
 <!--            </if>-->
-            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">
+            <if test="imageSearchParam.minLon != 181 and imageSearchParam.maxLon != 181">
                 and ((min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}) or (max_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}))
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
             </if>
-            <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
+            <if test="imageSearchParam.minLat != 181 and imageSearchParam.maxLat != 181">
                 and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLon != 181 and imageSearchParam.maxLon == 181">
+                and min_lon &gt;= #{imageSearchParam.minLon}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLon == 181 and imageSearchParam.maxLon != 181">
+                and max_lon &lt;= #{imageSearchParam.maxLon}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLat != 181 and imageSearchParam.maxLat == 181">
+                and min_lat &gt;= #{imageSearchParam.minLat}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLat == 181 and imageSearchParam.maxLat != 181">
+                and max_lat &lt;= #{imageSearchParam.maxLat}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
             </if>
             <if test="imageSearchParam.minWidth!=-1 and imageSearchParam.maxWidth !=-1">
                 and width between #{imageSearchParam.minWidth}
