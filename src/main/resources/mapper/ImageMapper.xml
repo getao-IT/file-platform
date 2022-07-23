@@ -102,13 +102,17 @@
                 and max_lat &lt;= #{imageSearchParam.maxLat}
                 and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
             </if>
-            <if test="imageSearchParam.minWidth!=-1 and imageSearchParam.maxWidth !=-1">
-                and width between #{imageSearchParam.minWidth}
-                and #{imageSearchParam.maxWidth}
+            <if test="imageSearchParam.minWidth!=-1">
+                and width &gt; #{imageSearchParam.minWidth}
             </if>
-            <if test="imageSearchParam.minHeight!=-1 and imageSearchParam.maxHeight !=-1">
-                and height between #{imageSearchParam.minHeight}
-                and #{imageSearchParam.maxHeight}
+            <if test="imageSearchParam.minHeight!=-1">
+                and height &gt; #{imageSearchParam.minHeight}
+            </if>
+            <if test="imageSearchParam.maxWidth !=-1">
+                and width &lt; #{imageSearchParam.maxWidth}
+            </if>
+            <if test="imageSearchParam.maxHeight !=-1">
+                and height &lt; #{imageSearchParam.maxHeight}
             </if>
             <if test="imageSearchParam.ispub != null and imageSearchParam.ispub != ''">
                 and is_public = #{imageSearchParam.isPublic}
