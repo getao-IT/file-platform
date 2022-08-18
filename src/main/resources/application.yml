@@ -61,17 +61,17 @@ value:
   database:
     dbName: geodl_iecas
     tables:
-      - file_image_info
-      - file_text_info
       - file_audio_info
-      - file_video_info
-      - file_transfer_info
-      - file_transfer_progress_info
+      - file_elec_info
+      - file_image_info
       - file_satellite_info
       - file_satellite_sensor_info
       - file_satellite_sensor_relation
-      - file_elec_info
-
+      - file_text_content
+      - file_text_info
+      - file_transfer_info
+      - file_transfer_progress_info
+      - file_video_info
 lab:
   enable: true
   prefix: /home/lab/data

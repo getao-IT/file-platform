@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 9.64
+ Source Server         : geodl_iecas
  Source Server Type    : PostgreSQL
  Source Server Version : 120003
  Source Host           : 192.168.9.64:32189
@@ -12,10 +12,10 @@
  Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 29/11/2021 15:20:53
+ Date: 18/08/2022 16:08:56
 */
 
-CREATE SEQUENCE file_text_content_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
+CREATE SEQUENCE file_text_content_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99_999_999;
 
 -- ----------------------------
 -- Table structure for file_text_content
