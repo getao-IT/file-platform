@@ -15,7 +15,7 @@
  Date: 18/08/2022 16:08:56
 */
 
-CREATE SEQUENCE file_text_content_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99_999_999;
+CREATE SEQUENCE file_text_content_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
 
 -- ----------------------------
 -- Table structure for file_text_content

@@ -97,3 +97,6 @@ catalog:
 
 configtask:
   cron: 0 */10 * * * ?
+
+defined:
+  enabled-schedul: false

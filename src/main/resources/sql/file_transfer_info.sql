@@ -15,7 +15,7 @@
  Date: 18/08/2022 16:09:08
 */
 
-CREATE SEQUENCE file_transfer_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99_999_999;
+CREATE SEQUENCE file_transfer_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
 
 -- ----------------------------
 -- Table structure for file_transfer_info
