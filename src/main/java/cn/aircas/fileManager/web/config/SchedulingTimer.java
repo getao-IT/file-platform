@@ -21,7 +21,7 @@ import java.net.InetAddress;
 @EnableScheduling
 @Slf4j
 @PropertySource(value = "classpath:/application.yml")
-@ConditionalOnProperty(value = "defined.enabled-schedul", havingValue = "true")
+@ConditionalOnProperty(value = "value.service.enable", havingValue = "true")
 public class SchedulingTimer {
 
     JSONObject jsonObject=new JSONObject();

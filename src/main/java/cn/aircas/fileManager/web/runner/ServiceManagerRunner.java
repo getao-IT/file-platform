@@ -22,7 +22,7 @@ import java.net.InetAddress;
 @Order(value = 2)
 @Slf4j
 @PropertySource(value = "classpath:/application.yml")
-@ConditionalOnProperty(value = "defined.enabled-schedul", havingValue = "true")
+@ConditionalOnProperty(value = "value.service.enable", havingValue = "true")
 public class ServiceManagerRunner<T> implements ApplicationRunner {
 
     JSONObject jsonObject=new JSONObject();

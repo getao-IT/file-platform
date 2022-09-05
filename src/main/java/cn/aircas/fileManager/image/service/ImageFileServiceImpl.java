@@ -143,6 +143,9 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image>  imple
                     .select("id").eq("delete", false).and(qw->{
                         qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true);
                     }));
+            if (selectCount == 0) {
+                return new PageResult<>(0, result, 0);
+            }
             int pages = selectCount % fileSearchParam.getPageSize() == 0 ? selectCount / fileSearchParam.getPageSize()
                     : selectCount / fileSearchParam.getPageSize() + 1;
             if (fileSearchParam.getPageNo() > pages) {
