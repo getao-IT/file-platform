@@ -59,7 +59,7 @@
         <dependency>
             <groupId>cn.aircas</groupId>
             <artifactId>aircasUtils</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

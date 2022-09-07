@@ -2,6 +2,7 @@ package cn.aircas.fileManager.web.service;
 
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.image.entity.Image;
+import cn.aircas.fileManager.web.entity.lab.AudioRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.ImageRetrieveParam;
 import cn.aircas.fileManager.web.entity.lab.TextRetrieveParam;
 import com.alibaba.fastjson.JSONObject;
@@ -45,4 +46,9 @@ public interface LabService {
      */
     PageResult<JSONObject> retrieveImageByImage(ImageRetrieveParam imageRetrieveParam) throws IOException;
 
+    /**
+     * 以音搜图
+     * @param audioRetrieveParam
+     */
+    PageResult<JSONObject> retrieveImageByAudio(AudioRetrieveParam audioRetrieveParam) throws IOException;
 }

@@ -19,7 +19,7 @@
         insert into file_image_info (image_name,path,user_id,source,thumb,width,height,projection,min_lon,min_lat,
                                      max_lon,max_lat,batch_number,user_name,is_public,bands,bit,create_time,keywords,size,
                                      resolution,min_projection_x,min_projection_y,max_projection_x,max_projection_y,
-                                     coordinate_system_type,file_length)
+                                     coordinate_system_type,file_length,delete)
         values
         <foreach collection="imageInfoList" item="imageInfo" separator=",">
             (#{imageInfo.imageName},#{imageInfo.path},#{imageInfo.userId},#{imageInfo.source},#{imageInfo.thumb}
@@ -27,7 +27,7 @@
             ,#{imageInfo.maxLon},#{imageInfo.maxLat},#{imageInfo.batchNumber},#{imageInfo.userName},#{imageInfo.isPublic}
             ,#{imageInfo.bands},#{imageInfo.bit},#{imageInfo.createTime},#{imageInfo.keywords},#{imageInfo.size}
             ,#{imageInfo.resolution},#{imageInfo.minProjectionX},#{imageInfo.minProjectionY},#{imageInfo.maxProjectionX}
-            ,#{imageInfo.maxProjectionY},#{imageInfo.coordinateSystemType},#{imageInfo.fileLength})
+            ,#{imageInfo.maxProjectionY},#{imageInfo.coordinateSystemType},#{imageInfo.fileLength},#{imageInfo.delete})
         </foreach>
     </insert>
 
@@ -69,23 +69,65 @@
             <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
                 and lower(keywords) like '%${imageSearchParam.keywords}%'
             </if>
-            <if test="imageSearchParam.sensorType !=null and imageSearchParam.sensorType != ''">
+            <!--<if test="imageSearchParam.sensorType !=null and imageSearchParam.sensorType != ''">
                 and sensor_type like '%${imageSearchParam.sensorType}%'
             </if>
             <if test="imageSearchParam.sensorName !=null and imageSearchParam.sensorName != ''">
                 and sensor_name like '%${imageSearchParam.sensorName}%'
-            </if>
+            </if>-->
 <!--            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">-->
 <!--                and (min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon})-->
 <!--            </if>-->
-            <if test="imageSearchParam.minLon !=0 and imageSearchParam.maxLon !=0">
+            <if test="imageSearchParam.minLon != 181 and imageSearchParam.maxLon != 181">
                 and ((min_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}) or (max_lon between #{imageSearchParam.minLon} and #{imageSearchParam.maxLon}))
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
             </if>
-            <if test="imageSearchParam.minLat !=0 and imageSearchParam.maxLat !=0">
+            <if test="imageSearchParam.minLat != 181 and imageSearchParam.maxLat != 181">
                 and ((min_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}) or (max_lat between #{imageSearchParam.minLat} and #{imageSearchParam.maxLat}))
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLon != 181 and imageSearchParam.maxLon == 181">
+                and min_lon &gt;= #{imageSearchParam.minLon}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLon == 181 and imageSearchParam.maxLon != 181">
+                and max_lon &lt;= #{imageSearchParam.maxLon}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLat != 181 and imageSearchParam.maxLat == 181">
+                and min_lat &gt;= #{imageSearchParam.minLat}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minLat == 181 and imageSearchParam.maxLat != 181">
+                and max_lat &lt;= #{imageSearchParam.maxLat}
+                and min_lon &lt;&gt; 0 and max_lon &lt;&gt; 0 and min_lat &lt;&gt; 0 and max_lat &lt;&gt; 0
+            </if>
+            <if test="imageSearchParam.minWidth!=-1">
+                and width &gt; #{imageSearchParam.minWidth}
+            </if>
+            <if test="imageSearchParam.minHeight!=-1">
+                and height &gt; #{imageSearchParam.minHeight}
+            </if>
+            <if test="imageSearchParam.maxWidth !=-1">
+                and width &lt; #{imageSearchParam.maxWidth}
+            </if>
+            <if test="imageSearchParam.maxHeight !=-1">
+                and height &lt; #{imageSearchParam.maxHeight}
             </if>
             <if test="imageSearchParam.ispub != null and imageSearchParam.ispub != ''">
                 and is_public = #{imageSearchParam.isPublic}
+            </if>
+            <if test="imageSearchParam.sensorType!=null and imageSearchParam.sensorType.length != 0">
+                and sensor_type in
+                <foreach collection="imageSearchParam.sensorType" item="sensorType" separator="," open="(" close=")">
+                    #{sensorType}
+                </foreach>
+            </if>
+            <if test="imageSearchParam.satelliteName != null and imageSearchParam.satelliteName.length != 0">
+                and satellite_name in
+                <foreach collection="imageSearchParam.satelliteName" item="satelliteName" separator="," open="(" close=")">
+                    #{satelliteName}
+                </foreach>
             </if>
         </where>
         order by create_time DESC, id DESC

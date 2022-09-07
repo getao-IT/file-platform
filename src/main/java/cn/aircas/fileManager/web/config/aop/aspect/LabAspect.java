@@ -33,7 +33,12 @@ public class LabAspect {
 
     @After("dePointcut()")
     public void deAfter(JoinPoint joinPoint){
-        this.labService.decodeImage((List<Integer>) joinPoint.getArgs()[0]);
+        try{
+            this.labService.decodeImage((List<Integer>) joinPoint.getArgs()[0]);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -46,7 +51,12 @@ public class LabAspect {
     @AfterReturning(pointcut = "enPointcut()",returning = "result")
     public void enAfter(JoinPoint joinPoint,Object result){
         log.info("进入切面");
-        this.labService.encodeImage((Image) result);
+        try {
+            this.labService.encodeImage((Image) result);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -59,7 +69,12 @@ public class LabAspect {
     @AfterReturning(pointcut = "enlistPointcut()",returning = "result")
     public void enlistAfter(JoinPoint joinPoint,Object result){
         log.info("进入切面");
-        this.labService.encodeImage((List<Image>) result);
+        try{
+            this.labService.encodeImage((List<Image>) result);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 

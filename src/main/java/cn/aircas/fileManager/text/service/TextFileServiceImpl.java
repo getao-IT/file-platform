@@ -159,8 +159,8 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
         File textFile = FileUtils.getFile(this.rootPath,textInfo.getPath());
 
         int totalCount = textInfo.getLineCount();
-        int beginLine = Math.min(fileSearchParam.getPageSize() * (fileSearchParam.getPageNo() - 1),totalCount);
-        int endLine = Math.min(beginLine + fileSearchParam.getPageSize(), totalCount);
+        long beginLine = Math.min(fileSearchParam.getPageSize() * (fileSearchParam.getPageNo() - 1),totalCount);
+        long endLine = Math.min(beginLine + fileSearchParam.getPageSize(), totalCount);
         if ( !textFile.exists() || (beginLine == endLine))
             return pageResult;
 

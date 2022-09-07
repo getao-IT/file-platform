@@ -19,22 +19,22 @@ public class FileSearchParam {
     /**
      * 最小经度
      */
-    private double minLon;
+    private double minLon = 181;
 
     /**
      * 最小纬度
      */
-    private double minLat;
+    private double minLat = 181;
 
     /**
      * 最大经度
      */
-    private double maxLon;
+    private double maxLon = 181;
 
     /**
      * 最大纬度
      */
-    private double maxLat;
+    private double maxLat = 181;
 
 
     /**
@@ -51,7 +51,7 @@ public class FileSearchParam {
     /**
      * 查询页码
      */
-    private int pageNo =1;
+    private long pageNo =1;
 
     /**
      * 查询开始时间
@@ -76,7 +76,6 @@ public class FileSearchParam {
     private boolean content;
 
 
-
     /**
      * 查询页数量
      */
@@ -90,7 +89,12 @@ public class FileSearchParam {
     /**
      * 传感器类型
      */
-    private String sensorType;
+    private String[] sensorType;
+
+    /**
+     * 卫星名称
+     */
+    private String[] satelliteName;
 
     /**
      * 传感器名称
@@ -116,7 +120,30 @@ public class FileSearchParam {
 
     private List<Integer> fileIdList = new ArrayList<>();
 
+    /**
+     * 影像最小宽度
+     */
+    private int minWidth = -1;
 
+    /**
+     * 影像最大宽度
+     */
+    private int maxWidth = -1;
+
+    /**
+     * 影像最小高度
+     */
+    private int minHeight = -1;
+
+    /**
+     * 影像最大高度
+     */
+    private int maxHeight = -1;
+
+    /**
+     * 是否测试
+     */
+    private boolean istest;
 
     public void setFileIdList(String fileIdListStr){
         if(fileIdListStr.equals(""))

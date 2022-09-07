@@ -3,7 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
-
+*.log
 ### STS ###
 .apt_generated
 .classpath
@@ -39,3 +39,7 @@ user/97/dataset/148/manifest.json
 .scannerwork/report-task.txt
 sonar-project.properties
 .scannerwork/.sonar_lock
+/hs_err_pid19160.log
+/hs_err_pid19160.log
+/hs_err_pid23844.log
+/hs_err_pid23844.log

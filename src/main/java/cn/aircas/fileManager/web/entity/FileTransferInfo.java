@@ -44,9 +44,13 @@ public class FileTransferInfo {
      */
     private boolean isPublic;
 
+    /**
+     * 传感器类型
+     */
+    private String sensorType;
 
-
-
-
-
+    /**
+     * 卫星名称
+     */
+    private String satelliteName;
 }
