@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,7 @@ import java.util.List;
 @WebFilter(filterName = "gatewayFilter", urlPatterns = "/*")
 @Order(2)
 @Slf4j
+@ConditionalOnProperty(value = "value.service.enable", havingValue = "true")
 public class GatewayFilter implements Filter {
 
     @Autowired

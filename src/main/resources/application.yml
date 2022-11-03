@@ -20,6 +20,16 @@ spring:
     username: iecas
     driver-class-name: org.postgresql.Driver
 
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+        hbm2ddl:
+          auto: update
+
 #mybatis-plus配置
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
@@ -43,8 +53,9 @@ value:
     port: 18082
     name: 文件管理
     url: http://192.168.3.13:18086/geoai/v1/service/register
-    status: http://192.168.3.13:18082/geoai/v1/status
+    status: http://192.168.3.13:18082/geoai/v1/statusl
     prefix: /file-platform
+    enable: false
   createDataset: false
   app:
     version: '@project.version@'
@@ -61,17 +72,17 @@ value:
   database:
     dbName: geodl_iecas
     tables:
-      - file_image_info
-      - file_text_info
       - file_audio_info
-      - file_video_info
-      - file_transfer_info
-      - file_transfer_progress_info
+      - file_elec_info
+      - file_image_info
       - file_satellite_info
       - file_satellite_sensor_info
       - file_satellite_sensor_relation
-      - file_elec_info
-
+      - file_text_content
+      - file_text_info
+      - file_transfer_info
+      - file_transfer_progress_info
+      - file_video_info
 lab:
   enable: true
   prefix: /home/lab/data
@@ -93,6 +104,7 @@ swagger:
   title: 文件管理平台接口文档
 
 catalog:
+  enable: false
   host: 192.168.7.20:11096
 
 configtask:

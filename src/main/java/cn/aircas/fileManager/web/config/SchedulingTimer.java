@@ -3,6 +3,7 @@ package cn.aircas.fileManager.web.config;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
@@ -20,6 +21,7 @@ import java.net.InetAddress;
 @EnableScheduling
 @Slf4j
 @PropertySource(value = "classpath:/application.yml")
+@ConditionalOnProperty(value = "value.service.enable", havingValue = "true")
 public class SchedulingTimer {
 
     JSONObject jsonObject=new JSONObject();

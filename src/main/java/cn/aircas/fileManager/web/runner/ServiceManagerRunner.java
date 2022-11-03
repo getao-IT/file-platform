@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpEntity;
@@ -21,6 +22,7 @@ import java.net.InetAddress;
 @Order(value = 2)
 @Slf4j
 @PropertySource(value = "classpath:/application.yml")
+@ConditionalOnProperty(value = "value.service.enable", havingValue = "true")
 public class ServiceManagerRunner<T> implements ApplicationRunner {
 
     JSONObject jsonObject=new JSONObject();

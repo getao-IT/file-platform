@@ -26,7 +26,7 @@ public class TextSearchParam {
     /**
      * 查询页码
      */
-    private int pageNo =1;
+    private long pageNo =1;
 
 
     /**

@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 9.64
+ Source Server         : geodl_iecas
  Source Server Type    : PostgreSQL
  Source Server Version : 120003
  Source Host           : 192.168.9.64:32189
@@ -12,7 +12,7 @@
  Target Server Version : 120003
  File Encoding         : 65001
 
- Date: 29/11/2021 15:17:52
+ Date: 18/08/2022 16:08:16
 */
 
 CREATE SEQUENCE file_image_info_id_seq INCREMENT BY 1 START WITH 1 MAXVALUE 99999999;
@@ -51,10 +51,9 @@ CREATE TABLE "public"."file_image_info" (
   "coordinate_system_type" varchar(255) COLLATE "pg_catalog"."default",
   "file_length" int8,
   "sensor_type" varchar(255) COLLATE "pg_catalog"."default",
-  "sensor_name" varchar(255) COLLATE "pg_catalog"."default",
+  "satellite_name" varchar(255) COLLATE "pg_catalog"."default",
   "delete" bool,
   "country" varchar(255) COLLATE "pg_catalog"."default"
-
 )
 ;
 COMMENT ON COLUMN "public"."file_image_info"."id" IS 'id';
@@ -76,3 +75,15 @@ COMMENT ON COLUMN "public"."file_image_info"."keywords" IS '标签';
 COMMENT ON COLUMN "public"."file_image_info"."resolution" IS '分辨率';
 COMMENT ON COLUMN "public"."file_image_info"."file_length" IS '文件长度';
 COMMENT ON COLUMN "public"."file_image_info"."delete" IS '是否删除字段';
+
+-- ----------------------------
+-- Indexes structure for table file_image_info
+-- ----------------------------
+CREATE INDEX "create_time" ON "public"."file_image_info" USING btree (
+  "create_time" "pg_catalog"."timestamp_ops" ASC NULLS LAST
+);
+
+-- ----------------------------
+-- Primary Key structure for table file_image_info
+-- ----------------------------
+ALTER TABLE "public"."file_image_info" ADD CONSTRAINT "file_image_info_pkey" PRIMARY KEY ("id");
