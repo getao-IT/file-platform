@@ -28,6 +28,9 @@ public class ElecTransferService extends AbstractFileTypeTransferService<ElecInf
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private ElecContentServiceImpl elecContentService;
+
     @Override
     public ElecInfo transferFromWeb(String fileRelativePath, FileTransferInfo fileTransferInfo) {
         String filePath = FileUtils.getStringPath(this.rootPath, fileRelativePath);
@@ -37,6 +40,7 @@ public class ElecTransferService extends AbstractFileTypeTransferService<ElecInf
         elecInfo.setPath(fileRelativePath);
         try {
             this.elecMapper.insert(elecInfo);
+            this.elecContentService.parseTextContent(elecInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,6 +55,7 @@ public class ElecTransferService extends AbstractFileTypeTransferService<ElecInf
 //            List<Integer> imageIdList = imageList.stream().map(Image::getId).collect(Collectors.toList());
 //            labelPlatFormService.createDataset(new File(absolutePath),imageIdList,token);
 //        }
+        //this.elecContentService.parseElecContent(elecInfoList);
         return elecInfoList;
     }
 
