@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class FileTextInfo {
 
     @Id
-    @Column(name = "id", unique = true, columnDefinition = "serial2")
+    @Column(name = "id", unique = true, columnDefinition = "serial4")
     @TableId(value = "id",type = IdType.AUTO)
     private int id;
 

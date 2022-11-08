@@ -1,12 +1,15 @@
 package cn.aircas.fileManager.elec.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -15,7 +18,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("file_elec_info")
+@TableName(value = "file_elec_info")
 public class ElecInfo {
 
     /**
@@ -77,6 +80,12 @@ public class ElecInfo {
      * 视频大小
      */
     private String size;
+
+    /**
+     * 文件长度
+     */
+    @TableField(exist = false)
+    private long fileLength;
 
 
 }

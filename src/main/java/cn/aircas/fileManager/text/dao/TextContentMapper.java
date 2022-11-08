@@ -12,5 +12,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TextContentMapper extends BaseMapper<TextContentInfo> {
     IPage<TextContentInfo> listTextContents(Page<TextContentInfo> pageInfo, @Param(value = "textSearchParam") TextSearchParam textSearchParam);
-
 }
