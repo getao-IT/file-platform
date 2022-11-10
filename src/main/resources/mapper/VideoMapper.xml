@@ -33,7 +33,7 @@
             <if test="videoSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="videoSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                        CONCAT(video_name,source,user_name,keywords) ilike '%${searchParam}%'
+                        CONCAT(video_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -48,7 +48,7 @@
 <!--                and CONCAT(video_name,source,user_name,keywords) ilike '%${videoSearchParam.searchParam}%'-->
 <!--            </if>-->
             <if test="videoSearchParam.source != null and videoSearchParam.source != ''">
-                and source like '%${videoSearchParam.source}%'
+                and source like concat('%',#{videoSearchParam.source},'%')
             </if>
             <if test="videoSearchParam.startTime != null and videoSearchParam.endTime !=null">
                 and create_time between #{videoSearchParam.startTime} and #{videoSearchParam.endTime}
@@ -60,7 +60,7 @@
 <!--                order by ${videoSearchParam.sortOrder}  ${videoSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="videoSearchParam.keywords  and videoSearchParam.keywords != ''">
-                and lower(keywords) like '%${videoSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{videoSearchParam.keywords},'%')
             </if>
             <if test="videoSearchParam.ispub != null and videoSearchParam.ispub != ''">
                 and is_public = #{videoSearchParam.isPublic}
@@ -92,7 +92,7 @@
             <if test="videoSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="videoSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                    CONCAT(video_name,source,user_name,keywords) ilike '%${searchParam}%'
+                    CONCAT(video_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -100,7 +100,7 @@
             <!--                and CONCAT(video_name,source,user_name,keywords) ilike '%${videoSearchParam.searchParam}%'-->
             <!--            </if>-->
             <if test="videoSearchParam.source != null and videoSearchParam.source != ''">
-                and source like '%${videoSearchParam.source}%'
+                and source like concat('%',#{videoSearchParam.source},'%')
             </if>
             <if test="videoSearchParam.startTime != null and videoSearchParam.endTime !=null">
                 and create_time between #{videoSearchParam.startTime} and #{videoSearchParam.endTime}
@@ -112,7 +112,7 @@
 <!--                order by ${videoSearchParam.sortOrder}  ${videoSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="videoSearchParam.keywords  and videoSearchParam.keywords != ''">
-                and lower(keywords) like '%${videoSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{videoSearchParam.keywords},'%')
             </if>
         </where>
         order by create_time DESC

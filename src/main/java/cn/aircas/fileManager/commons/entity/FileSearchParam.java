@@ -145,6 +145,12 @@ public class FileSearchParam {
      */
     private boolean istest;
 
+    /**
+     * 是否重数据集查看
+     * @param fileIdListStr
+     */
+    private boolean isFromDataset;
+
     public void setFileIdList(String fileIdListStr){
         if(fileIdListStr.equals(""))
             return;

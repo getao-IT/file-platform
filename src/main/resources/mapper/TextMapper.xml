@@ -33,7 +33,7 @@
             <if test="textSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                        CONCAT(text_name,source,user_name,keywords) ilike '%${searchParam}%'
+                        CONCAT(text_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -48,7 +48,7 @@
 <!--                and CONCAT(text_name,source,user_name,keywords) ilike '%${textSearchParam.searchParam}%'-->
 <!--            </if>-->
             <if test="textSearchParam.source != null and textSearchParam.source != ''">
-                and source like '%${textSearchParam.source}%'
+                and source like concat('%',#{textSearchParam.source},'%')
             </if>
             <if test="textSearchParam.startTime != null and textSearchParam.endTime !=null">
                 and create_time between #{textSearchParam.startTime} and #{textSearchParam.endTime}
@@ -60,7 +60,7 @@
 <!--                order by ${textSearchParam.sortOrder}  ${textSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="textSearchParam.keywords  and textSearchParam.keywords != ''">
-                and lower(keywords) like '%${textSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{textSearchParam.keywords},'%')
             </if>
             <if test="textSearchParam.ispub != null and textSearchParam.ispub != ''">
                 and is_public = #{textSearchParam.isPublic}
@@ -93,7 +93,7 @@
             <if test="textSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                    CONCAT(text_name,source,user_name,keywords) ilike '%${searchParam}%'
+                    CONCAT(text_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -101,7 +101,7 @@
             <!--                and CONCAT(text_name,source,user_name,keywords) ilike '%${textSearchParam.searchParam}%'-->
             <!--            </if>-->
             <if test="textSearchParam.source != null and textSearchParam.source != ''">
-                and source like '%${textSearchParam.source}%'
+                and source like concat('%',#{textSearchParam.source},'%')
             </if>
             <if test="textSearchParam.startTime != null and textSearchParam.endTime !=null">
                 and create_time between #{textSearchParam.startTime} and #{textSearchParam.endTime}
@@ -113,7 +113,7 @@
 <!--                order by ${textSearchParam.sortOrder}  ${textSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="textSearchParam.keywords  and textSearchParam.keywords != ''">
-                and lower(keywords) like '%${textSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{textSearchParam.keywords},'%')
             </if>
         </where>
         order by create_time DESC

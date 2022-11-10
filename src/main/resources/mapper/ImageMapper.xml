@@ -40,7 +40,7 @@
             <if test="imageSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                    CONCAT(image_name,source,user_name,keywords) ilike '%${searchParam}%'
+                    CONCAT(image_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -55,7 +55,7 @@
             <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${imageSearchParam.searchParam}%'-->
             <!--            </if>-->
             <if test="imageSearchParam.source != null and imageSearchParam.source != ''">
-                and source like '%${imageSearchParam.source}%'
+                and source like concat('%',#{imageSearchParam.source},'%')
             </if>
             <if test="imageSearchParam.startTime != null and imageSearchParam.endTime !=null">
                 and create_time between #{imageSearchParam.startTime} and #{imageSearchParam.endTime}
@@ -67,7 +67,7 @@
 <!--                order by ${imageSearchParam.sortOrder}  ${imageSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
-                and lower(keywords) like '%${imageSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{imageSearchParam.keywords},'%')
             </if>
             <!--<if test="imageSearchParam.sensorType !=null and imageSearchParam.sensorType != ''">
                 and sensor_type like '%${imageSearchParam.sensorType}%'
@@ -156,7 +156,7 @@
             <if test="imageSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                    CONCAT(image_name,source,user_name,keywords) ilike '%${searchParam}%'
+                    CONCAT(image_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -164,7 +164,7 @@
             <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${imageSearchParam.searchParam}%'-->
             <!--            </if>-->
             <if test="imageSearchParam.source != null and imageSearchParam.source != ''">
-                and source like '%${imageSearchParam.source}%'
+                and source like concat('%',#{imageSearchParam.source},'%')
             </if>
             <if test="imageSearchParam.startTime != null and imageSearchParam.endTime !=null">
                 and create_time between #{imageSearchParam.startTime} and #{imageSearchParam.endTime}
@@ -176,7 +176,7 @@
 <!--                order by ${imageSearchParam.sortOrder}  ${imageSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="imageSearchParam.keywords  and imageSearchParam.keywords != ''">
-                and lower(keywords) like '%${imageSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{imageSearchParam.keywords},'%')
             </if>
         </where>
         order by create_time DESC

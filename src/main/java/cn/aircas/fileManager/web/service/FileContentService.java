@@ -1,7 +1,9 @@
 package cn.aircas.fileManager.web.service;
 
 import cn.aircas.fileManager.commons.entity.common.PageResult;
+import cn.aircas.fileManager.elec.entity.ElecContent;
 import cn.aircas.fileManager.elec.entity.ElecInfo;
+import cn.aircas.fileManager.elec.entity.ElecSearchParam;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
