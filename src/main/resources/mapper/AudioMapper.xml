@@ -32,7 +32,7 @@
             <if test="audioSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="audioSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                        CONCAT(audio_name,source,user_name,keywords) ilike '%${searchParam}%'
+                        CONCAT(audio_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -47,7 +47,7 @@
 <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${audioSearchParam.searchParam}%'-->
 <!--            </if>-->
             <if test="audioSearchParam.source != null and audioSearchParam.source != ''">
-                and source like '%${audioSearchParam.source}%'
+                and source like concat('%',#{audioSearchParam.source},'%')
             </if>
             <if test="audioSearchParam.startTime != null and audioSearchParam.endTime !=null">
                 and create_time between #{audioSearchParam.startTime} and #{audioSearchParam.endTime}
@@ -59,7 +59,7 @@
 <!--                order by ${audioSearchParam.sortOrder}  ${audioSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="audioSearchParam.keywords  and audioSearchParam.keywords != ''">
-                and lower(keywords) like '%${audioSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{audioSearchParam.keywords},'%')
             </if>
             <if test="audioSearchParam.ispub != null and audioSearchParam.ispub != ''">
                 and is_public = #{audioSearchParam.isPublic}
@@ -91,7 +91,7 @@
             <if test="audioSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="audioSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                    CONCAT(audio_name,source,user_name,keywords) ilike '%${searchParam}%'
+                    CONCAT(audio_name,source,user_name,keywords) like concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -99,7 +99,7 @@
             <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${audioSearchParam.searchParam}%'-->
             <!--            </if>-->
             <if test="audioSearchParam.source != null and audioSearchParam.source != ''">
-                and source like '%${audioSearchParam.source}%'
+                and source like concat('%',#{audioSearchParam.source},'%')
             </if>
             <if test="audioSearchParam.startTime != null and audioSearchParam.endTime !=null">
                 and create_time between #{audioSearchParam.startTime} and #{audioSearchParam.endTime}
@@ -111,7 +111,7 @@
 <!--                order by ${audioSearchParam.sortOrder}  ${audioSearchParam.orderBy}-->
 <!--            </if>-->
             <if test="audioSearchParam.keywords  and audioSearchParam.keywords != ''">
-                and lower(keywords) like '%${audioSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{audioSearchParam.keywords},'%')
             </if>
         </where>
         order by create_time DESC

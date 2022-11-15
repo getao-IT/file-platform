@@ -93,6 +93,12 @@ public class TextSearchParam {
      */
     private String searchParam;
 
+    /**
+     * 是否重数据集查看
+     * @param fileIdListStr
+     */
+    private boolean isFromDataset;
+
 
 
     private List<Integer> textIdList;

@@ -10,15 +10,23 @@
             <if test="textSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="OR">
-                        CONCAT(content) ilike '%${searchParam}%'
+                        CONCAT(content) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
             <if test="textSearchParam.textIdList!=null and textSearchParam.textIdList.size()!=0">
-                AND text_file_id in
-                <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
-                    #{textId}
-                </foreach>
+                <if test="textSearchParam.isFromDataset == false">
+                    AND text_file_id in
+                    <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                        #{textId}
+                    </foreach>
+                </if>
+                <if test="textSearchParam.isFromDataset == true">
+                    AND id in
+                    <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                        #{textId}
+                    </foreach>
+                </if>
             </if>
         </where>
         order by line_number ASC

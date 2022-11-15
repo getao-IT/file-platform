@@ -32,7 +32,7 @@
             <if test="elecSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="elecSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                        CONCAT(elec_name,source,user_name,keywords) ilike '%${searchParam}%'
+                        CONCAT(elec_name,source,user_name,keywords) like concat('%',#{searchParam},'%')
                 </foreach>
             </if>
 
@@ -43,7 +43,7 @@
                 </foreach>
             </if>
             <if test="elecSearchParam.source != null and elecSearchParam.source != ''">
-                and source like '%${elecSearchParam.source}%'
+                and source like concat('%',#{elecSearchParam.source},'%')
             </if>
             <if test="elecSearchParam.startTime != null and elecSearchParam.endTime !=null">
                 and create_time between #{elecSearchParam.startTime} and #{elecSearchParam.endTime}
@@ -52,7 +52,7 @@
                 and batch_number = #{elecSearchParam.batchNumber}
             </if>
             <if test="elecSearchParam.keywords != null and elecSearchParam.keywords != ''">
-                and lower(keywords) like '%${elecSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{elecSearchParam.keywords},'%')
             </if>
             <if test="elecSearchParam.ispub != null and elecSearchParam.ispub != ''">
                 and is_public = #{elecSearchParam.isPublic}
@@ -84,11 +84,11 @@
             <if test="elecSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="elecSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
-                    CONCAT(video_name,source,user_name,keywords) ilike '%${searchParam}%'
+                    CONCAT(video_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
                 </foreach>
             </if>
             <if test="elecSearchParam.source != null and elecSearchParam.source != ''">
-                and source like '%${videoSearchParam.source}%'
+                and source like concat('%',#{videoSearchParam.source},'%')
             </if>
             <if test="elecSearchParam.startTime != null and elecSearchParam.endTime !=null">
                 and create_time between #{elecSearchParam.startTime} and #{elecSearchParam.endTime}
@@ -97,7 +97,7 @@
                 and batch_number = #{elecSearchParam.batchNumber}
             </if>
             <if test="elecSearchParam.keywords  and elecSearchParam.keywords != ''">
-                and lower(keywords) like '%${elecSearchParam.keywords}%'
+                and lower(keywords) like concat('%',#{elecSearchParam.keywords},'%')
             </if>
         </where>
         order by create_time DESC
