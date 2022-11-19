@@ -70,6 +70,7 @@ value:
     path-pattern: /static/file/**
     static-locations: file:c:/
   database:
+    enable: false
     dbName: geodl_iecas
     tables:
       - file_audio_info
@@ -93,10 +94,10 @@ auth:
   enabled: true
   user-info-url: http://192.168.2.156:31151/api/v1/users/token_check
   ignore-url-list:
-#    - /geoai/v1/swagger-ui.html
-#    - /geoai/v1/webjars/**
-#    - /geoai/v1/swagger-resources/**
-#    - /geoai/v1/v2/**
+    - /geoai/v1/swagger-ui.html
+    - /geoai/v1/webjars/**
+    - /geoai/v1/swagger-resources/**
+    - /geoai/v1/v2/**
     - /geoai/v1/status/**
 swagger:
   enabled: true
