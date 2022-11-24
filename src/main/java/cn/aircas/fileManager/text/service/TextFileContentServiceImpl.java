@@ -6,6 +6,7 @@ import cn.aircas.fileManager.text.dao.TextContentMapper;
 import cn.aircas.fileManager.text.entity.TextContentInfo;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.text.entity.TextSearchParam;
+import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,9 +22,11 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-@Service
-public class TextFileContentServiceImpl extends ServiceImpl<TextContentMapper, TextContentInfo> {
+@Service("TEXT-CONTENT")
+public class TextFileContentServiceImpl extends ServiceImpl<TextContentMapper, TextContentInfo> implements FileContentService<TextInfo> {
     @Value("${sys.rootPath}")
     public String rootPath;
 
@@ -56,6 +59,7 @@ public class TextFileContentServiceImpl extends ServiceImpl<TextContentMapper, T
      * 保存文件内容
      * @param textInfo
      */
+    @Override
     public void parseTextContent(TextInfo textInfo){
         List<TextContentInfo> textContentInfoList = new ArrayList<>();
         File textFile = FileUtils.getFile(this.rootPath,textInfo.getPath());
@@ -75,5 +79,20 @@ public class TextFileContentServiceImpl extends ServiceImpl<TextContentMapper, T
             e.printStackTrace();
         }
         this.saveBatch(textContentInfoList);
+    }
+
+    @Override
+    public PageResult<JSONObject> getContent(int pageSize, long pageNo, int fileId) {
+        return null;
+    }
+
+    /**
+     * 批量查询文件内容所属文件信息成功
+     * @param contentIds
+     * @return
+     */
+    @Override
+    public Map<Integer, TextInfo> getFileByContentId(Set<Integer> contentIds) {
+        return this.baseMapper.getFileByContentId(contentIds);
     }
 }

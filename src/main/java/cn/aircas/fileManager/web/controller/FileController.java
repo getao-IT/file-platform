@@ -2,9 +2,11 @@ package cn.aircas.fileManager.web.controller;
 
 import cn.aircas.fileManager.elec.service.ElecFileServiceImpl;
 import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
+import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
+import cn.aircas.fileManager.web.entity.database.FileTextInfo;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @Api(tags = "文件管理接口")
@@ -158,6 +162,14 @@ public class FileController {
     public CommonResult<JSONArray> listImageCoordinate() {
         JSONArray result = this.imageFileService.listImageCoordinate();
         return new CommonResult<JSONArray>().success().data(result).message("查询所有影像坐标信息信息成功");
+    }
+
+    @Log(value = "根据文件内容批量获取所属文件信息")
+    @GetMapping("/text/getFileByContentId")
+    @ApiOperation(("批量查询文件内容所属文件信息成功"))
+    public CommonResult<Map<Integer, TextInfo>> getFileByContentId(FileType fileType, @RequestParam(value = "contentIds") Set<Integer> contentIds) {
+        Map<Integer, TextInfo> fileByContentId = this.fileService.getFileByContentId(fileType, contentIds);
+        return new CommonResult<Map<Integer, TextInfo>>().success().data(fileByContentId).message("批量查询文件内容所属文件信息成功");
     }
 
 }

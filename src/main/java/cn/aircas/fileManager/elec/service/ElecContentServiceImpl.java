@@ -23,9 +23,11 @@ import org.springframework.util.Assert;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service("ELEC-CONTENT")
-public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  implements FileContentService{
+public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  implements FileContentService<ElecInfo> {
 
     @Value("${sys.rootPath}")
     private String rootPath;
@@ -68,7 +70,7 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
                 result.add(content);
             }
         }catch (IOException e){
-            //log.error("获取样本集{}:数据内容出错",sampleSetId);
+            log.error("电子文件获取数据内容出错 {} ", new Exception(e));
         }
 
         return new PageResult<JSONObject>(pageNo, result, lineCount);
@@ -105,6 +107,16 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 批量查询文件内容所属文件信息成功
+     * @param contentIds
+     * @return
+     */
+    @Override
+    public Map<Integer, ElecInfo> getFileByContentId(Set<Integer> contentIds) {
+        return null;
     }
 
 }

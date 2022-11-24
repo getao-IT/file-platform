@@ -32,4 +32,19 @@
         order by line_number ASC
     </select>
 
+    <select id="getFileByContentId" parameterType="java.util.Set" resultType="java.util.Map">
+        SELECT
+            ftc.id AS contentid,
+            *
+        FROM
+            file_text_info AS fti,
+            file_text_content AS ftc
+        WHERE
+            fti."id" = ftc.text_file_id
+          AND ftc."id" IN
+        <foreach collection="contentIds" open="(" close=")" item="contentId" separator=",">
+            #{contentId}
+        </foreach>
+    </select>
+
 </mapper>

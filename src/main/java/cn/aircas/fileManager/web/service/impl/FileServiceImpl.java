@@ -2,6 +2,8 @@ package cn.aircas.fileManager.web.service.impl;
 
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
+import cn.aircas.fileManager.text.entity.TextInfo;
+import cn.aircas.fileManager.web.entity.database.FileTextInfo;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileContentService;
@@ -146,6 +148,19 @@ public class FileServiceImpl implements FileService {
             e.printStackTrace();
         }
         return count;
+    }
+
+    /**
+     * 批量查询文件内容所属文件信息成功
+     * @param fileType
+     * @param contentIds
+     * @return
+     */
+    @Override
+    public Map<Integer, TextInfo> getFileByContentId(FileType fileType, Set<Integer> contentIds) {
+        FileContentService contentService = fileType.getContentService();
+        Map<Integer, TextInfo> fileByContentId = contentService.getFileByContentId(contentIds);
+        return fileByContentId;
     }
 
     public void addEndTimeOneDay(FileSearchParam fileSearchParam){
