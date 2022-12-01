@@ -17,6 +17,11 @@ public class FileSearchParam {
     private int userId;
 
     /**
+     * 文件路径
+     */
+    private String filePath;
+
+    /**
      * 最小经度
      */
     private double minLon = 181;

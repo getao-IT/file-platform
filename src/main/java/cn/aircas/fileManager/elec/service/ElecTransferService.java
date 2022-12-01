@@ -10,6 +10,7 @@ import cn.aircas.utils.file.FileUtils;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,12 @@ public class ElecTransferService extends AbstractFileTypeTransferService<ElecInf
         elecInfo.setPath(fileRelativePath);
         try {
             this.elecMapper.insert(elecInfo);
-            this.elecContentService.parseTextContent(elecInfo);
+            if (FilenameUtils.isExtension(fileRelativePath, "dat")) {
+                this.elecContentService.parseElecContentFromDat(elecInfo);
+            }
+            if (FilenameUtils.isExtension(fileRelativePath, "csv")) {
+                this.elecContentService.parseTextContent(elecInfo);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
