@@ -6,6 +6,7 @@ import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.commons.service.FileTypeService;
 import cn.aircas.fileManager.elec.dao.ElecMapper;
+import cn.aircas.fileManager.elec.entity.ElecContent;
 import cn.aircas.fileManager.elec.entity.ElecInfo;
 import cn.aircas.fileManager.elec.entity.ElecSearchParam;
 import cn.aircas.fileManager.text.entity.TextContentInfo;
@@ -18,22 +19,35 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.transform.DftNormalization;
+import org.apache.commons.math3.transform.FastFourierTransformer;
+import org.apache.commons.math3.transform.TransformType;
+import org.springframework.aop.scope.ScopedObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("ELEC-SERVICE")
 public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> implements FileTypeService{
 
     @Value("${sys.rootPath}")
     String rootPath;
+
+    @Autowired
+    private ElecContentServiceImpl elecContentService;
 
     @Autowired
     ElecMapper elecMapper;
@@ -95,13 +109,29 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
         long totalPage = 0;
         long currentPage = 0;
 
-        List<JSONObject> result = null;
+        List<JSONObject> result = new ArrayList<>();
         if (fileSearchParam.isContent()) {
+            Assert.isTrue(fileSearchParam.getFileIdList().size() == 1, "查看单个文件内容，但传入了多个文件ID："+fileSearchParam.getFileIdList());
             FileContentService fileContentService = fileSearchParam.getFileType().getContentService();
-            PageResult<JSONObject> content = fileContentService.getContent(fileSearchParam.getPageSize(), fileSearchParam.getPageNo(), fileSearchParam.getFileIdList().get(0));
-            totalPage = content.getTotalCount();
-            currentPage = content.getPageNo();
-            result = content.getResult();
+            if (FilenameUtils.isExtension(fileSearchParam.getFilePath(), "dat")) {
+                List<ElecContent> collect = elecContentService.getElecContentFromDat(fileSearchParam);
+                totalPage = collect.size();
+                currentPage = 1;
+                List<String> data = collect.stream().map(ElecContent::getContent).collect(Collectors.toList());
+                double[] fourierTransInitData = this.getFourierTransInitData(collect);
+                List<Double> fourierTransformData = this.getFourierTransformData(fourierTransInitData);
+                JSONObject dataJsonObject = new JSONObject();
+                dataJsonObject.put("contentData", data);
+                result.add(dataJsonObject);
+                JSONObject fourierJsonObject = new JSONObject();
+                fourierJsonObject.put("fourierTransformData", fourierTransformData);
+                result.add(fourierJsonObject);
+            } else {
+                PageResult<JSONObject> content = fileContentService.getContent(fileSearchParam.getPageSize(), fileSearchParam.getPageNo(), fileSearchParam.getFileIdList().get(0));
+                totalPage = content.getTotalCount();
+                currentPage = content.getPageNo();
+                result = content.getResult();
+            }
         } else {
             ElecSearchParam elecSearchParam = convertSearchParam(fileSearchParam);
             Page<ElecInfo> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
@@ -146,5 +176,41 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
 
         elecSearchParam.setElecName(fileSearchParam.getFileName());
         return elecSearchParam;
+    }
+
+
+    /**
+     * 获取傅立叶转换数据
+     * @param initData
+     * @return
+     */
+    public List<Double> getFourierTransformData(double[] initData) {
+        List<Double> result = new ArrayList<>();
+        FastFourierTransformer transformer = new FastFourierTransformer(DftNormalization.STANDARD);
+        Complex[] complexes = transformer.transform(initData, TransformType.FORWARD);
+        for (int i = 0; i < complexes.length; i++) {
+            double sqrt = Math.sqrt(Math.pow(complexes[i].getReal(), 2) + Math.pow(complexes[i].getImaginary(), 2));
+            result.add(sqrt);
+        }
+        return result;
+    }
+
+    /**
+     * 初始化傅里叶转换所用数据
+     * @param collect
+     */
+    private double[] getFourierTransInitData(List<ElecContent> collect) {
+        int size = collect.size();
+        double[] doubleData = null;
+        int powerOfTwo = 1<<(int)(Math.log(size)/Math.log(2))+1;
+        if (size == 0) {
+            throw new IllegalArgumentException("傅里叶转换数据为空");
+        }
+        List<Double> list = collect.stream().map(ElecContent::getContent).map(Double::parseDouble).collect(Collectors.toList());
+        for (int i = size; i < powerOfTwo; i++) {
+            list.add((double) 0);
+        }
+        doubleData = list.stream().mapToDouble(Double::doubleValue).toArray();
+        return doubleData;
     }
 }

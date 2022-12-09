@@ -16,7 +16,7 @@ spring:
 
   datasource:
     password: 123456
-    url: jdbc:postgresql://192.168.3.35:32189/geodl_iecas?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    url: jdbc:postgresql://192.168.3.13:32189/geodl_iecas?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
     username: iecas
     driver-class-name: org.postgresql.Driver
 
