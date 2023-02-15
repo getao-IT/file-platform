@@ -30,7 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("ELEC-CONTENT")
-public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  implements FileContentService<ElecInfo> {
+public class ElecContentServiceImpl extends ServiceImpl<ElecContextMapper, ElecContent>  implements FileContentService<ElecInfo> {
 
     @Value("${sys.rootPath}")
     private String rootPath;
@@ -38,11 +38,14 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
     @Autowired
     private ElecContextMapper elecContextMapper;
 
+    @Autowired
+    private ElecFileServiceImpl elecFileService;
+
     @Override
     public PageResult<JSONObject> getContent(int pageSize, long pageNo, int fileId) {
         List<JSONObject> result = new ArrayList<>();
 
-        ElecInfo elecInfo = this.getById(fileId);
+        ElecInfo elecInfo = this.elecFileService.getById(fileId);
         int lineCount = elecInfo.getCount();
         long beginLine = (pageNo - 1) * pageSize + 1;
         long endLineNum = Math.min(beginLine + pageSize, lineCount);
@@ -92,6 +95,7 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
      */
     public void parseTextContent(ElecInfo elecInfo) {
         File elecFile = FileUtils.getFile(this.rootPath, elecInfo.getPath());
+        List<ElecContent> elecContentList = new ArrayList<>();
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(elecFile), "GB2312");
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -102,8 +106,18 @@ public class ElecContentServiceImpl extends ServiceImpl<ElecMapper, ElecInfo>  i
                 elecContent.setLineNumber(lineNumber);
                 elecContent.setElecFileId(elecInfo.getId());
                 elecContent.setContent(context);
-                this.elecContextMapper.insert(elecContent);
+                //this.elecContextMapper.insert(elecContent);
+                elecContentList.add(elecContent);
+
+                if (elecContentList.size()==1000){
+                    this.saveBatch(elecContentList);
+                    elecContentList.clear();
+                }
                 lineNumber++;
+            }
+            if (elecContentList.size()!=0){
+                this.saveBatch(elecContentList);
+                elecContentList.clear();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

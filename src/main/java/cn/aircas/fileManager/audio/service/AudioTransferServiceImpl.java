@@ -9,6 +9,9 @@ import cn.aircas.utils.file.FileUtils;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.mp3.MP3AudioHeader;
+import org.jaudiotagger.audio.mp3.MP3File;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,16 +57,16 @@ public class AudioTransferServiceImpl extends AbstractFileTypeTransferService<Au
     public AudioInfo parseFileInfo(String filePath) {
         AudioInfo audioInfo = new AudioInfo();
         File source = new File(filePath);
-        Encoder encoder = new Encoder();
         try {
-            MultimediaInfo multimediaInfo = encoder.getInfo(source);
-            String audioDuration = String.format("%d分%d秒",(multimediaInfo.getDuration())/60000,(multimediaInfo.getDuration()%60000)/1000);
+            MP3File f = (MP3File) AudioFileIO.read(source);
+            MP3AudioHeader mp3AudioHeader = f.getMP3AudioHeader();
+            String audioDuration = String.format("%d分%d秒",(mp3AudioHeader.getTrackLength())/60,(mp3AudioHeader.getTrackLength()));
             audioInfo.setFileLength(source.length());
             audioInfo.setAudioName(source.getName());
             audioInfo.setDurationStr(audioDuration);
             audioInfo.setCreateTime(DateUtils.nowDate());
-            audioInfo.setFormat(multimediaInfo.getFormat());
-            audioInfo.setDuration(multimediaInfo.getDuration());
+            audioInfo.setFormat(mp3AudioHeader.getFormat());
+            audioInfo.setDuration(mp3AudioHeader.getTrackLength());
             audioInfo.setPath(filePath.substring(this.rootPath.length()));
             audioInfo.setSize(FileUtils.fileSizeToString(source.length()));
         }catch (Exception e) {

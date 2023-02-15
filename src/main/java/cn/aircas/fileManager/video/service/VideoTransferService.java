@@ -9,6 +9,12 @@ import cn.aircas.fileManager.web.service.impl.AbstractFileTypeTransferService;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.coremedia.iso.IsoFile;
+import com.coremedia.iso.boxes.MovieHeaderBox;
+import com.coremedia.iso.boxes.TrackBox;
+import com.coremedia.iso.boxes.TrackHeaderBox;
+import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -64,16 +70,20 @@ public class VideoTransferService extends AbstractFileTypeTransferService<VideoI
     public VideoInfo parseFileInfo(String filePath) {
         VideoInfo videoInfo = new VideoInfo();
         File source = new File(filePath);
-        Encoder encoder = new Encoder();
         try {
-            MultimediaInfo multimediaInfo = encoder.getInfo(source);
-            String videoDuration = String.format("%d分%d秒",(multimediaInfo.getDuration())/60000,(multimediaInfo.getDuration()%60000)/1000);
+            Movie movie = MovieCreator.build(filePath);
+            IsoFile isoFile = new IsoFile(filePath);
+            MovieHeaderBox movieHeaderBox= isoFile.getMovieBox().getMovieHeaderBox();
+            TrackHeaderBox trackHeaderBox = isoFile.getMovieBox().getBoxes(TrackBox.class).get(0).getTrackHeaderBox();
+            float lengthInSeconds = (float)  movieHeaderBox.getDuration()/movieHeaderBox.getTimescale();
+            String videoDuration = String.format("%d分%d秒",(int)lengthInSeconds/60,(int)lengthInSeconds%60);
+            float frameRate = movie.getTracks().get(0).getSamples().size() / lengthInSeconds;
             videoInfo.setDurationStr(videoDuration);
-            videoInfo.setFormat(multimediaInfo.getFormat());
-            videoInfo.setDuration(multimediaInfo.getDuration());
-            videoInfo.setFrameRate(multimediaInfo.getVideo().getFrameRate());
-            videoInfo.setWidth(multimediaInfo.getVideo().getSize().getWidth());
-            videoInfo.setHeight(multimediaInfo.getVideo().getSize().getHeight());
+            videoInfo.setFormat(movieHeaderBox.getType());
+            videoInfo.setDuration(movieHeaderBox.getDuration());
+            videoInfo.setFrameRate((float) Math.ceil(frameRate));
+            videoInfo.setWidth((int)trackHeaderBox.getWidth());
+            videoInfo.setHeight((int)trackHeaderBox.getHeight());
         }catch (Exception e) {
             e.printStackTrace();
             log.error("解析视频文件信息错误:{}",filePath);
