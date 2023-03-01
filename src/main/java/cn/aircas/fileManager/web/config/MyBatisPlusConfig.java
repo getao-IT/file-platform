@@ -12,7 +12,7 @@ public class MyBatisPlusConfig {
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor page = new PaginationInterceptor();
-        //page.setDbType(DbType.POSTGRE_SQL);
+        page.setDialectType("postgresql");
         return page;
     }
 }
