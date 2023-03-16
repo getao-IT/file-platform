@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -36,8 +37,8 @@ public class DatabaseServiceImpl implements DatabaseService {
         List<String> tables = databaseConfig.getTables();
 
         List<String> tableNameList = databaseMapper.selectTableNames();
-        InputStreamReader inputStreamReader;
-        InputStream inputStream;
+        InputStreamReader inputStreamReader = null;
+        InputStream inputStream = null;
         try {
             ScriptRunner runner=new ScriptRunner(dataSource.getConnection());
             runner.setAutoCommit(false);
@@ -57,10 +58,16 @@ public class DatabaseServiceImpl implements DatabaseService {
                     log.info("创建表:{}",table);
                 }
             }
+            if (inputStreamReader!=null)
+                inputStreamReader.close();
+            if (inputStream!=null)
+                inputStream.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
