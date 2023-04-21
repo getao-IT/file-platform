@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,16 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
     @Override
     public List<Image> transferFromBackend(String srcDir, String destDir, FileTransferInfo fileTransferInfo){
         List<Image> imageInfoList = traverseFile(srcDir,destDir,fileTransferInfo);
-        this.imageMapper.batchInsertImageInfo(imageInfoList);
+
+        int beginIndex = 0;
+        int batchInsertSize = 1000;
+        int imageCount = imageInfoList.size();
+
+        while (beginIndex<imageCount){
+            int endIndex = imageCount < (beginIndex+batchInsertSize) ? imageCount : (beginIndex+batchInsertSize);
+            this.imageMapper.batchInsertImageInfo(imageInfoList.subList(beginIndex,endIndex));
+            beginIndex = endIndex;
+        }
 
         if (createDataset){
             List<Integer> imageIdList = imageInfoList.stream().map(Image::getId).collect(Collectors.toList());
@@ -88,6 +98,5 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
 
         return image;
     }
-
 
 }
