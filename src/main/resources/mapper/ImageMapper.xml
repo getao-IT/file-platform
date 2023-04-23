@@ -152,7 +152,7 @@
     <select id="listImageIdBySearchParam" resultType="java.lang.Integer">
         select id from file_image_info
         <where>
-            (user_id = #{imageSearchParam.userId} or is_public = TRUE)
+            (user_id = #{imageSearchParam.userId} or is_public = TRUE) AND delete IS False
             <if test="imageSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">

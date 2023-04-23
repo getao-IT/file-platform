@@ -37,7 +37,7 @@ public class FileController {
     ImageFileServiceImpl imageFileService;
 
     /**
-     * 查询文件信息
+     * 查询文件信息folder
      * @param fileSearchParam
      * @return
      */

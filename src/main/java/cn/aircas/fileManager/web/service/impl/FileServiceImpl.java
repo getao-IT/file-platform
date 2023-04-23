@@ -64,11 +64,14 @@ public class FileServiceImpl implements FileService {
             log.error("路径：{} 不存在",path);
             return new ArrayList<>();
         }
-        List<String> filePathList = Arrays.stream(files)
+
+        // 过滤掉文件路径，只显示文件夹
+        /*List<String> filePathList = Arrays.stream(files)
                 .filter(file -> file.isDirectory())
                 .map(File::getName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
+        List<String> filePathList = Arrays.stream(files).map(File::getName).collect(Collectors.toList());
         return filePathList;
     }
 
