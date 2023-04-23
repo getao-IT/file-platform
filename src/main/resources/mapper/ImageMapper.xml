@@ -23,7 +23,7 @@
         values
         <foreach collection="imageInfoList" item="imageInfo" separator=",">
             (#{imageInfo.imageName},#{imageInfo.path},#{imageInfo.userId},#{imageInfo.source},#{imageInfo.thumb}
-            ,#{imageInfo.width},#{imageInfo.height},#{imageInfo.projection},#{imageInfo.minLat},#{imageInfo.minLon}
+            ,#{imageInfo.width},#{imageInfo.height},#{imageInfo.projection},#{imageInfo.minLon},#{imageInfo.minLat}
             ,#{imageInfo.maxLon},#{imageInfo.maxLat},#{imageInfo.batchNumber},#{imageInfo.userName},#{imageInfo.isPublic}
             ,#{imageInfo.bands},#{imageInfo.bit},#{imageInfo.createTime},#{imageInfo.keywords},#{imageInfo.size}
             ,#{imageInfo.resolution},#{imageInfo.minProjectionX},#{imageInfo.minProjectionY},#{imageInfo.maxProjectionX}
