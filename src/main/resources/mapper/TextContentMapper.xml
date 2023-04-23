@@ -41,10 +41,12 @@
             file_text_content AS ftc
         WHERE
             fti."id" = ftc.text_file_id
-          AND ftc."id" IN
-        <foreach collection="contentIds" open="(" close=")" item="contentId" separator=",">
-            #{contentId}
-        </foreach>
+        <if test="contentIds != null || contentIds != 0">
+            AND ftc."id" IN
+            <foreach collection="contentIds" open="(" close=")" item="contentId" separator=",">
+                #{contentId}
+            </foreach>
+        </if>
     </select>
 
 </mapper>
