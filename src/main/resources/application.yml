@@ -44,7 +44,7 @@ mybatis-plus:
 ---
 sys:
   #  拿到哪
-  rootPath: D:\\数据\\
+  rootPath: C:\Users\dell\Desktop
   #  从哪拿
   uploadRootPath: D:\\数据\\
 

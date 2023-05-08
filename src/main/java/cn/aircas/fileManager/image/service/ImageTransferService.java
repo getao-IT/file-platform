@@ -74,7 +74,7 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
 
     @Override
     public String[] getSupportFileType() {
-        return new String[]{"jpg", "tiff", "tif", "png","TIF","TIFF","jpeg"};
+        return new String[]{"jpg", "JPG", "tiff", "tif", "png", "PNG", "TIF","TIFF","jpeg"};
     }
 
     @Override
@@ -90,10 +90,16 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
         if (relativeFilePath.startsWith("/"))
             relativeFilePath = relativeFilePath.substring(1);
         ImageInfo imageInfo = ParseImageInfo.parseInfo(filePath);
-        Image image = Image.builder().imageName(imageFile.getName()).createTime(DateUtils.nowDate()).path(relativeFilePath)
-                .thumb(thumbnail).size(fileSize).fileLength(imageFile.length()).minProjectionX(imageInfo.getProjectionRange()[0])
-                .minProjectionY(imageInfo.getProjectionRange()[1]).maxProjectionX(imageInfo.getProjectionRange()[2])
-                .maxProjectionY(imageInfo.getProjectionRange()[3]).delete(false).build();
+        Image image = null;
+        try {
+            image = Image.builder().imageName(imageFile.getName()).createTime(DateUtils.nowDate()).path(relativeFilePath)
+                    .thumb(thumbnail).size(fileSize).fileLength(imageFile.length()).minProjectionX(imageInfo.getProjectionRange()[0])
+                    .minProjectionY(imageInfo.getProjectionRange()[1]).maxProjectionX(imageInfo.getProjectionRange()[2])
+                    .maxProjectionY(imageInfo.getProjectionRange()[3]).delete(false).build();
+        } catch (Exception e) {
+            log.error("文件 {} 影像信息解析失败");
+            return null;
+        }
         BeanUtils.copyProperties(imageInfo,image);
 
         return image;

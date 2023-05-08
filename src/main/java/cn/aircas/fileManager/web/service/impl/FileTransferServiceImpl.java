@@ -6,6 +6,7 @@ import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.entity.FileTransferParam;
 import cn.aircas.fileManager.web.entity.FileTransferProgressInfo;
+import cn.aircas.fileManager.web.entity.enums.FileTransferStatus;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.web.service.FileBackendTransferProgressService;
 import cn.aircas.fileManager.web.service.FileTransferProgressService;
@@ -28,6 +29,7 @@ import java.nio.channels.FileChannel;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author Vanishrain
@@ -121,6 +123,8 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
 
     @Override
     public FileBackendTransferProgress getBackendTransferProgress(String transferToken) {
+        FileBackendTransferProgress progress = FileBackendTransferProgressService.getTransferProgress(transferToken);
+        Map<String, FileTransferStatus> finishedFileNameMap = progress.getFinishedFileNameMap();
         return FileBackendTransferProgressService.getTransferProgress(transferToken);
     }
 

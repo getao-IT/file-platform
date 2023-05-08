@@ -1,6 +1,7 @@
 package cn.aircas.fileManager.web.service.impl;
 
 import cn.aircas.fileManager.image.entity.Image;
+import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.service.FileBackendTransferProgressService;
 import cn.aircas.fileManager.web.service.FileTypeTransferService;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class AbstractFileTypeTransferService<T> implements FileTypeTransferService<T> {
@@ -45,13 +47,22 @@ public abstract class AbstractFileTypeTransferService<T> implements FileTypeTran
     public List<T> traverseFile(String srcDir, String destDir, FileTransferInfo fileTransferInfo){
         List<T> fileInfoList = new ArrayList<>();
         File srcDirFile = FileUtils.getFile(this.rootPath,srcDir);
-        List<File> fileList = Arrays.asList(Objects.requireNonNull(srcDirFile.listFiles((dir, name) -> FilenameUtils.isExtension(name, getSupportFileType()))));
+        List<File> fileList = null;
+        if (fileTransferInfo.getIsCurrentOnly()) {
+            fileList = Arrays.asList(Objects.requireNonNull(srcDirFile.listFiles((dir, name) -> FilenameUtils.isExtension(name, getSupportFileType()))));
+        } else {
+            List<String> fileListPath = new ArrayList<>();
+            FileUtils.folderFiles(srcDirFile.getAbsolutePath(), fileListPath);
+            fileList = fileListPath.stream().map(File::new).collect(Collectors.toList());
+        }
         Assert.notEmpty(fileList, String.format("上传文件夹：%s 为空", fileList));
         String transferToken = fileTransferInfo.getTransferToken();
-        FileBackendTransferProgressService.beginOneTransfer(transferToken, fileList.size());
+        FileBackendTransferProgressService.beginOneTransfer(srcDirFile.getAbsolutePath(), transferToken, fileList);
 
         int count = 0;
         for (File file : fileList) {
+            String filePath = file.getAbsolutePath().replace(srcDirFile.getAbsolutePath() + "/", "");
+            FileBackendTransferProgressService.beginOneFileTransfer(transferToken, filePath);
             String fileName = file.getName();
             String fileRelativeSavePath = FileUtils.getStringPath(destDir, fileName);
             String fileSavePath = FileUtils.getStringPath(this.rootPath, fileRelativeSavePath);
@@ -60,6 +71,7 @@ public abstract class AbstractFileTypeTransferService<T> implements FileTypeTran
                 try {
                     FileUtils.copyFile(file, FileUtils.getFile(this.rootPath, fileRelativeSavePath));
                 } catch (IOException e) {
+                    FileBackendTransferProgressService.transferError(transferToken, filePath);
                     log.error("拷贝文件：{} 出错", file.getAbsolutePath());
                     continue;
                 }
@@ -68,11 +80,16 @@ public abstract class AbstractFileTypeTransferService<T> implements FileTypeTran
             }
 
             T fileInfo = parseFileInfo(fileSavePath);
+            if (fileInfo == null) {
+                FileBackendTransferProgressService.finishOneTransfer(transferToken, filePath);
+                FileBackendTransferProgressService.transferError(transferToken, filePath);
+                continue;
+            }
             BeanUtils.copyProperties(fileTransferInfo,fileInfo,"createTime");
             fileInfoList.add(fileInfo);
             count++;
 
-            FileBackendTransferProgressService.finishOneTransfer(transferToken, file.getName());
+            FileBackendTransferProgressService.finishOneTransfer(transferToken, filePath);
             log.info("上传进度：{}/{}", count, fileList.size());
 
         }

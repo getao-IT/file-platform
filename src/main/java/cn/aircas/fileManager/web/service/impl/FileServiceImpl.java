@@ -2,6 +2,7 @@ package cn.aircas.fileManager.web.service.impl;
 
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
+import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.web.entity.database.FileTextInfo;
 import cn.aircas.fileManager.web.entity.enums.FileType;
@@ -9,12 +10,15 @@ import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.commons.service.FileTypeService;
+import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -55,7 +59,7 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public List<String> listFolderFiles(String path) {
+    public List<JSONObject> listFolderFiles(String path) {
         path = StringUtils.isBlank(path) ? File.separator : path;
         path = FilenameUtils.normalizeNoEndSeparator(this.uploadRootPath + File.separator + path);
         File[] files = new File(path).listFiles();
@@ -71,10 +75,16 @@ public class FileServiceImpl implements FileService {
                 .map(File::getName)
                 .collect(Collectors.toList());*/
 
-        List<String> filePathList = Arrays.stream(files).map(File::getName).collect(Collectors.toList());
+        List<JSONObject> filePathList = Lists.newArrayList();
+        for (File file : files) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name" , file.getName());
+            jsonObject.put("isFile" , !file.isDirectory());
+            filePathList.add(jsonObject);
+        }
+
         return filePathList;
     }
-
 
     /**
      * 根据id批量删除文件
@@ -154,6 +164,40 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
+     * 裁切影像得到切片图片
+     * @param fileType
+     * @param id
+     * @param minLon
+     * @param minLat
+     * @param width
+     * @param height
+     * @param sliceInsertPath
+     */
+    @Override
+    public String makeImageSlice(FileType fileType, int id, double minLon, double minLat, int width, int height, String sliceInsertPath) {
+        ImageFileServiceImpl service = (ImageFileServiceImpl) fileType.getService();
+        String slicetPath = service.makeImageGeoSlice(fileType, id, minLon, minLat, width, height, sliceInsertPath);
+        return slicetPath;
+    }
+
+    /**
+     * 裁切影像得到切片图片
+     * @param fileType
+     * @param id
+     * @param width
+     * @param height
+     * @param sliceInsertPath
+     * @param step
+     * @return
+     */
+    @Override
+    public String  makeImageAllGeoSlice(FileType fileType, int id, int width, int height, String sliceInsertPath, int step) {
+        ImageFileServiceImpl service = (ImageFileServiceImpl) fileType.getService();
+        String  slicetPath = service.makeImageAllGeoSlice(fileType, id, width, height, sliceInsertPath, step);
+        return slicetPath;
+    }
+
+    /**
      * 批量查询文件内容所属文件信息成功
      * @param fileType
      * @param contentIds
@@ -175,7 +219,5 @@ public class FileServiceImpl implements FileService {
         calendar.add(Calendar.DATE,1);
         fileSearchParam.setEndTime(calendar.getTime());
     }
-
-
 
 }

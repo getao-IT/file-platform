@@ -1,6 +1,7 @@
 package cn.aircas.fileManager.web.controller;
 
 import cn.aircas.fileManager.elec.service.ElecFileServiceImpl;
+import cn.aircas.fileManager.image.entity.Slice;
 import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
@@ -131,9 +132,9 @@ public class FileController {
     @Log(value = "获取子文件夹list")
     //@OperationLog("获取子文件夹list")
     @GetMapping("/folder")
-    public CommonResult<List<String>> getFolderList(String path) {
-        List<String> folderList = fileService.listFolderFiles(path);
-        return new CommonResult<List<String>>().data(folderList).success().message("获取子文件夹数据成功");
+    public CommonResult<List<JSONObject>> getFolderList(String path) {
+        List<JSONObject> folderList = fileService.listFolderFiles(path);
+        return new CommonResult<List<JSONObject>>().data(folderList).success().message("获取子文件夹数据成功");
     }
 
     /**
@@ -170,6 +171,24 @@ public class FileController {
     public CommonResult<Map<Integer, TextInfo>> getFileByContentId(FileType fileType, @RequestParam(value = "contentIds") Set<Integer> contentIds) {
         Map<Integer, TextInfo> fileByContentId = this.fileService.getFileByContentId(fileType, contentIds);
         return new CommonResult<Map<Integer, TextInfo>>().success().data(fileByContentId).message("批量查询文件内容所属文件信息成功");
+    }
+
+    @Log(value = "裁切影像指定位置得到切片图片")
+    @PostMapping("/custom")
+    @ApiOperation("裁切影像指定位置得到切片图片")
+    public CommonResult<String> makeImageSlice(@RequestBody Slice slice) {
+        String result = this.fileService.makeImageSlice(slice.getFileType(), slice.getId(), slice.getMinLon(),
+                slice.getMinLat(), slice.getWidth(), slice.getHeight(), slice.getSliceInsertPath());
+        return new CommonResult<String>().data(result).success().data(result).message("裁切任务后台处理中...");
+    }
+
+    @Log(value = "根据宽高裁切影像所有位置得到切片图片")
+    @PostMapping("/slice")
+    @ApiOperation("根据宽高裁切影像所有位置得到切片图片")
+    public CommonResult<String> makeImageAllGeoSlice(@RequestBody Slice slice) {
+        String result = this.fileService.makeImageAllGeoSlice(slice.getFileType(), slice.getId(), slice.getWidth(),
+                slice.getHeight(), slice.getSliceInsertPath(), slice.getStep());
+        return new CommonResult<String>().data(result).success().data(result).message("裁切任务后台处理中...");
     }
 
 }

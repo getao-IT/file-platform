@@ -39,6 +39,8 @@ public class FileTransferInfo {
     private boolean createDataset;
     @TableField(exist = false)
     private String token;
+    @TableField(exist = false)
+    private Boolean isCurrentOnly;
     /**
      * 是否公开
      */
