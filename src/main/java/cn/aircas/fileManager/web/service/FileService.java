@@ -16,7 +16,7 @@ import java.util.Set;
 
 public interface FileService {
     List<String> getFileType();
-    List<String> listFolderFiles(String path);
+    List<JSONObject> listFolderFiles(String path);
     void deleteFilesByIds(List<Integer> idList, FileType fileType);
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileByPage(FileSearchParam fileSearchParam);
@@ -25,4 +25,6 @@ public interface FileService {
     List<JSONObject> getFileInfoByIds(List<Integer> idList,FileType fileType, boolean content);
     int getFileLineCount(File source);
     Map<Integer, TextInfo> getFileByContentId(FileType fileType, Set<Integer> contentIds);
+    String makeImageSlice(FileType fileType, int id, double minLon, double minLat, int width, int height, String sliceInsertPath);
+    String  makeImageAllGeoSlice(FileType fileType, int id, int width, int height, String sliceInsertPath, int step);
 }
