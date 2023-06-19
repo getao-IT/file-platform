@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.audio.dao.AudioMapper">
+
+    <resultMap type="cn.aircas.fileManager.audio.entity.AudioInfo" id="AudioMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="audioName" column="audio_name" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="batchNumber" column="batch_number" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <insert id="batchInsertAudioInfo" parameterType="java.util.List">
+        insert into file_audio_info (audio_name,path,user_id,source,user_name,is_public,create_time,keywords,size,
+                                     duration,file_length,batch_number,duration_str)
+        values
+        <foreach collection="audioInfoList" item="audioInfo" separator=",">
+            (#{audioInfo.audioName},#{audioInfo.path},#{audioInfo.userId},#{audioInfo.source},#{audioInfo.userName}
+            ,#{audioInfo.isPublic},#{audioInfo.createTime},#{audioInfo.keywords},#{audioInfo.size}
+            ,#{audioInfo.duration},#{audioInfo.fileLength},#{audioInfo.batchNumber},#{audioInfo.durationStr})
+        </foreach>
+    </insert>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listAudioInfos" resultMap="AudioMap" parameterType="cn.aircas.fileManager.audio.entity.AudioSearchParam">
+        select * from file_audio_info
+        <where>
+            (user_id = #{audioSearchParam.userId})
+            <if test="audioSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="audioSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                        CONCAT(audio_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <if test="audioSearchParam.audioIdList!=null and audioSearchParam.audioIdList.size()!=0">
+                AND id in
+                <foreach collection="audioSearchParam.audioIdList" item="audioId" open="(" close=")" separator=",">
+                    #{audioId}
+                </foreach>
+            </if>
+
+<!--            <if test="audioSearchParam.searchParam != null and audioSearchParam.searchParam != ''">-->
+<!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${audioSearchParam.searchParam}%'-->
+<!--            </if>-->
+            <if test="audioSearchParam.source != null and audioSearchParam.source != ''">
+                and source like concat('%',#{audioSearchParam.source},'%')
+            </if>
+            <if test="audioSearchParam.startTime != null and audioSearchParam.endTime !=null">
+                and create_time between #{audioSearchParam.startTime} and #{audioSearchParam.endTime}
+            </if>
+            <if test="audioSearchParam.batchNumber > 0">
+                and batch_number = #{audioSearchParam.batchNumber}
+            </if>
+<!--            <if test="audioSearchParam.sortOrder != null and audioSearchParam.orderBy !=null">-->
+<!--                order by ${audioSearchParam.sortOrder}  ${audioSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="audioSearchParam.keywords  and audioSearchParam.keywords != ''">
+                and lower(keywords) like concat('%',#{audioSearchParam.keywords},'%')
+            </if>
+            <if test="audioSearchParam.ispub != null and audioSearchParam.ispub != ''">
+                and is_public = #{audioSearchParam.isPublic}
+            </if>
+        </where>
+        order by create_time DESC, id DESC
+    </select>
+
+    <select id="listDeleteAudioInfos" resultType="cn.aircas.fileManager.audio.entity.AudioInfo">
+        select id, path from file_audio_info
+        <where>
+            <if test="audioDeleteParam.batchNumber > 0">
+                and batch_number = #{audioDeleteParam.batchNumber}
+            </if>
+            <if test="audioDeleteParam.audioIdList!=null">
+                and id in
+                <foreach collection="audioDeleteParam.audioIdList" item="audioId" open="(" close=")" separator=",">
+                    #{audioId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listAudioIdBySearchParam" resultType="java.lang.Integer">
+        select id from file_audio_info
+        <where>
+            (user_id = #{audioSearchParam.userId} or is_public = TRUE)
+            <if test="audioSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="audioSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                    CONCAT(audio_name,source,user_name,keywords) like concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <!--            <if test="audioSearchParam.searchParam != null and audioSearchParam.searchParam != ''">-->
+            <!--                and CONCAT(image_name,source,user_name,keywords) ilike '%${audioSearchParam.searchParam}%'-->
+            <!--            </if>-->
+            <if test="audioSearchParam.source != null and audioSearchParam.source != ''">
+                and source like concat('%',#{audioSearchParam.source},'%')
+            </if>
+            <if test="audioSearchParam.startTime != null and audioSearchParam.endTime !=null">
+                and create_time between #{audioSearchParam.startTime} and #{audioSearchParam.endTime}
+            </if>
+            <if test="audioSearchParam.batchNumber > 0">
+                and batch_number = #{audioSearchParam.batchNumber}
+            </if>
+<!--            <if test="audioSearchParam.sortOrder != null and audioSearchParam.orderBy !=null">-->
+<!--                order by ${audioSearchParam.sortOrder}  ${audioSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="audioSearchParam.keywords  and audioSearchParam.keywords != ''">
+                and lower(keywords) like concat('%',#{audioSearchParam.keywords},'%')
+            </if>
+        </where>
+        order by create_time DESC
+    </select>
+
+</mapper>
