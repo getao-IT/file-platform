@@ -132,9 +132,9 @@ public class FileController {
     @Log(value = "获取子文件夹list")
     //@OperationLog("获取子文件夹list")
     @GetMapping("/folder")
-    public CommonResult<List<String>> getFolderList(String path) {
-        List<String> folderList = fileService.listFolderFiles(path);
-        return new CommonResult<List<String>>().data(folderList).success().message("获取子文件夹数据成功");
+    public CommonResult<List<JSONObject>> getFolderList(String path) {
+        List<JSONObject> folderList = fileService.listFolderFiles(path);
+        return new CommonResult<List<JSONObject>>().data(folderList).success().message("获取子文件夹数据成功");
     }
 
     /**

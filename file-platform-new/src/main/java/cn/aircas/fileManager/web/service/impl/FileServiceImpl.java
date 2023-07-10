@@ -62,7 +62,7 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public List<String> listFolderFiles(String path) {
+    public List<JSONObject> listFolderFiles(String path) {
         path = StringUtils.isBlank(path) ? File.separator : path;
         path = FilenameUtils.normalizeNoEndSeparator(this.uploadRootPath + File.separator + path);
         File[] files = new File(path).listFiles();
@@ -73,18 +73,18 @@ public class FileServiceImpl implements FileService {
         }
 
         // 过滤掉文件路径，只显示文件夹
-        List<String> filePathList = Arrays.stream(files)
+        /*List<String> filePathList = Arrays.stream(files)
                 .filter(file -> file.isDirectory())
                 .map(File::getName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
-        /*List<JSONObject> filePathList = Lists.newArrayList();
+        List<JSONObject> filePathList = Lists.newArrayList();
         for (File file : files) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name" , file.getName());
             jsonObject.put("isFile" , !file.isDirectory());
             filePathList.add(jsonObject);
-        }*/
+        }
 
         return filePathList;
     }

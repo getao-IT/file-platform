@@ -15,9 +15,14 @@ spring:
       max-request-size: 10GB
 
   datasource:
+    #password: 123456
+    #url: jdbc:postgresql://192.168.3.13:32189/geodl_iecas?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    #username: iecas
+    #driver-class-name: org.postgresql.Driver
+
     password: 123456
-    url: jdbc:postgresql://192.168.3.13:32189/geodl_iecas?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
-    username: iecas
+    url: jdbc:postgresql://localhost:5432/postgres?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    username: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:
