@@ -17,10 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.message.AuthException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -37,6 +40,9 @@ import java.util.stream.Collectors;
 public class FileServiceImpl implements FileService {
     @Value("${sys.uploadRootPath}")
     String uploadRootPath;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public List<String> getFileType() {
@@ -92,7 +98,8 @@ public class FileServiceImpl implements FileService {
      * @param fileType
      */
     @Override
-    public void deleteFilesByIds(List<Integer> idList, FileType fileType) {
+    public void deleteFilesByIds(List<Integer> idList, FileType fileType) throws AuthException {
+
         FileTypeService fileTypeService = fileType.getService();
         fileTypeService.deleteFileByIds(idList);
     }
@@ -193,8 +200,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public String  makeImageAllGeoSlice(FileType fileType, int id, int width, int height, String sliceInsertPath, int step) {
         ImageFileServiceImpl service = (ImageFileServiceImpl) fileType.getService();
-        String  slicetPath = service.makeImageAllGeoSlice(fileType, id, width, height, sliceInsertPath, step);
-        return slicetPath;
+        String  slicePath = service.makeImageAllGeoSlice(fileType, id, width, height, sliceInsertPath, step);
+        return slicePath;
     }
 
     /**

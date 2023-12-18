@@ -1,6 +1,7 @@
 package cn.aircas.fileManager.web.controller;
 
 
+import cn.aircas.fileManager.commons.annnotation.AuthLog;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
@@ -58,6 +59,13 @@ public class FileTransferController {
     }
 
 
+    @ApiOperation("检查用户上传权限")
+    @GetMapping(value = "/checkAuth")
+    public CommonResult<Boolean> checkUserUploadAuth(int userId) {
+        Boolean blag =  fileTransferService.checkUserUploadAuth(userId);
+        return new CommonResult<Boolean>().success().data(true).message("");
+    }
+
     @Log(value = "验证文件md5")
     //@OperationLog("验证md5")
     @PostMapping(value = "/checkFileMd5")
@@ -67,6 +75,7 @@ public class FileTransferController {
         return new CommonResult<String>().data(null).success().message("验证文件md5成功");
     }
 
+    @AuthLog
     @Log(value = "分块上传影像")
     //@OperationLog("分块上传影像")
     @PostMapping(value = "/byChuck")

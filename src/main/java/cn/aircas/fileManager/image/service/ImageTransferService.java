@@ -33,8 +33,6 @@ public class ImageTransferService extends AbstractFileTypeTransferService<Image>
     @Autowired
     ImageMapper imageMapper;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
     @Value("${value.createDataset}")
     private boolean createDataset;
 

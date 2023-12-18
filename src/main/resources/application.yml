@@ -4,7 +4,8 @@ server:
   port: 8088
   servlet:
     context-path: /geoai/v1
----
+  max-http-header-size: 1024000
+
 #数据源配置
 spring:
   servlet:
@@ -41,12 +42,15 @@ mybatis-plus:
     debug: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
----
 sys:
-  #  拿到哪
-  rootPath: C:\Users\dell\Desktop
-  #  从哪拿
-  uploadRootPath: D:\\数据\\
+#  #  拿到哪
+#  rootPath: D:\\数据\\
+#  #  从哪拿
+#  uploadRootPath: D:\\数据\\
+  monitorPath: tifimage
+  rootPath: x:\\
+    #  从哪拿
+  uploadRootPath: C:\\Users\\dell\\Desktop\\tifimage
 
 value:
   service:
@@ -73,17 +77,24 @@ value:
     enable: false
     dbName: geodl_iecas
     tables:
+      - file_image_info
+      - file_image_label_relation
+      - file_text_info
       - file_audio_info
       - file_elec_info
       - file_image_info
       - file_satellite_info
       - file_satellite_sensor_info
       - file_satellite_sensor_relation
+      - file_resolution_info
+      - file_country_info
+
       - file_text_content
       - file_text_info
       - file_transfer_info
       - file_transfer_progress_info
       - file_video_info
+
 lab:
   enable: true
   prefix: /home/lab/data
@@ -92,7 +103,7 @@ lab:
 
 auth:
   enabled: true
-  user-info-url: http://192.168.2.156:31151/api/v1/users/token_check
+  user-info-url: http://30.249.2.156:31151/api/v1/users/token_check
   ignore-url-list:
     - /geoai/v1/swagger-ui.html
     - /geoai/v1/webjars/**

@@ -10,6 +10,7 @@ import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.image.entity.ImageSearchParam;
 import cn.aircas.fileManager.web.entity.enums.FileType;
+import cn.aircas.fileManager.web.service.impl.AuthServiceImpl;
 import cn.aircas.utils.file.FileUtils;
 import cn.aircas.utils.image.ImageInfo;
 import cn.aircas.utils.image.slice.SliceGenerateUtil;
@@ -31,17 +32,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.imageio.ImageIO;
+import javax.security.auth.message.AuthException;
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service("IMAGE-SERVICE")
@@ -50,9 +50,14 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     @Value("${sys.rootPath}")
     String rootPath;
 
-
     @Autowired
     private ImageMapper imageMapper;
+
+    @Autowired
+    HttpServletRequest request;
+
+    @Autowired
+    private AuthServiceImpl authService;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -66,10 +71,15 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
      * @param idList
      */
     @Override
-    public void deleteFileByIds(List<Integer> idList) {
+    public void deleteFileByIds(List<Integer> idList) throws AuthException {
+        authService.checkDeleteAuth();
         List<Image> imageInfoList = this.imageMapper.selectBatchIds(idList);
         Assert.notEmpty(imageInfoList, String.format("影像的路径列表:%s为空", imageInfoList.toString()));
-        imageInfoList.forEach(image -> image.setDelete(true));
+        imageInfoList.forEach(image -> {
+            image.setDelete(true);
+            authService.deleteToUpdateUserFileAuth(image);
+        });
+
         this.updateBatchById(imageInfoList);
 //        for (Image imageInfo : imageInfoList) {
 //            String filePath = FileUtils.getStringPath(this.rootPath, imageInfo.getPath());
@@ -137,7 +147,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     public PageResult<JSONObject> relateFind(FileSearchParam fileSearchParam) {
         ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
         Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
-        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam , Integer.parseInt(request.getParameter("adminLevel")));
         List<Image> imageList = imageIPage.getRecords();
         List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
         return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
@@ -169,9 +179,10 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
             if (fileSearchParam.getPageNo() > pages) {
                 fileSearchParam.setPageNo(fileSearchParam.getPageNo() % pages == 0 ? pages : fileSearchParam.getPageNo() % pages);
             }
+            int adminLevel = Integer.parseInt(request.getParameter("adminLevel"));
             ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
             Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
-            imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+            imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam , adminLevel);
             List<Image> imageList = imageIPage.getRecords();
             result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
             if (imageIPage.getTotal() == selectCount) {

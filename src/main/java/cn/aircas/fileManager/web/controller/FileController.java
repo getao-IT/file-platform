@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.message.AuthException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +78,7 @@ public class FileController {
     //@OperationLog(value = "分页查询影像信息")
     @DeleteMapping
     @ApiOperation("根据id批量删除文件")
-    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Integer> idList, FileType fileType) {
+    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Integer> idList, FileType fileType) throws AuthException {
         this.fileService.deleteFilesByIds(idList,fileType);
         return new CommonResult<String>().success().message("根据id批量删除文件成功");
     }

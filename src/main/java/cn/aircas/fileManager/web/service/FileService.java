@@ -9,6 +9,7 @@ import cn.aircas.fileManager.commons.entity.common.PageResult;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.models.auth.In;
 
+import javax.security.auth.message.AuthException;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Set;
 public interface FileService {
     List<String> getFileType();
     List<JSONObject> listFolderFiles(String path);
-    void deleteFilesByIds(List<Integer> idList, FileType fileType);
+    void deleteFilesByIds(List<Integer> idList, FileType fileType) throws AuthException;
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileByPage(FileSearchParam fileSearchParam);
     PageResult<JSONObject> getContent(int pageSize, int pageNo,FileType fileType, int fileId);

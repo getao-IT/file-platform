@@ -2,10 +2,12 @@ package cn.aircas.fileManager.web.service.impl;
 
 import cn.aircas.fileManager.commons.service.FileTypeService;
 import cn.aircas.fileManager.web.dao.FileTransferInfoMapper;
+import cn.aircas.fileManager.web.dao.UserUploadAuthMapper;
 import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.entity.FileTransferParam;
 import cn.aircas.fileManager.web.entity.FileTransferProgressInfo;
+import cn.aircas.fileManager.web.entity.database.UserUploadAuthInfo;
 import cn.aircas.fileManager.web.entity.enums.FileTransferStatus;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.web.service.FileBackendTransferProgressService;
@@ -14,6 +16,7 @@ import cn.aircas.fileManager.web.service.FileTransferService;
 import cn.aircas.fileManager.web.service.FileTypeTransferService;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
@@ -43,6 +47,9 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
 
     @Value("${sys.uploadRootPath}")
     String uploadRootPath;
+
+    @Autowired
+    private AuthServiceImpl authService;
 
     @Autowired
     private FileTransferProgressService fileTransferProgressService;
@@ -117,6 +124,8 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
             String fileRelativePath = FileUtils.getStringPath(relativeDir,fileTransferParam.getFile().getOriginalFilename());
             FileTypeTransferService fileTypeTransferService = fileType.getTransferService();
             fileTypeTransferService.transferFromWeb(fileRelativePath,fileTransferInfo);
+
+            authService.saveOrUpdateUserFileAuth(fileTransferParam);
         }
         fileTransferParam.setFile(null);
     }
@@ -126,6 +135,11 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         FileBackendTransferProgress progress = FileBackendTransferProgressService.getTransferProgress(transferToken);
         Map<String, FileTransferStatus> finishedFileNameMap = progress.getFinishedFileNameMap();
         return FileBackendTransferProgressService.getTransferProgress(transferToken);
+    }
+
+    @Override
+    public Boolean checkUserUploadAuth(int userId) {
+        return null;
     }
 
     /**

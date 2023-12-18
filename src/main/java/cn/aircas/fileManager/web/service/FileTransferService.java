@@ -13,4 +13,7 @@ public interface FileTransferService {
     int commitTransferInfo( FileTransferInfo fileTransferInfo);
     void transferFromWeb(FileTransferParam fileTransferParam) throws Exception;
     FileBackendTransferProgress getBackendTransferProgress(String transferToken);
+
+    Boolean checkUserUploadAuth(int userId);
 }
+
