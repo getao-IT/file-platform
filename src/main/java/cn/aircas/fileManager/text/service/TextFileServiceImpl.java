@@ -82,6 +82,12 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
         return textList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
 
+    @Override
+    public int getFileUserId(int fileId) {
+        TextInfo textInfo = getById(fileId);
+        return textInfo.getUserId();
+    }
+
     /**
      * 更新文件信息
      * @param fileIdList
@@ -197,6 +203,7 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
         TextSearchParam textSearchParam = new TextSearchParam();
         BeanUtils.copyProperties(fileSearchParam,textSearchParam);
         textSearchParam.setTextIdList(fileSearchParam.getFileIdList());
+        textSearchParam.setAdminLevel(Integer.parseInt(fileSearchParam.getAdminLevel()));
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){
             List<String> params = Arrays.asList(searchParam.split(" "));

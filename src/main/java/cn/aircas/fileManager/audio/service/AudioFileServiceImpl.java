@@ -67,6 +67,11 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
         return textList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
 
+    @Override
+    public int getFileUserId(int fileId) {
+        return this.audioMapper.selectUserId(fileId);
+    }
+
     /**
      * 更新文件信息
      * @param fileIdList
@@ -109,6 +114,7 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
     private AudioSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         AudioSearchParam audioSearchParam = new AudioSearchParam();
         BeanUtils.copyProperties(fileSearchParam,audioSearchParam);
+        audioSearchParam.setAdminLevel(Integer.parseInt(fileSearchParam.getAdminLevel()));
         audioSearchParam.setAudioIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){

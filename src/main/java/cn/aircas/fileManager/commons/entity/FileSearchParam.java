@@ -17,6 +17,11 @@ public class FileSearchParam {
     private int userId;
 
     /**
+     * 用户等级
+     */
+    private String adminLevel;
+
+    /**
      * 文件路径
      */
     private String filePath;

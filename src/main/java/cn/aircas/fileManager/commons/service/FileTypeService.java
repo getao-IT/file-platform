@@ -15,4 +15,6 @@ public interface FileTypeService {
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileInfoByPage(FileSearchParam searchParam);
     List<JSONObject> listFileInfosByIds(List<Integer> fileIdList,boolean content);
+
+    int getFileUserId(int fileId);
 }

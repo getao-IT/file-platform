@@ -2,6 +2,7 @@ package cn.aircas.fileManager.web.service.impl;
 
 import cn.aircas.fileManager.commons.service.FileTypeService;
 import cn.aircas.fileManager.web.dao.FileTransferInfoMapper;
+import cn.aircas.fileManager.web.dao.FileTransferProgressMapper;
 import cn.aircas.fileManager.web.dao.UserUploadAuthMapper;
 import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
@@ -19,11 +20,13 @@ import cn.aircas.utils.file.FileUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -61,7 +64,8 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
      * @return
      */
     @Override
-    public String download(int fileId, FileType fileType) {
+    public String download(int fileId, FileType fileType) throws AuthException, NoSuchPointcutException {
+        authService.checkDownloadAuth(fileId , fileType);
         FileTypeService fileTypeService = fileType.getService();
         return fileTypeService.downloadFileById(fileId);
     }

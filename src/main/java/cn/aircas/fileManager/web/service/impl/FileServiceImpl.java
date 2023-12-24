@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.CharsetEncoder;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,6 +45,9 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private AuthServiceImpl authService;
 
     @Override
     public List<String> getFileType() {
@@ -98,7 +103,10 @@ public class FileServiceImpl implements FileService {
      * @param fileType
      */
     @Override
-    public void deleteFilesByIds(List<Integer> idList, FileType fileType) throws AuthException {
+    public void deleteFilesByIds(List<Integer> idList, FileType fileType) throws Exception {
+        for (Integer integer : idList) {
+            authService.checkDeleteAuth(integer , fileType);
+        }
 
         FileTypeService fileTypeService = fileType.getService();
         fileTypeService.deleteFileByIds(idList);
@@ -117,7 +125,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void updateFileInfo(List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) {
+    public void updateFileInfo(List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) throws AuthException, NoSuchPointcutException {
+        for (Integer integer : fileIdList) {
+            authService.checkUpdateAuth(integer , fileType);
+        }
+
+
         FileTypeService fileTypeService = fileType.getService();
         fileTypeService.updateFileInfoByIds(fileIdList,fileInfo);
     }
@@ -202,6 +215,11 @@ public class FileServiceImpl implements FileService {
         ImageFileServiceImpl service = (ImageFileServiceImpl) fileType.getService();
         String  slicePath = service.makeImageAllGeoSlice(fileType, id, width, height, sliceInsertPath, step);
         return slicePath;
+    }
+
+    @Override
+    public int getFileUserId(int fileId , FileType fileType) {
+        return fileType.getService().getFileUserId(fileId);
     }
 
     /**

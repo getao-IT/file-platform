@@ -14,6 +14,11 @@ public class ImageSearchParam {
     private int userId;
 
     /**
+     * 用户等级
+     */
+    private int adminLevel;
+
+    /**
      * 最小经度
      */
     private double minLon;

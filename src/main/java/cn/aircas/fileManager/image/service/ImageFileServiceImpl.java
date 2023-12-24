@@ -72,7 +72,6 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
      */
     @Override
     public void deleteFileByIds(List<Integer> idList) throws AuthException {
-        authService.checkDeleteAuth();
         List<Image> imageInfoList = this.imageMapper.selectBatchIds(idList);
         Assert.notEmpty(imageInfoList, String.format("影像的路径列表:%s为空", imageInfoList.toString()));
         imageInfoList.forEach(image -> {
@@ -99,6 +98,12 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
         List<Image> imageList = this.imageMapper.selectBatchIds(fileIdList);
         return imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+    }
+
+    @Override
+    public int getFileUserId(int fileId) {
+        Image image = this.imageMapper.selectById(fileId);
+        return image.getUserId();
     }
 
     /**
@@ -166,10 +171,9 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
         if (!fileSearchParam.isIstest()) {
             return this.relateFind(fileSearchParam);
         } else {
-            long totalCount = 10000000030l;
             Integer selectCount = this.imageMapper.selectCount(new QueryWrapper<Image>()
                     .select("id").eq("delete", false).and(qw -> {
-                        qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true);
+                        qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true).or(fileSearchParam.getAdminLevel().equals("0"));
                     }));
             if (selectCount == 0) {
                 return new PageResult<>(0, result, 0);
@@ -185,9 +189,6 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
             imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam , adminLevel);
             List<Image> imageList = imageIPage.getRecords();
             result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
-            if (imageIPage.getTotal() == selectCount) {
-                imageIPage.setTotal(totalCount);
-            }
         }
 
         return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
@@ -202,6 +203,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     private ImageSearchParam convertSearchParam(FileSearchParam fileSearchParam) {
         ImageSearchParam imageSearchParam = new ImageSearchParam();
         BeanUtils.copyProperties(fileSearchParam, imageSearchParam);
+        imageSearchParam.setAdminLevel(Integer.parseInt(fileSearchParam.getAdminLevel()));
         imageSearchParam.setImageIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)) {

@@ -13,6 +13,7 @@ public class TextSearchParam {
      */
     private int userId;
 
+    private int adminLevel;
 
 
     private String userName;

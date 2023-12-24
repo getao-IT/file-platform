@@ -157,6 +157,12 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
         return elecInfoList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
 
+    @Override
+    public int getFileUserId(int fileId) {
+        ElecInfo elecInfo = this.elecMapper.selectById(fileId);
+        return elecInfo.getUserId();
+    }
+
     /**
      * 转换查询参数
      * @param fileSearchParam

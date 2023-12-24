@@ -13,7 +13,7 @@ public class AudioSearchParam {
      */
     private int userId;
 
-
+    private int adminLevel;
 
     private String userName;
 

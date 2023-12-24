@@ -13,11 +13,13 @@ import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
+import cn.aircas.fileManager.web.utils.EncryptUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,8 +80,8 @@ public class FileController {
     //@OperationLog(value = "分页查询影像信息")
     @DeleteMapping
     @ApiOperation("根据id批量删除文件")
-    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Integer> idList, FileType fileType) throws AuthException {
-        this.fileService.deleteFilesByIds(idList,fileType);
+    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Object> idList, FileType fileType) throws Exception {
+        this.fileService.deleteFilesByIds(EncryptUtils.decryptIdAndInt(idList),fileType);
         return new CommonResult<String>().success().message("根据id批量删除文件成功");
     }
 
@@ -119,7 +121,7 @@ public class FileController {
     //@OperationLog(value = "下载影像")
     @ApiOperation("根据id修改文件信息")
     @PutMapping("/{fileIdList}")
-    public CommonResult<String> updateFileInfo(@PathVariable("fileIdList")List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) {
+    public CommonResult<String> updateFileInfo(@PathVariable("fileIdList")List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) throws AuthException, NoSuchPointcutException {
         this.fileService.updateFileInfo(fileIdList,fileType,fileInfo);
         return new CommonResult<String>().success().message("根据id修改文件信息成功");
     }
@@ -192,4 +194,12 @@ public class FileController {
         return new CommonResult<String>().data(result).success().data(result).message("裁切任务后台处理中...");
     }
 
+
+    @Log(value = "返回默认保存位置")
+    @GetMapping("/defaultPath")
+    @ApiOperation("返回默认保存位置")
+    public CommonResult<String> defaultPath() {
+        String restult = "/file-data/image_slice";
+        return new CommonResult<String>().data(restult).success().message("返回默认保存位置");
+    }
 }

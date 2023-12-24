@@ -13,9 +13,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -111,7 +113,7 @@ public class FileTransferController {
     //@OperationLog(value = "下载影像")
     @ApiOperation("根据id下载文件")
     @GetMapping("/download/{id}")
-    public CommonResult<String> download(@PathVariable("id") int id, FileType fileType) {
+    public CommonResult<String> download(@PathVariable("id") int id, FileType fileType) throws AuthException, NoSuchPointcutException {
         String filePath = this.fileTransferService.download(id,fileType);
         return new CommonResult<String>().success().data(filePath).message("根据id下载文件");
     }

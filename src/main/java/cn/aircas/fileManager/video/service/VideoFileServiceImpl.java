@@ -66,6 +66,12 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
         return videoInfoList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
 
+    @Override
+    public int getFileUserId(int fileId) {
+        VideoInfo videoInfo = getById(fileId);
+        return videoInfo.getUserId();
+    }
+
     /**
      * 更新文件信息
      * @param fileIdList
@@ -109,7 +115,7 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
         VideoSearchParam videoSearchParam = new VideoSearchParam();
         BeanUtils.copyProperties(fileSearchParam,videoSearchParam);
         videoSearchParam.setVideoIdList(fileSearchParam.getFileIdList());
-
+        videoSearchParam.setAdminLevel(Integer.parseInt(fileSearchParam.getAdminLevel()));
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){
             List<String> params = Arrays.asList(searchParam.split(" "));

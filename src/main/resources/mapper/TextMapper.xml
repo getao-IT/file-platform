@@ -29,7 +29,7 @@
     <select id="listTextInfos" resultMap="TextMap" parameterType="cn.aircas.fileManager.text.entity.TextSearchParam">
         select * from file_text_info
         <where>
-            (user_id = #{textSearchParam.userId})
+            (user_id = #{textSearchParam.userId} or #{textSearchParam.adminLevel} = 0 or is_public = true)
             <if test="textSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
