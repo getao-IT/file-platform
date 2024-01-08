@@ -6,8 +6,6 @@ import cn.aircas.fileManager.web.entity.FileTransferInfo;
 import cn.aircas.fileManager.web.service.impl.AbstractFileTypeTransferService;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.mp3.MP3AudioHeader;

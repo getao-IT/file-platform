@@ -18,4 +18,5 @@ public interface AudioMapper extends BaseMapper<AudioInfo> {
     List<Integer> listAudioIdBySearchParam(@Param(value = "audioSearchParam") AudioSearchParam audioSearchParam);
     IPage<AudioInfo> listAudioInfos(Page<AudioInfo> pageInfo, @Param(value = "audioSearchParam") AudioSearchParam audioSearchParam);
 
+    int selectUserId(@Param("fileId") int fileId);
 }

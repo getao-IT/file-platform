@@ -16,6 +16,8 @@ import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.gdal.gdal.Dataset;
+import org.gdal.gdal.gdal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -117,6 +119,13 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
             String fileRelativePath = FileUtils.getStringPath(relativeDir,fileTransferParam.getFile().getOriginalFilename());
             FileTypeTransferService fileTypeTransferService = fileType.getTransferService();
             fileTypeTransferService.transferFromWeb(fileRelativePath,fileTransferInfo);
+            // 若不存在ORV文件，则构建
+            String filePath = FileUtils.getStringPath(this.rootPath, fileRelativePath);
+            File ovrFile = new File(filePath + ".ovr");
+            if (!ovrFile.exists()) {
+                this.buildOverviews(filePath, new int[]{2,4,8});
+                log.info("{} 金字塔文件生成中...", filePath);
+            }
         }
         fileTransferParam.setFile(null);
     }
@@ -163,6 +172,7 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, fileData.length);
         mappedByteBuffer.put(fileData);
         // 释放
+        //mappedByteBuffer.clear();
         freedMappedByteBuffer(mappedByteBuffer);
         fileChannel.close();
 
@@ -193,6 +203,10 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
                         getCleanerMethod.setAccessible(true);
                         sun.misc.Cleaner cleaner = (sun.misc.Cleaner) getCleanerMethod.invoke(mappedByteBuffer,
                                 new Object[0]);
+                        // Java8之后，好像将Cleaner归类到了jdk.internal.ref下
+                        // CLASSPATH .;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar
+                       /* Cleaner cleaner = (Cleaner) getCleanerMethod.invoke(mappedByteBuffer,
+                                new Object[0]);*/
                         cleaner.clean();
                     } catch (Exception e) {
                         log.error("clean MappedByteBuffer error!!!", e);
@@ -207,5 +221,16 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         }
     }
 
-
+    /**
+     * 构建文件金字塔
+     * @param imagePath
+     * @param overviewLists
+     */
+    @Async
+    public void buildOverviews(String imagePath, int[] overviewLists) {
+        gdal.SetConfigOption("GDAL_PAM_ENABLED", "FALSE");
+        Dataset dataset = gdal.Open(imagePath);
+        dataset.BuildOverviews(overviewLists);
+        dataset.delete();
+    }
 }
