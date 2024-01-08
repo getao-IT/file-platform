@@ -16,7 +16,7 @@ import java.util.Set;
 
 public interface FileService {
     List<String> getFileType();
-    List<String> listFolderFiles(String path);
+    List<JSONObject> listFolderFiles(String path);
     void deleteFilesByIds(List<Integer> idList, FileType fileType);
     List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam);
     PageResult<JSONObject> listFileByPage(FileSearchParam fileSearchParam);

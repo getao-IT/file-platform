@@ -7,8 +7,6 @@ import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.web.service.impl.AbstractFileTypeTransferService;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;

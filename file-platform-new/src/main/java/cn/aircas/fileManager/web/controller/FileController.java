@@ -1,24 +1,25 @@
 package cn.aircas.fileManager.web.controller;
 
-import cn.aircas.fileManager.elec.service.ElecFileServiceImpl;
 import cn.aircas.fileManager.image.entity.Slice;
 import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
-import cn.aircas.fileManager.web.entity.database.FileTextInfo;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
-import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
+import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.gdal.gdal.Dataset;
+import org.gdal.gdal.gdal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,9 @@ import java.util.Set;
 @RequestMapping("/file")
 @Slf4j
 public class FileController {
+
+    @Value("${sys.rootPath}")
+    private String rootPath;
 
     @Autowired
     FileService fileService;
@@ -132,9 +136,9 @@ public class FileController {
     @Log(value = "获取子文件夹list")
     //@OperationLog("获取子文件夹list")
     @GetMapping("/folder")
-    public CommonResult<List<String>> getFolderList(String path) {
-        List<String> folderList = fileService.listFolderFiles(path);
-        return new CommonResult<List<String>>().data(folderList).success().message("获取子文件夹数据成功");
+    public CommonResult<List<JSONObject>> getFolderList(String path) {
+        List<JSONObject> folderList = fileService.listFolderFiles(path);
+        return new CommonResult<List<JSONObject>>().data(folderList).success().message("获取子文件夹数据成功");
     }
 
     /**
@@ -200,4 +204,15 @@ public class FileController {
         return new CommonResult<String>().data(restult).success().message("返回默认保存位置");
     }
 
+    @Log(value = "构建金字塔")
+    @GetMapping("/buildOverviews")
+    @ApiOperation("构建金字塔")
+    public CommonResult<String> buildOverviews(String imagePath, int[] overviewLists) {
+        gdal.AllRegister();
+        gdal.SetConfigOption("GDAL_PAM_ENABLED", "FALSE");
+        Dataset dataset = gdal.Open(FileUtils.getStringPath(rootPath, imagePath));
+        dataset.BuildOverviews(overviewLists);
+        dataset.delete();
+        return new CommonResult<String>().success().message("构建金字塔成功");
+    }
 }

@@ -1,5 +1,6 @@
 package cn.aircas.fileManager.web.config;
 
+import io.xjar.XCryptos;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -20,6 +21,8 @@ public class WebMVCConfiguration extends WebMvcConfigurationSupport {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        /*registry.addResourceHandler("/cfile/**")
+                .addResourceLocations("file:c:/");*/
         if (this.staticPattern==null || this.staticLocation==null)
             return;
 
