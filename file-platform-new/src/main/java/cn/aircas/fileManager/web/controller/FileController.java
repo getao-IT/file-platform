@@ -196,6 +196,7 @@ public class FileController {
     @ApiOperation("返回默认保存位置")
     public CommonResult<String> defaultPath() {
         String restult = "/file-data/image_slice";
+        //asd
         return new CommonResult<String>().data(restult).success().message("返回默认保存位置");
     }
 
