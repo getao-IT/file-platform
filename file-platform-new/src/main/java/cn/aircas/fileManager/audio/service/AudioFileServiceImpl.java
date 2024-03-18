@@ -8,6 +8,7 @@ import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.commons.service.FileTypeService;
+import cn.aircas.fileManager.web.service.UserInfoService;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +35,12 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
 
     @Autowired
     private AudioMapper audioMapper;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -65,6 +73,16 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
     public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
         List<AudioInfo> textList = this.audioMapper.selectBatchIds(fileIdList);
         return textList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+    }
+
+    /**
+     * 更新文件信息
+     * @param fileIdList
+     * @param fileInfo
+     */
+    @Override
+    public int getFileUserId(int fileId) {
+        return this.audioMapper.selectUserId(fileId);
     }
 
     /**
@@ -109,6 +127,9 @@ public class AudioFileServiceImpl extends ServiceImpl<AudioMapper, AudioInfo> im
     private AudioSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         AudioSearchParam audioSearchParam = new AudioSearchParam();
         BeanUtils.copyProperties(fileSearchParam,audioSearchParam);
+        JSONObject userInfo = this.userInfoService.getUserInfoByToken(request.getHeader("token")).getData();
+        audioSearchParam.setAdminLevel(userInfo.getString("admin_level"));
+        audioSearchParam.setUserId(userInfo.getInteger("id"));
         audioSearchParam.setAudioIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){

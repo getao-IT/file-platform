@@ -13,6 +13,7 @@ import cn.aircas.fileManager.text.entity.TextContentInfo;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.text.entity.TextSearchParam;
 import cn.aircas.fileManager.web.service.FileContentService;
+import cn.aircas.fileManager.web.service.UserInfoService;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +53,12 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
 
     @Autowired
     ElecMapper elecMapper;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -157,6 +165,12 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
         return elecInfoList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
 
+    @Override
+    public int getFileUserId(int fileId) {
+        ElecInfo elecInfo = this.elecMapper.selectById(fileId);
+        return elecInfo.getUserId();
+    }
+
     /**
      * 转换查询参数
      * @param fileSearchParam
@@ -164,16 +178,16 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
      */
     private ElecSearchParam convertSearchParam(FileSearchParam fileSearchParam){
         ElecSearchParam elecSearchParam = new ElecSearchParam();
-        System.out.println(elecSearchParam);
         BeanUtils.copyProperties(fileSearchParam,elecSearchParam);
-        System.out.println(elecSearchParam);
         elecSearchParam.setElecIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)){
             List<String> params = Arrays.asList(searchParam.split(" "));
             elecSearchParam.setSearchParamList(params);
         }
-
+        JSONObject userInfo = this.userInfoService.getUserInfoByToken(request.getHeader("token")).getData();
+        elecSearchParam.setAdminLevel(userInfo.getString("admin_level"));
+        elecSearchParam.setUserId(userInfo.getInteger("id"));
         elecSearchParam.setElecName(fileSearchParam.getFileName());
         return elecSearchParam;
     }

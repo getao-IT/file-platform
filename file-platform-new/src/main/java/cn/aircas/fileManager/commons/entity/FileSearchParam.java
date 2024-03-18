@@ -17,6 +17,11 @@ public class FileSearchParam {
     private int userId;
 
     /**
+     * 用户等级
+     */
+    private String adminLevel;
+
+    /**
      * 文件路径
      */
     private String filePath;
@@ -105,7 +110,7 @@ public class FileSearchParam {
      * 传感器名称
      */
     private String sensorName;
-    private boolean isPublic = true;
+    private Boolean isPublic;
     /**
      * 是否公开
      */

@@ -29,7 +29,10 @@
     <select id="listVideoInfos" resultMap="VideoMap" parameterType="cn.aircas.fileManager.video.entity.VideoSearchParam">
         select * from file_video_info
         <where>
-            (user_id = #{videoSearchParam.userId} or is_public = TRUE)
+            <if test="videoSearchParam.adminLevel!='0'">
+                (user_id = #{videoSearchParam.userId} or is_public = true)
+            </if>
+
             <if test="videoSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="videoSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">

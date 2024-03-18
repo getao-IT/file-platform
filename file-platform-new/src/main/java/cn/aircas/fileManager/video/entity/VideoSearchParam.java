@@ -13,7 +13,10 @@ public class VideoSearchParam {
      */
     private int userId;
 
-
+    /**
+     * 用户等级
+     */
+    private String adminLevel;
 
     private String userName;
 

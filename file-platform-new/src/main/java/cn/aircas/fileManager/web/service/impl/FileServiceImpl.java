@@ -4,29 +4,26 @@ import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.text.entity.TextInfo;
-import cn.aircas.fileManager.web.entity.database.FileTextInfo;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.commons.service.FileTypeService;
-import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
+import javax.security.auth.message.AuthException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
+
+
 
 /**
  * @Vanishrain
@@ -35,11 +32,19 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FileServiceImpl implements FileService {
+
     @Value("${sys.uploadRootPath}")
     String uploadRootPath;
 
     @Value("${sys.rootPath}")
     String rootPath;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private AuthServiceImpl authService;
+
 
     @Override
     public List<String> getFileType() {
@@ -50,11 +55,14 @@ public class FileServiceImpl implements FileService {
         return fileTypeList;
     }
 
+
     @Override
     public PageResult<JSONObject> getContent(int pageSize, int pageNo,FileType fileType, int fileId) {
         FileContentService fileContentService = fileType.getContentService();
         return fileContentService.getContent(pageSize, pageNo,fileId);
     }
+
+
 
     /**
      * 列出文件夹下的文件夹
@@ -89,16 +97,22 @@ public class FileServiceImpl implements FileService {
         return filePathList;
     }
 
+
+
     /**
      * 根据id批量删除文件
      * @param idList
      * @param fileType
      */
     @Override
-    public void deleteFilesByIds(List<Integer> idList, FileType fileType) {
+    public void deleteFilesByIds(List<Integer> idList, FileType fileType) throws Exception {
+        for (Integer integer : idList) {
+            authService.checkDeleteAuth(integer , fileType);
+        }
         FileTypeService fileTypeService = fileType.getService();
         fileTypeService.deleteFileByIds(idList);
     }
+
 
     @Override
     public List<Integer> listFileIdBySearchParam(FileSearchParam fileSearchParam) {
@@ -112,11 +126,16 @@ public class FileServiceImpl implements FileService {
         return fileType.getService().listFileIdBySearchParam(fileSearchParam);
     }
 
+
     @Override
-    public void updateFileInfo(List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) {
+    public void updateFileInfo(List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) throws AuthException, NoSuchPointcutException {
+        /*for (Integer integer : fileIdList) {
+            authService.checkUpdateAuth(integer , fileType);
+        }*/
         FileTypeService fileTypeService = fileType.getService();
         fileTypeService.updateFileInfoByIds(fileIdList,fileInfo);
     }
+
 
     /**
      * 分页查询文件信息
@@ -130,6 +149,7 @@ public class FileServiceImpl implements FileService {
         return fileTypeService.listFileInfoByPage(fileSearchParam);
     }
 
+
     /**
      * 根据id批量获取文件信息
      * @param idList
@@ -141,6 +161,7 @@ public class FileServiceImpl implements FileService {
         FileTypeService fileTypeService = fileType.getService();
         return fileTypeService.listFileInfosByIds(idList,content);
     }
+
 
     /**
      * 获取文件条数
@@ -166,6 +187,7 @@ public class FileServiceImpl implements FileService {
         return count;
     }
 
+
     /**
      * 裁切影像得到切片图片
      * @param fileType
@@ -181,6 +203,7 @@ public class FileServiceImpl implements FileService {
         ImageFileServiceImpl service = (ImageFileServiceImpl) fileType.getService();
         service.makeImageGeoSlice(fileType, id, minLon, minLat, width, height, sliceInsertPath, storage);
     }
+
 
     /**
      * 裁切影像得到切片图片
@@ -198,6 +221,13 @@ public class FileServiceImpl implements FileService {
         service.makeImageAllGeoSlice(fileType, id, width, height, sliceInsertPath, step, storage);
     }
 
+
+    @Override
+    public int getFileUserId(int fileId , FileType fileType) {
+        return fileType.getService().getFileUserId(fileId);
+    }
+
+
     /**
      * 批量查询文件内容所属文件信息成功
      * @param fileType
@@ -211,6 +241,7 @@ public class FileServiceImpl implements FileService {
         return fileByContentId;
     }
 
+
     public void addEndTimeOneDay(FileSearchParam fileSearchParam){
         Date endTime = fileSearchParam.getEndTime();
         if (endTime == null)
@@ -220,5 +251,4 @@ public class FileServiceImpl implements FileService {
         calendar.add(Calendar.DATE,1);
         fileSearchParam.setEndTime(calendar.getTime());
     }
-
 }

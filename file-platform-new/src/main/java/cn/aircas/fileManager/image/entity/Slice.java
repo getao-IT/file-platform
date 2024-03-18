@@ -32,7 +32,10 @@ public class Slice {
      * 步长
      */
     private int step;
-
+    /**
+     * 是否入库
+     */
+    private boolean isInsert;
     /**
      * 样本类型
      */

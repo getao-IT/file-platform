@@ -16,13 +16,14 @@ import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
+import javax.security.auth.message.AuthException;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
@@ -33,6 +34,8 @@ import java.security.PrivilegedAction;
 import java.util.Date;
 import java.util.Map;
 
+
+
 /**
  * @author Vanishrain
  * 文件传输服务
@@ -40,6 +43,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,FileTransferInfo> implements FileTransferService {
+
     @Value("${sys.rootPath}")
     String rootPath;
 
@@ -47,7 +51,11 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
     String uploadRootPath;
 
     @Autowired
+    private AuthServiceImpl authService;
+
+    @Autowired
     private FileTransferProgressService fileTransferProgressService;
+
 
     /**
      * 下载文件
@@ -56,7 +64,8 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
      * @return
      */
     @Override
-    public String download(int fileId, FileType fileType) {
+    public String download(int fileId, FileType fileType) throws AuthException, NoSuchPointcutException {
+        authService.checkDownloadAuth(fileId , fileType);
         FileTypeService fileTypeService = fileType.getService();
         return fileTypeService.downloadFileById(fileId);
     }
@@ -78,6 +87,7 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         fileTypeTransferService.transferFromBackend(fileTransferInfo.getFileSaveDir(),relativeSaveDir,fileTransferInfo);
     }
 
+
     /**
      * 记录文件上传提交的信息
      * @param fileTransferInfo
@@ -97,6 +107,7 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         this.save(fileTransferInfo);
         return fileTransferInfo.getId();
     }
+
 
     @Override
     public void transferFromWeb(FileTransferParam fileTransferParam) throws Exception {
@@ -119,16 +130,20 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
             String fileRelativePath = FileUtils.getStringPath(relativeDir,fileTransferParam.getFile().getOriginalFilename());
             FileTypeTransferService fileTypeTransferService = fileType.getTransferService();
             fileTypeTransferService.transferFromWeb(fileRelativePath,fileTransferInfo);
-            // 若不存在ORV文件，则构建
-            String filePath = FileUtils.getStringPath(this.rootPath, fileRelativePath);
-            File ovrFile = new File(filePath + ".ovr");
-            if (!ovrFile.exists()) {
-                this.buildOverviews(filePath, new int[]{2,4,8});
-                log.info("{} 金字塔文件生成中...", filePath);
+            // 如果上传的文件为IMAGE，若不存在ORV文件，则构建
+            if (fileType == FileType.IMAGE) {
+                String filePath = FileUtils.getStringPath(this.rootPath, fileRelativePath);
+                File ovrFile = new File(filePath + ".ovr");
+                if (!ovrFile.exists()) {
+                    this.buildOverviews(filePath, new int[]{2,4,8});
+                    log.info("{} 金字塔文件生成中...", filePath);
+                }
             }
+            authService.saveOrUpdateUserFileAuth(fileTransferParam);
         }
         fileTransferParam.setFile(null);
     }
+
 
     @Override
     public FileBackendTransferProgress getBackendTransferProgress(String transferToken) {
@@ -136,6 +151,13 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         Map<String, FileTransferStatus> finishedFileNameMap = progress.getFinishedFileNameMap();
         return FileBackendTransferProgressService.getTransferProgress(transferToken);
     }
+
+
+    @Override
+    public Boolean checkUserUploadAuth(int userId) {
+        return null;
+    }
+
 
     /**
      * 检查文件上传md5，如果没有则创建一条md5信息
@@ -182,6 +204,7 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
         fileTransferParam.setChunk(fileTransferParam.getChunk() + 1);
     }
 
+
     /**
      * 在MappedByteBuffer释放后再对它进行读操作的话就会引发jvm crash，在并发情况下很容易发生
      * 正在释放时另一个线程正开始读取，于是crash就发生了。所以为了系统稳定性释放前一般需要检查是否还有线程在读或写
@@ -220,6 +243,7 @@ public class FileTransferServiceImpl extends ServiceImpl<FileTransferInfoMapper,
             e.printStackTrace();
         }
     }
+
 
     /**
      * 构建文件金字塔

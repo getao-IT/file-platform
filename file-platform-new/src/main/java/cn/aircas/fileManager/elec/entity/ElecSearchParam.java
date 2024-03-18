@@ -13,7 +13,7 @@ public class ElecSearchParam {
      */
     private int userId;
 
-
+    private String adminLevel;
 
     private String userName;
 

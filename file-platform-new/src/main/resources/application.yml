@@ -71,6 +71,7 @@ value:
     user-register: http://192.168.2.156:31151/api/v1/users/login
     create-dataset-url: http://127.0.0.1:8082/geoai/V1/label-platform/dataset/createDatasetAndProject
     dispatch: http://192.168.3.13:18086/geoai/v1/service/dispatch
+    user-query-name: http://192.168.2.156:31151/api/v1/users/simplified_info/get?user_ids={user_ids}
   static:
     path-pattern: /static/file/**
     static-locations: file:c:/

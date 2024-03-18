@@ -36,7 +36,13 @@
     <select id="listImageInfosByPage" resultMap="ImageMap" parameterType="cn.aircas.fileManager.image.entity.ImageSearchParam">
         select * from file_image_info
         <where>
-            (user_id = #{imageSearchParam.userId} or is_public = TRUE) and delete = False
+            <if test="adminLevel!='0'">
+                (user_id = #{imageSearchParam.userId} or is_public = true) and delete = False
+            </if>
+            <if test="adminLevel=='0'">
+                delete = False
+            </if>
+
             <if test="imageSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="imageSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">

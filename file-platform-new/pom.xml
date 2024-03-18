@@ -196,6 +196,7 @@
     </pluginRepositories>
 
     <build>
+        <finalName>file-platform</finalName>
         <plugins>
             <!-- 混淆插件 -->
             <!--<plugin>

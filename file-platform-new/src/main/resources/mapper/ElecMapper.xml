@@ -28,7 +28,9 @@
     <select id="listElecInfos" resultMap="ElecMap" parameterType="cn.aircas.fileManager.elec.entity.ElecSearchParam">
         select * from file_elec_info
         <where>
-            user_id = #{elecSearchParam.userId}
+            <if test="elecSearchParam.adminLevel!='0'">
+                (user_id = #{elecSearchParam.userId} or is_public = true)
+            </if>
             <if test="elecSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="elecSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">

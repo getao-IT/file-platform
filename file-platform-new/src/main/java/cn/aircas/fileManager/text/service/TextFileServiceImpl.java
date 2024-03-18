@@ -8,6 +8,7 @@ import cn.aircas.fileManager.text.dao.TextMapper;
 import cn.aircas.fileManager.text.entity.TextContentInfo;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.text.entity.TextSearchParam;
+import cn.aircas.fileManager.web.service.UserInfoService;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +40,12 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
 
     @Autowired
     private TextFileContentServiceImpl textFileContentService;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -80,6 +88,17 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
 
         List<TextInfo> textList = this.textMapper.selectBatchIds(fileIdList);
         return textList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+    }
+
+    /**
+     * 更新文件信息
+     * @param fileIdList
+     * @param fileInfo
+     */
+    @Override
+    public int getFileUserId(int fileId) {
+        TextInfo textInfo = getById(fileId);
+        return textInfo.getUserId();
     }
 
     /**
@@ -202,7 +221,9 @@ public class TextFileServiceImpl extends ServiceImpl<TextMapper, TextInfo> imple
             List<String> params = Arrays.asList(searchParam.split(" "));
             textSearchParam.setSearchParamList(params);
         }
-
+        JSONObject userInfo = this.userInfoService.getUserInfoByToken(request.getHeader("token")).getData();
+        textSearchParam.setAdminLevel(userInfo.getString("admin_level"));
+        textSearchParam.setUserId(userInfo.getInteger("id"));
         textSearchParam.setTextName(fileSearchParam.getFileName());
         return textSearchParam;
     }

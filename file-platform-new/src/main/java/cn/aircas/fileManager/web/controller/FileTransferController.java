@@ -1,6 +1,7 @@
 package cn.aircas.fileManager.web.controller;
 
 
+import cn.aircas.fileManager.commons.annnotation.AuthLog;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
@@ -8,13 +9,16 @@ import cn.aircas.fileManager.web.entity.FileTransferParam;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.web.service.FileTransferService;
+import cn.aircas.fileManager.web.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -58,6 +62,13 @@ public class FileTransferController {
     }
 
 
+    @ApiOperation("检查用户上传权限")
+    @GetMapping(value = "/checkAuth")
+    public CommonResult<Boolean> checkUserUploadAuth(int userId) {
+        Boolean blag =  fileTransferService.checkUserUploadAuth(userId);
+        return new CommonResult<Boolean>().success().data(true).message("");
+    }
+
     @Log(value = "验证文件md5")
     //@OperationLog("验证md5")
     @PostMapping(value = "/checkFileMd5")
@@ -67,6 +78,7 @@ public class FileTransferController {
         return new CommonResult<String>().data(null).success().message("验证文件md5成功");
     }
 
+    @AuthLog
     @Log(value = "分块上传影像")
     //@OperationLog("分块上传影像")
     @PostMapping(value = "/byChuck")
@@ -102,7 +114,7 @@ public class FileTransferController {
     //@OperationLog(value = "下载影像")
     @ApiOperation("根据id下载文件")
     @GetMapping("/download/{id}")
-    public CommonResult<String> download(@PathVariable("id") int id, FileType fileType) {
+    public CommonResult<String> download(@PathVariable("id") int id, FileType fileType) throws AuthException, NoSuchPointcutException {
         String filePath = this.fileTransferService.download(id,fileType);
         return new CommonResult<String>().success().data(filePath).message("根据id下载文件");
     }

@@ -1,7 +1,5 @@
 package cn.aircas.fileManager.image.service;
 
-import cn.aircas.fileManager.audio.dao.AudioMapper;
-import cn.aircas.fileManager.audio.entity.AudioInfo;
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
@@ -10,6 +8,8 @@ import cn.aircas.fileManager.image.dao.ImageMapper;
 import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.image.entity.ImageSearchParam;
 import cn.aircas.fileManager.web.entity.enums.FileType;
+import cn.aircas.fileManager.web.service.UserInfoService;
+import cn.aircas.fileManager.web.service.impl.AuthServiceImpl;
 import cn.aircas.utils.date.DateUtils;
 import cn.aircas.utils.file.FileUtils;
 import cn.aircas.utils.image.ImageInfo;
@@ -21,34 +21,31 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xpath.operations.Bool;
-import org.bytedeco.opencv.presets.opencv_core;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
 import javax.imageio.ImageIO;
+import javax.security.auth.message.AuthException;
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
+
 
 @Service("IMAGE-SERVICE")
 @Slf4j
@@ -62,6 +59,14 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
 
     @Autowired
     private ImageMapper imageMapper;
+    @Autowired
+    HttpServletRequest request;
+
+    @Autowired
+    private AuthServiceImpl authService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -75,10 +80,14 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
      * @param idList
      */
     @Override
-    public void deleteFileByIds(List<Integer> idList) {
+    public void deleteFileByIds(List<Integer> idList) throws AuthException {
         List<Image> imageInfoList = this.imageMapper.selectBatchIds(idList);
         Assert.notEmpty(imageInfoList, String.format("影像的路径列表:%s为空", imageInfoList.toString()));
-        imageInfoList.forEach(image -> image.setDelete(true));
+        imageInfoList.forEach(image -> {
+            image.setDelete(true);
+            authService.deleteToUpdateUserFileAuth(image);
+        });
+
         this.updateBatchById(imageInfoList);
 //        for (Image imageInfo : imageInfoList) {
 //            String filePath = FileUtils.getStringPath(this.rootPath, imageInfo.getPath());
@@ -100,6 +109,12 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
         return imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
     }
 
+    @Override
+    public int getFileUserId(int fileId) {
+        Image image = this.imageMapper.selectById(fileId);
+        return image.getUserId();
+    }
+
     /**
      * 更新文件信息
      *
@@ -111,6 +126,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
         UpdateWrapper<Image> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set(fileInfo.getDescription() != null, "description", fileInfo.getDescription())
                 .set(fileInfo.getKeywords() != null, "keywords", fileInfo.getKeywords())
+                .set(fileInfo.getIsPublic() != null, "is_public", fileInfo.getIsPublic())
                 .set(fileInfo.getSource() != null, "source", fileInfo.getSource()).in("id", fileIdList);
         this.update(updateWrapper);
 
@@ -146,7 +162,9 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     public PageResult<JSONObject> relateFind(FileSearchParam fileSearchParam) {
         ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
         Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
-        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+        JSONObject userInfo = this.userInfoService.getUserInfoByToken(request.getHeader("token")).getData();
+        imageSearchParam.setUserId(userInfo.getInteger("id"));
+        IPage<Image> imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam , userInfo.getString("admin_level"));
         List<Image> imageList = imageIPage.getRecords();
         List<JSONObject> result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
         return new PageResult<>(imageIPage.getCurrent(), result, imageIPage.getTotal());
@@ -168,7 +186,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
             long totalCount = 10000000030l;
             Integer selectCount = this.imageMapper.selectCount(new QueryWrapper<Image>()
                     .select("id").eq("delete", false).and(qw -> {
-                        qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true);
+                        qw.eq("user_id", fileSearchParam.getUserId()).or().eq("is_public", true).or(fileSearchParam.getAdminLevel().equals("0"));
                     }));
             if (selectCount == 0) {
                 return new PageResult<>(0, result, 0);
@@ -178,9 +196,10 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
             if (fileSearchParam.getPageNo() > pages) {
                 fileSearchParam.setPageNo(fileSearchParam.getPageNo() % pages == 0 ? pages : fileSearchParam.getPageNo() % pages);
             }
+            String adminLevel = request.getParameter("adminLevel");
             ImageSearchParam imageSearchParam = convertSearchParam(fileSearchParam);
             Page<Image> page = new Page<>(fileSearchParam.getPageNo(), fileSearchParam.getPageSize());
-            imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam);
+            imageIPage = this.imageMapper.listImageInfosByPage(page, imageSearchParam , adminLevel);
             List<Image> imageList = imageIPage.getRecords();
             result = imageList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
             if (imageIPage.getTotal() == selectCount) {
@@ -200,6 +219,7 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     private ImageSearchParam convertSearchParam(FileSearchParam fileSearchParam) {
         ImageSearchParam imageSearchParam = new ImageSearchParam();
         BeanUtils.copyProperties(fileSearchParam, imageSearchParam);
+        //imageSearchParam.setAdminLevel(Integer.parseInt(fileSearchParam.getAdminLevel()));
         imageSearchParam.setImageIdList(fileSearchParam.getFileIdList());
         String searchParam = fileSearchParam.getSearchParam();
         if (StringUtils.isNotBlank(searchParam)) {

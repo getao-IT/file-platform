@@ -10,21 +10,25 @@ import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileService;
+import cn.aircas.fileManager.web.utils.EncryptUtils;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.reflect.NoSuchPointcutException;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
+import javax.security.auth.message.AuthException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+
 
 @RestController
 @Api(tags = "文件管理接口")
@@ -40,6 +44,7 @@ public class FileController {
 
     @Autowired
     ImageFileServiceImpl imageFileService;
+
 
     /**
      * 查询文件信息folder
@@ -81,8 +86,8 @@ public class FileController {
     //@OperationLog(value = "分页查询影像信息")
     @DeleteMapping
     @ApiOperation("根据id批量删除文件")
-    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Integer> idList, FileType fileType) {
-        this.fileService.deleteFilesByIds(idList,fileType);
+    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Object> idList, FileType fileType) throws Exception {
+        this.fileService.deleteFilesByIds(EncryptUtils.decryptIdAndInt(idList),fileType);
         return new CommonResult<String>().success().message("根据id批量删除文件成功");
     }
 
@@ -122,7 +127,7 @@ public class FileController {
     //@OperationLog(value = "下载影像")
     @ApiOperation("根据id修改文件信息")
     @PutMapping("/{fileIdList}")
-    public CommonResult<String> updateFileInfo(@PathVariable("fileIdList")List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) {
+    public CommonResult<String> updateFileInfo(@PathVariable("fileIdList")List<Integer> fileIdList, FileType fileType, FileInfo fileInfo) throws AuthException, NoSuchPointcutException {
         this.fileService.updateFileInfo(fileIdList,fileType,fileInfo);
         return new CommonResult<String>().success().message("根据id修改文件信息成功");
     }
@@ -206,7 +211,7 @@ public class FileController {
     @Log(value = "构建金字塔")
     @GetMapping("/buildOverviews")
     @ApiOperation("构建金字塔")
-    public CommonResult<String> buildOverviews(String imagePath, int[] overviewLists) {
+    public CommonResult<String> buildOverviews(String imagePath, @RequestParam int[] overviewLists) {
         gdal.AllRegister();
         gdal.SetConfigOption("GDAL_PAM_ENABLED", "FALSE");
         Dataset dataset = gdal.Open(FileUtils.getStringPath(rootPath, imagePath));

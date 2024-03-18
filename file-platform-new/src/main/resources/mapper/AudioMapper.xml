@@ -28,7 +28,9 @@
     <select id="listAudioInfos" resultMap="AudioMap" parameterType="cn.aircas.fileManager.audio.entity.AudioSearchParam">
         select * from file_audio_info
         <where>
-            (user_id = #{audioSearchParam.userId})
+            <if test="audioSearchParam.adminLevel!='0'">
+                (user_id = #{audioSearchParam.userId} or is_public = true)
+            </if>
             <if test="audioSearchParam.searchParamList!=null">
                 AND
                 <foreach collection="audioSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
@@ -115,6 +117,9 @@
             </if>
         </where>
         order by create_time DESC
+    </select>
+    <select id="selectUserId" resultType="java.lang.Integer">
+        select user_id from file_audio_info where id = #{fileId}
     </select>
 
 </mapper>

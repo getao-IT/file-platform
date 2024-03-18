@@ -49,7 +49,9 @@ public abstract class AbstractFileTypeTransferService<T> implements FileTypeTran
         File srcDirFile = FileUtils.getFile(this.rootPath,srcDir);
         List<File> fileList = null;
         fileTransferInfo.setIsCurrentOnly(true);
-        if (fileTransferInfo.getIsCurrentOnly()) {
+        if (srcDirFile.isFile() && FilenameUtils.isExtension(srcDirFile.getName(), getSupportFileType())) {
+            fileList.add(srcDirFile);
+        } else if (fileTransferInfo.getIsCurrentOnly()) {
             fileList = Arrays.asList(Objects.requireNonNull(srcDirFile.listFiles((dir, name) -> FilenameUtils.isExtension(name, getSupportFileType()))));
         } else {
             List<String> fileListPath = new ArrayList<>();

@@ -7,6 +7,7 @@ import cn.aircas.fileManager.commons.service.FileTypeService;
 import cn.aircas.fileManager.video.dao.VideoMapper;
 import cn.aircas.fileManager.video.entity.VideoInfo;
 import cn.aircas.fileManager.video.entity.VideoSearchParam;
+import cn.aircas.fileManager.web.service.UserInfoService;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +34,12 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
 
     @Autowired
     VideoMapper videoMapper;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public String downloadFileById(int fileId) {
@@ -64,6 +72,17 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
     public List<JSONObject> listFileInfosByIds(List<Integer> fileIdList, boolean content) {
         List<VideoInfo> videoInfoList = this.videoMapper.selectBatchIds(fileIdList);
         return videoInfoList.stream().map(JSONObject::toJSONString).map(JSONObject::parseObject).collect(Collectors.toList());
+    }
+
+    /**
+     * 更新文件信息
+     * @param fileIdList
+     * @param fileInfo
+     */
+    @Override
+    public int getFileUserId(int fileId) {
+        VideoInfo videoInfo = getById(fileId);
+        return videoInfo.getUserId();
     }
 
     /**
@@ -115,7 +134,9 @@ public class VideoFileServiceImpl extends ServiceImpl<VideoMapper, VideoInfo> im
             List<String> params = Arrays.asList(searchParam.split(" "));
             videoSearchParam.setSearchParamList(params);
         }
-
+        JSONObject userInfo = this.userInfoService.getUserInfoByToken(request.getHeader("token")).getData();
+        videoSearchParam.setAdminLevel(userInfo.getString("admin_level"));
+        videoSearchParam.setUserId(userInfo.getInteger("id"));
         videoSearchParam.setVideoName(fileSearchParam.getFileName());
         return videoSearchParam;
     }
