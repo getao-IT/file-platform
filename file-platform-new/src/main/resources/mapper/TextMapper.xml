@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.text.dao.TextMapper">
+
+    <resultMap type="cn.aircas.fileManager.text.entity.TextInfo" id="TextMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="textName" column="text_name" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="batchNumber" column="batch_number" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    
+    <insert id="batchInsertTextInfo" parameterType="java.util.List">
+        insert into file_text_info (text_name,path,user_id,source,user_name,is_public,create_time,keywords,size,
+        line_count,file_length,batch_number)
+        values
+        <foreach collection="textInfoList" item="textInfo" separator=",">
+            (#{textInfo.textName},#{textInfo.path},#{textInfo.userId},#{textInfo.source},#{textInfo.userName}
+            ,#{textInfo.isPublic},#{textInfo.createTime},#{textInfo.keywords},#{textInfo.size}
+            ,#{textInfo.lineCount},#{textInfo.fileLength},#{textInfo.batchNumber})
+        </foreach>
+    </insert>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listTextInfos" resultMap="TextMap" parameterType="cn.aircas.fileManager.text.entity.TextSearchParam">
+        select * from file_text_info
+        <where>
+            (user_id = #{textSearchParam.userId})
+            <if test="textSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                        CONCAT(text_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <if test="textSearchParam.textIdList!=null and textSearchParam.textIdList.size()!=0">
+                AND id in
+                <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                    #{textId}
+                </foreach>
+            </if>
+
+<!--            <if test="textSearchParam.searchParam != null and textSearchParam.searchParam != ''">-->
+<!--                and CONCAT(text_name,source,user_name,keywords) ilike '%${textSearchParam.searchParam}%'-->
+<!--            </if>-->
+            <if test="textSearchParam.source != null and textSearchParam.source != ''">
+                and source like concat('%',#{textSearchParam.source},'%')
+            </if>
+            <if test="textSearchParam.startTime != null and textSearchParam.endTime !=null">
+                and create_time between #{textSearchParam.startTime} and #{textSearchParam.endTime}
+            </if>
+            <if test="textSearchParam.batchNumber > 0">
+                and batch_number = #{textSearchParam.batchNumber}
+            </if>
+<!--            <if test="textSearchParam.sortOrder != null and textSearchParam.orderBy !=null">-->
+<!--                order by ${textSearchParam.sortOrder}  ${textSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="textSearchParam.keywords  and textSearchParam.keywords != ''">
+                and lower(keywords) like concat('%',#{textSearchParam.keywords},'%')
+            </if>
+            <if test="textSearchParam.ispub != null and textSearchParam.ispub != ''">
+                and is_public = #{textSearchParam.isPublic}
+            </if>
+        </where>
+        order by create_time DESC, id DESC
+    </select>
+
+
+    <select id="listDeleteTextInfos" resultType="cn.aircas.fileManager.text.entity.TextInfo">
+        select id, path from file_text_info
+        <where>
+            <if test="textDeleteParam.batchNumber > 0">
+                and batch_number = #{textDeleteParam.batchNumber}
+            </if>
+            <if test="textDeleteParam.textIdList!=null">
+                and id in
+                <foreach collection="textDeleteParam.textIdList" item="textId" open="(" close=")" separator=",">
+                    #{textId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listTextIdBySearchParam" resultType="java.lang.Integer">
+        select id from file_text_info
+        <where>
+            (user_id = #{textSearchParam.userId} or is_public = TRUE)
+            <if test="textSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                    CONCAT(text_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <!--            <if test="textSearchParam.searchParam != null and textSearchParam.searchParam != ''">-->
+            <!--                and CONCAT(text_name,source,user_name,keywords) ilike '%${textSearchParam.searchParam}%'-->
+            <!--            </if>-->
+            <if test="textSearchParam.source != null and textSearchParam.source != ''">
+                and source like concat('%',#{textSearchParam.source},'%')
+            </if>
+            <if test="textSearchParam.startTime != null and textSearchParam.endTime !=null">
+                and create_time between #{textSearchParam.startTime} and #{textSearchParam.endTime}
+            </if>
+            <if test="textSearchParam.batchNumber > 0">
+                and batch_number = #{textSearchParam.batchNumber}
+            </if>
+<!--            <if test="textSearchParam.sortOrder != null and textSearchParam.orderBy !=null">-->
+<!--                order by ${textSearchParam.sortOrder}  ${textSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="textSearchParam.keywords  and textSearchParam.keywords != ''">
+                and lower(keywords) like concat('%',#{textSearchParam.keywords},'%')
+            </if>
+        </where>
+        order by create_time DESC
+    </select>
+
+</mapper>

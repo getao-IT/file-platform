@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.text.dao.TextContentMapper">
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listTextContents" parameterType="cn.aircas.fileManager.text.entity.TextSearchParam"
+            resultType="cn.aircas.fileManager.text.entity.TextContentInfo">
+        select * from file_text_content
+        <where>
+            <if test="textSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="textSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="OR">
+                        CONCAT(content) ilike concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <if test="textSearchParam.textIdList!=null and textSearchParam.textIdList.size()!=0">
+                <if test="textSearchParam.isFromDataset == false">
+                    AND text_file_id in
+                    <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                        #{textId}
+                    </foreach>
+                </if>
+                <if test="textSearchParam.isFromDataset == true">
+                    AND id in
+                    <foreach collection="textSearchParam.textIdList" item="textId" open="(" close=")" separator=",">
+                        #{textId}
+                    </foreach>
+                </if>
+            </if>
+        </where>
+        order by line_number ASC
+    </select>
+
+    <select id="getFileByContentId" parameterType="java.util.Set" resultType="java.util.Map">
+        SELECT
+            ftc.id AS contentid,
+            *
+        FROM
+            file_text_info AS fti,
+            file_text_content AS ftc
+        WHERE
+            fti."id" = ftc.text_file_id
+        <if test="contentIds != null || contentIds != 0">
+            AND ftc."id" IN
+            <foreach collection="contentIds" open="(" close=")" item="contentId" separator=",">
+                #{contentId}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

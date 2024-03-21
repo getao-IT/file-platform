@@ -1,0 +1,28 @@
+{
+  "implementationType": "04",
+  "interfaceContractList": [
+    "S1.ZNSJZC.JW"
+  ],
+  "keywordList": [
+    "智能处理支撑"
+  ],
+  "loadBalanceType": "01",
+  "segmentID": "SJGLHD",
+  "serviceDescription": "智能处理支撑数据管理后端",
+  "serviceDeveloperInformation": "中科院空天信息创新研究院",
+  "serviceInstanceList": [
+    {
+      "ip": "192.168.181.65",
+      "portInfoList": [
+        {
+          "originalPort": 10001,
+          "port": 10001,
+          "type": "http"
+        }
+      ]
+    }],
+  "serviceName": "BS1.SJGLHD.BJ.JW",
+  "serviceOpenness": "01",
+  "serviceProviderInformation": "中科院空天信息创新研究院",
+      "serviceTitle": "智能处理-数据支撑"
+}

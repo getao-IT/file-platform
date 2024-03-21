@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.aircas</groupId>
+    <artifactId>fileManager</artifactId>
+    <version>V0.7.3</version>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.0.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <catalog.sdk.version>J20210802</catalog.sdk.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.62</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!--<dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>-->
+        <dependency>
+            <groupId>cn.aircas</groupId>
+            <artifactId>aircasUtils</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>net.jthink</groupId>
+            <artifactId>jaudiotagger</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.mp4parser</groupId>
+            <artifactId>isoparser</artifactId>
+            <version>1.1.22</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.aircas.airproject</groupId>
+            <artifactId>authentication</artifactId>
+            <version>1.1.4</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>it.sauronsoftware</groupId>
+            <artifactId>jave</artifactId>
+            <version>1.0.2</version>
+        </dependency>-->
+        <dependency>
+            <groupId>cn.aircas.catalog</groupId>
+            <artifactId>aircas-catalog-client</artifactId>
+            <version>${catalog.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.5.Final</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>ffmpeg-platform</artifactId>
+            <version>4.4-1.5.6</version>
+        </dependency>-->
+
+        <!-- 混淆 -->
+        <!-- https://mvnrepository.com/artifact/org.cuberact/proguard-maven-plugin -->
+        <dependency>
+            <groupId>org.cuberact</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.wvengen/proguard-maven-plugin -->
+        <dependency>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <version>2.0.10</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.proguard</groupId>
+            <artifactId>proguard-base</artifactId>
+            <version>6.0.2</version>
+        </dependency>
+
+        <!-- 加密 -->
+        <!-- https://mvnrepository.com/artifact/com.github.core-lib/xjar -->
+        <dependency>
+            <groupId>com.github.core-lib</groupId>
+            <artifactId>xjar</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib</groupId>
+            <artifactId>loadkit</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!-- NDI -->
+        <dependency>
+            <groupId>me.walkerknapp</groupId>
+            <artifactId>devolay</artifactId>
+            <version>2.1.0</version>
+            <classifier>integrated</classifier>
+        </dependency>
+
+    </dependencies>
+
+    <!-- 设置 jitpack.io 仓库 -->
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://www.jitpack.io</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <plugins>
+            <!-- 混淆插件 -->
+            <!--<plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>2.0.10</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>proguard</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <proguardVersion>5.2</proguardVersion>
+                    <obfuscate>true</obfuscate>
+                    &lt;!&ndash;<proguardInclude>${basedir}/proguard.conf</proguardInclude>&ndash;&gt;
+                    &lt;!&ndash; 添加依赖，这里你可以按你的需要修改 &ndash;&gt;
+                    <libs>
+                        <lib>${java.home}/lib/rt.jar</lib>
+                        <lib>${java.home}/lib/jce.jar</lib>
+                        <lib>${java.home}/lib/jsse.jar</lib>
+                        &lt;!&ndash;<lib>E:/tomcat-8.0/lib/jsp-api.jar</lib>
+                        <lib>E:/tomcat-8.0/lib/servlet-api.jar</lib>&ndash;&gt;
+                    </libs>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                    <injar>${project.build.finalName}.jar</injar>
+                    <outjar>${project.build.finalName}-pg.jar</outjar>
+                    <outputDirectory>${project.basedir}/target</outputDirectory>
+                    &lt;!&ndash; 对输入jar进行过滤比如，如下配置就是对META-INFO文件不处理。 &ndash;&gt;
+                    &lt;!&ndash;<inLibsFilter>!META-INF/**,!META-INF/versions/9/**.class</inLibsFilter>&ndash;&gt;
+                    <options>
+                        &lt;!&ndash; JDK目标版本1.8&ndash;&gt;
+                        <option>-target 1.8</option>
+                        &lt;!&ndash; 不做收缩（删除注释、未被引用代码）&ndash;&gt;
+                        <option>-dontshrink</option>
+                        &lt;!&ndash; 不做优化（变更代码实现逻辑）&ndash;&gt;
+                        <option>-dontoptimize</option>
+                        &lt;!&ndash; 不路过非公用类文件及成员&ndash;&gt;
+                        <option>-dontskipnonpubliclibraryclasses</option>
+                        <option>-dontskipnonpubliclibraryclassmembers</option>
+                        &lt;!&ndash; 优化时允许访问并修改有修饰符的类和类的成员 &ndash;&gt;
+                        <option>-allowaccessmodification</option>
+                        &lt;!&ndash; 确定统一的混淆类的成员名称来增加混淆&ndash;&gt;
+                        <option>-useuniqueclassmembernames</option>
+
+                        &lt;!&ndash;保证spring注解能力&ndash;&gt;
+                        &lt;!&ndash;<option>&#45;&#45;keepdirectories</option>&ndash;&gt;
+
+                        &lt;!&ndash; 不混淆所有包名，本人测试混淆后WEB项目问题实在太多，毕竟Spring配置中有大量固定写法的包名&ndash;&gt;
+                        <option>-keeppackagenames</option>
+
+                        &lt;!&ndash; 不混淆注解 &ndash;&gt;
+                        <option>-keep class * {
+                                @org.springframework.context.annotation.Bean *;
+                            }
+                        </option>
+                        &lt;!&ndash; 不混淆所有特殊的类&ndash;&gt;
+                        <option>-keepattributes
+                            Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod
+                        </option>
+                        &lt;!&ndash; 不混淆所有的set/get方法，毕竟项目中使用的部分第三方框架（例如Shiro）会用到大量的set/get映射&ndash;&gt;
+                        &lt;!&ndash;<option>-keepclassmembers public class * {void set*(***);*** get*();}</option>&ndash;&gt;
+
+                        &lt;!&ndash; 不混淆commonmodel，model包中的所有类以及类的属性及方法，实体包，混淆了会导致前端无法识别&ndash;&gt;
+                        &lt;!&ndash;<option>-keep class cn.aircas.fileManager.web.entity.** {*;}</option>
+                        <option>-keep class cn.aircas.fileManager.image.entity.** {*;}</option>&ndash;&gt;
+
+                        &lt;!&ndash; 以下三个包因为大部分是Spring管理的Bean，不对包类的类名进行混淆，但对类中的属性和方法混淆&ndash;&gt;
+                        &lt;!&ndash;<option>-keep class cn.aircas.fileManager.web.controller.**</option>
+                        <option>-keep class cn.aircas.fileManager.web.service.**</option>
+                        <option>-keep class cn.aircas.fileManager.web.config.**</option>
+                        <option>-keep class cn.aircas.fileManager.image.service.**</option>&ndash;&gt;
+
+                        &lt;!&ndash; 不混淆重要配置 &ndash;&gt;
+                        <option>-keep class cn.aircas.fileManager.web.config.** {*;}</option>
+
+                        &lt;!&ndash; 不混淆启动类，否则spring-boot不能正常启动 &ndash;&gt;
+                        <option>-keep class cn.aircas.fileManager.MainApplication</option>
+
+                        &lt;!&ndash; 忽略打包时的告警信息 &ndash;&gt;
+                        <option>-ignorewarnings</option>
+
+                    </options>
+                </configuration>
+                <dependencies>
+                    &lt;!&ndash; 使用5.2版本来混淆 &ndash;&gt;
+                    <dependency>
+                        <groupId>net.sf.proguard</groupId>
+                        <artifactId>proguard-base</artifactId>
+                        <version>6.0.2</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>-->
+            <!-- 打包插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>cn.aircas.fileManager.MainApplication</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 加密插件 -->
+            <!--<plugin>
+                <groupId>com.github.core-lib</groupId>
+                <artifactId>xjar-maven-plugin</artifactId>
+                <version>4.0.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <phase>package</phase>
+                        &lt;!&ndash; package 或使用 install
+                        <phase>install</phase>
+                        &ndash;&gt;
+                        <configuration>
+                            &lt;!&ndash; 输入输出配置 &ndash;&gt;
+                            &lt;!&ndash;<password>111111</password>&ndash;&gt;
+                            <sourceDir>${project.basedir}/target</sourceDir>
+                            <sourceJar>fileManager-V0.7.3.jar</sourceJar>
+                            <targetDir>${project.basedir}/target</targetDir>
+                            <targetJar>fileManager-xjar.jar</targetJar>
+                            &lt;!&ndash; 需要加密的资源路径表达式 &ndash;&gt;
+                            <includes>　　　　　　　　　
+                                &lt;!&ndash;<include>com/zsplat/**</include>
+                                <include>mapper/*Mapper.xml</include>
+                                <include>config/**</include>&ndash;&gt;
+                            </includes>
+                            &lt;!&ndash; 无需加密的资源路径表达式 &ndash;&gt;
+                            <excludes>
+                                <exclude>static/**</exclude>
+                                <exclude>META-INF/**</exclude>
+                                <exclude>mapper/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+                &lt;!&ndash;<dependencies>
+                    <dependency>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-compress</artifactId>
+                        <version>1.21</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.github.core-lib</groupId>
+                        <artifactId>loadkit</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.github.core-lib</groupId>
+                        <artifactId>xjar</artifactId>
+                        <version>4.0.2</version>
+                    </dependency>
+                </dependencies>&ndash;&gt;
+            </plugin>-->
+        </plugins>
+    </build>
+
+</project>
+
+
