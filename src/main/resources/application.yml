@@ -1,0 +1,123 @@
+---
+#server配置
+server:
+  port: 8088
+  servlet:
+    context-path: /geoai/v1
+  max-http-header-size: 1024000
+
+#数据源配置
+spring:
+  servlet:
+    multipart:
+      # 单个文件的最大值
+      max-file-size: 2GB
+      # 上传文件总的最大值
+      max-request-size: 10GB
+
+  datasource:
+    password: 123456
+    url: jdbc:postgresql://192.168.3.13:32189/geodl_iecas?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2b8&useSSL=false
+    username: iecas
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+        hbm2ddl:
+          auto: update
+
+#mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    logging:
+      level:
+        cn.aircas.fileManager.text.dao: debug
+    debug: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+sys:
+#  #  拿到哪
+#  rootPath: D:\\数据\\
+#  #  从哪拿
+#  uploadRootPath: D:\\数据\\
+  monitorPath: tifimage
+  rootPath: x:\\
+    #  从哪拿
+  uploadRootPath: C:\\Users\\dell\\Desktop\\tifimage
+
+value:
+  service:
+    port: 18082
+    name: 文件管理
+    url: http://192.168.3.13:18086/geoai/v1/service/register
+    status: http://192.168.3.13:18082/geoai/v1/statusl
+    prefix: /file-platform
+    enable: false
+  createDataset: false
+  app:
+    version: '@project.version@'
+    build:
+      time: '@timestamp@'
+  api:
+    user-info: http://192.168.2.156:31151/api/v1/users/token_check
+    user-register: http://192.168.2.156:31151/api/v1/users/login
+    create-dataset-url: http://127.0.0.1:8082/geoai/V1/label-platform/dataset/createDatasetAndProject
+    dispatch: http://192.168.3.13:18086/geoai/v1/service/dispatch
+  static:
+    path-pattern: /static/file/**
+    static-locations: file:c:/
+  database:
+    enable: false
+    dbName: geodl_iecas
+    tables:
+      - file_image_info
+      - file_image_label_relation
+      - file_text_info
+      - file_audio_info
+      - file_elec_info
+      - file_image_info
+      - file_satellite_info
+      - file_satellite_sensor_info
+      - file_satellite_sensor_relation
+      - file_resolution_info
+      - file_country_info
+
+      - file_text_content
+      - file_text_info
+      - file_transfer_info
+      - file_transfer_progress_info
+      - file_video_info
+
+lab:
+  enable: true
+  prefix: /home/lab/data
+  lab-service-url: http://192.168.14.11:33133/api
+
+
+auth:
+  enabled: true
+  user-info-url: http://30.249.2.156:31151/api/v1/users/token_check
+  ignore-url-list:
+    - /geoai/v1/swagger-ui.html
+    - /geoai/v1/webjars/**
+    - /geoai/v1/swagger-resources/**
+    - /geoai/v1/v2/**
+    - /geoai/v1/status/**
+swagger:
+  enabled: true
+  base-package: cn.aircas.fileManager.web.controller
+  title: 文件管理平台接口文档
+
+catalog:
+  enable: false
+  host: 192.168.7.20:11096
+
+configtask:
+  cron: 0 */10 * * * ?

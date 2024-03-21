@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.aircas.fileManager.video.dao.VideoMapper">
+
+    <resultMap type="cn.aircas.fileManager.video.entity.VideoInfo" id="VideoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="videoName" column="video_name" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="batchNumber" column="batch_number" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="batchInsertVideoInfo">
+        insert into file_video_info (video_name,path,user_id,source,user_name,is_public,create_time,keywords,size,
+        duration,file_length,resolution,batch_number,format,frame_rate,width,height,duration_str)
+        values
+        <foreach collection="videoInfoList" item="videoInfo" separator=",">
+            (#{videoInfo.videoName},#{videoInfo.path},#{videoInfo.userId},#{videoInfo.source},#{videoInfo.userName}
+            ,#{videoInfo.isPublic},#{videoInfo.createTime},#{videoInfo.keywords},#{videoInfo.size}
+            ,#{videoInfo.duration},#{videoInfo.fileLength},#{videoInfo.resolution},#{videoInfo.batchNumber}
+            ,#{videoInfo.format},#{videoInfo.frameRate},#{videoInfo.width},#{videoInfo.height},#{videoInfo.durationStr})
+        </foreach>
+    </insert>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="listVideoInfos" resultMap="VideoMap" parameterType="cn.aircas.fileManager.video.entity.VideoSearchParam">
+        select * from file_video_info
+        <where>
+            (user_id = #{videoSearchParam.userId} or is_public = TRUE or #{videoSearchParam.adminLevel} = 0)
+            <if test="videoSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="videoSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                        CONCAT(video_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <if test="videoSearchParam.videoIdList!=null and videoSearchParam.videoIdList.size()!=0">
+                AND id in
+                <foreach collection="videoSearchParam.videoIdList" item="videoId" open="(" close=")" separator=",">
+                    #{videoId}
+                </foreach>
+            </if>
+
+<!--            <if test="videoSearchParam.searchParam != null and videoSearchParam.searchParam != ''">-->
+<!--                and CONCAT(video_name,source,user_name,keywords) ilike '%${videoSearchParam.searchParam}%'-->
+<!--            </if>-->
+            <if test="videoSearchParam.source != null and videoSearchParam.source != ''">
+                and source like concat('%',#{videoSearchParam.source},'%')
+            </if>
+            <if test="videoSearchParam.startTime != null and videoSearchParam.endTime !=null">
+                and create_time between #{videoSearchParam.startTime} and #{videoSearchParam.endTime}
+            </if>
+            <if test="videoSearchParam.batchNumber > 0">
+                and batch_number = #{videoSearchParam.batchNumber}
+            </if>
+<!--            <if test="videoSearchParam.sortOrder != null and videoSearchParam.orderBy !=null">-->
+<!--                order by ${videoSearchParam.sortOrder}  ${videoSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="videoSearchParam.keywords  and videoSearchParam.keywords != ''">
+                and lower(keywords) like concat('%',#{videoSearchParam.keywords},'%')
+            </if>
+            <if test="videoSearchParam.ispub != null and videoSearchParam.ispub != ''">
+                and is_public = #{videoSearchParam.isPublic}
+            </if>
+        </where>
+        order by create_time DESC, id DESC
+    </select>
+
+    <select id="listDeleteVideoInfos" resultType="cn.aircas.fileManager.video.entity.VideoInfo">
+        select id, path from file_video_info
+        <where>
+            <if test="videoDeleteParam.batchNumber > 0">
+                and batch_number = #{videoDeleteParam.batchNumber}
+            </if>
+            <if test="videoDeleteParam.videoIdList!=null">
+                and id in
+                <foreach collection="videoDeleteParam.videoIdList" item="videoId" open="(" close=")" separator=",">
+                    #{videoId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listVideoIdBySearchParam" resultType="java.lang.Integer">
+        select id from file_video_info
+        <where>
+            (user_id = #{videoSearchParam.userId} or is_public = TRUE)
+            <if test="videoSearchParam.searchParamList!=null">
+                AND
+                <foreach collection="videoSearchParam.searchParamList" item="searchParam" open="(" close=")" separator="AND">
+                    CONCAT(video_name,source,user_name,keywords) ilike concat('%',#{searchParam},'%')
+                </foreach>
+            </if>
+
+            <!--            <if test="videoSearchParam.searchParam != null and videoSearchParam.searchParam != ''">-->
+            <!--                and CONCAT(video_name,source,user_name,keywords) ilike '%${videoSearchParam.searchParam}%'-->
+            <!--            </if>-->
+            <if test="videoSearchParam.source != null and videoSearchParam.source != ''">
+                and source like concat('%',#{videoSearchParam.source},'%')
+            </if>
+            <if test="videoSearchParam.startTime != null and videoSearchParam.endTime !=null">
+                and create_time between #{videoSearchParam.startTime} and #{videoSearchParam.endTime}
+            </if>
+            <if test="videoSearchParam.batchNumber > 0">
+                and batch_number = #{videoSearchParam.batchNumber}
+            </if>
+<!--            <if test="videoSearchParam.sortOrder != null and videoSearchParam.orderBy !=null">-->
+<!--                order by ${videoSearchParam.sortOrder}  ${videoSearchParam.orderBy}-->
+<!--            </if>-->
+            <if test="videoSearchParam.keywords  and videoSearchParam.keywords != ''">
+                and lower(keywords) like concat('%',#{videoSearchParam.keywords},'%')
+            </if>
+        </where>
+        order by create_time DESC
+    </select>
+
+</mapper>

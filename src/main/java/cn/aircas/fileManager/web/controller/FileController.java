@@ -1,34 +1,32 @@
 package cn.aircas.fileManager.web.controller;
 
+import cn.aircas.fileManager.elec.service.ElecFileServiceImpl;
 import cn.aircas.fileManager.image.entity.Slice;
 import cn.aircas.fileManager.image.service.ImageFileServiceImpl;
 import cn.aircas.fileManager.text.entity.TextInfo;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.commons.entity.FileInfo;
 import cn.aircas.fileManager.commons.entity.FileSearchParam;
+import cn.aircas.fileManager.web.entity.database.FileTextInfo;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
+import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.web.utils.EncryptUtils;
-import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.reflect.NoSuchPointcutException;
-import org.gdal.gdal.Dataset;
-import org.gdal.gdal.gdal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
 import javax.security.auth.message.AuthException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-
 
 @RestController
 @Api(tags = "文件管理接口")
@@ -36,15 +34,11 @@ import java.util.Set;
 @Slf4j
 public class FileController {
 
-    @Value("${sys.rootPath}")
-    private String rootPath;
-
     @Autowired
     FileService fileService;
 
     @Autowired
     ImageFileServiceImpl imageFileService;
-
 
     /**
      * 查询文件信息folder
@@ -186,38 +180,26 @@ public class FileController {
     @PostMapping("/custom")
     @ApiOperation("裁切影像指定位置得到切片图片")
     public CommonResult<String> makeImageSlice(@RequestBody Slice slice) {
-        this.fileService.makeImageSlice(slice.getFileType(), slice.getId(), slice.getMinLon(),
-                slice.getMinLat(), slice.getWidth(), slice.getHeight(), slice.getSliceInsertPath(), slice.getStorage());
-        return new CommonResult<String>().success().message("裁切任务后台处理中...");
+        String result = this.fileService.makeImageSlice(slice.getFileType(), slice.getId(), slice.getMinLon(),
+                slice.getMinLat(), slice.getWidth(), slice.getHeight(), slice.getSliceInsertPath());
+        return new CommonResult<String>().data(result).success().data(result).message("裁切任务后台处理中...");
     }
 
     @Log(value = "根据宽高裁切影像所有位置得到切片图片")
     @PostMapping("/slice")
     @ApiOperation("根据宽高裁切影像所有位置得到切片图片")
     public CommonResult<String> makeImageAllGeoSlice(@RequestBody Slice slice) {
-        this.fileService.makeImageAllGeoSlice(slice.getFileType(), slice.getId(), slice.getWidth(),
-                slice.getHeight(), slice.getSliceInsertPath(), slice.getStep(), slice.getStorage());
-        return new CommonResult<String>().success().message("裁切任务后台处理中...");
+        String result = this.fileService.makeImageAllGeoSlice(slice.getFileType(), slice.getId(), slice.getWidth(),
+                slice.getHeight(), slice.getSliceInsertPath(), slice.getStep());
+        return new CommonResult<String>().data(result).success().data(result).message("裁切任务后台处理中...");
     }
+
 
     @Log(value = "返回默认保存位置")
     @GetMapping("/defaultPath")
     @ApiOperation("返回默认保存位置")
     public CommonResult<String> defaultPath() {
         String restult = "/file-data/image_slice";
-        //asd
         return new CommonResult<String>().data(restult).success().message("返回默认保存位置");
-    }
-
-    @Log(value = "构建金字塔")
-    @GetMapping("/buildOverviews")
-    @ApiOperation("构建金字塔")
-    public CommonResult<String> buildOverviews(String imagePath, @RequestParam int[] overviewLists) {
-        gdal.AllRegister();
-        gdal.SetConfigOption("GDAL_PAM_ENABLED", "FALSE");
-        Dataset dataset = gdal.Open(FileUtils.getStringPath(rootPath, imagePath));
-        dataset.BuildOverviews(overviewLists);
-        dataset.delete();
-        return new CommonResult<String>().success().message("构建金字塔成功");
     }
 }
