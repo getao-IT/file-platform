@@ -92,7 +92,8 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
     public void updateFileInfoByIds(List<Integer> fileIdList, FileInfo fileInfo) {
         UpdateWrapper<ElecInfo> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set(fileInfo.getKeywords()!=null,"keywords",fileInfo.getKeywords())
-                .set(fileInfo.getSource()!=null,"source",fileInfo.getSource()).in("id",fileIdList);
+                .set(fileInfo.getSource()!=null,"source",fileInfo.getSource())
+                .set(fileInfo.getIsPublic() != null, "is_public", fileInfo.getIsPublic()).in("id",fileIdList);
         this.update(updateWrapper);
     }
 
