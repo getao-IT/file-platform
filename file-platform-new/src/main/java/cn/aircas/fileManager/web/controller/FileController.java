@@ -220,4 +220,29 @@ public class FileController {
         dataset.delete();
         return new CommonResult<String>().success().message("构建金字塔成功");
     }
+
+
+    @Log(value = "计算图像信息熵")
+    @GetMapping("/getEntropy")
+    public CommonResult<List<JSONObject>> getEntropy(@RequestParam List<String> imagePaths) {
+        List<JSONObject> entropy = this.fileService.getEntropy(imagePaths);
+        return new CommonResult<List<JSONObject>>().data(entropy).success().message("计算图像信息熵成功");
+    }
+
+
+    @Log(value = "计算图像平均信息熵")
+    @GetMapping("/getAveEntropy")
+    public CommonResult<JSONObject> getAveEntropy(String entropys) {
+        List<JSONObject> entropyList = JSONObject.parseObject(entropys).getJSONArray("entropys").toJavaList(JSONObject.class);
+        JSONObject entropy = this.fileService.getAveEntropy(entropyList);
+        return new CommonResult<JSONObject>().data(entropy).success().message("计算图像平均信息熵成功");
+    }
+
+
+    @Log(value = "计算最终平均信息熵")
+    @GetMapping("/getFinalAveEntropy")
+    public CommonResult<JSONObject> getFinalAveEntropy(@RequestParam List<Double> aveEntropys) {
+        JSONObject entropy = this.fileService.getFinalAveEntropy(aveEntropys);
+        return new CommonResult<JSONObject>().data(entropy).success().message("计算最终平均信息熵成功");
+    }
 }

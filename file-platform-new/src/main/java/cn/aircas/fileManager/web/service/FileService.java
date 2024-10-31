@@ -30,4 +30,7 @@ public interface FileService {
     void makeImageSlice(FileType fileType, int id, double minLon, double minLat, int width, int height, String sliceInsertPath, Boolean storage);
     void makeImageAllGeoSlice(FileType fileType, int id, int width, int height, String sliceInsertPath, int step, Boolean storage);
     int getFileUserId(int fileId , FileType fileType);
+    List<JSONObject> getEntropy(List<String> imagePaths);
+    JSONObject getAveEntropy(List<JSONObject> entropys);
+    JSONObject getFinalAveEntropy(List<Double> aveEntropys);
 }

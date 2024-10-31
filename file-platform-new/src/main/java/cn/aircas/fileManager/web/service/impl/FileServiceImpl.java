@@ -9,6 +9,7 @@ import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileContentService;
 import cn.aircas.fileManager.web.service.FileService;
 import cn.aircas.fileManager.commons.service.FileTypeService;
+import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -22,7 +23,7 @@ import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 
 /**
@@ -250,5 +251,67 @@ public class FileServiceImpl implements FileService {
         calendar.setTime(endTime);
         calendar.add(Calendar.DATE,1);
         fileSearchParam.setEndTime(calendar.getTime());
+    }
+
+
+    /**
+     * 计算最终平均K熵判据
+     * @param aveEntropys
+     * @return
+     */
+    @Override
+    public JSONObject getFinalAveEntropy(List<Double> aveEntropys) {
+        JSONObject entropyRate = new JSONObject();
+        Double ave = aveEntropys.stream().collect(Collectors.averagingDouble(Double::doubleValue));
+        for (Double aveEntropy : aveEntropys) {
+            double rate = (Math.abs(aveEntropy - ave) / ave) * 100;
+            if (rate > 10) {
+                rate = Math.abs(rate - 10);
+            }
+            entropyRate.put("Group" + (aveEntropys.indexOf(aveEntropy) + 1),
+                    cn.aircas.fileManager.web.utils.FileUtils.setScale(rate, 2) + "%");
+        }
+        return entropyRate;
+    }
+
+
+    /**
+     * 计算图像平均信息 熵
+     * @param entropys
+     * @return
+     */
+    @Override
+    public JSONObject getAveEntropy(List<JSONObject> entropys) {
+        JSONObject result = new JSONObject();
+        double totalEntropy = 0;
+        double totalTransition = 0;
+        for (JSONObject entropy : entropys) {
+            Double entropyValue = entropy.getDouble("imageEntropy");
+            Double transitionValue = entropy.getDouble("avePblty");
+            totalEntropy += entropyValue;
+            totalTransition += transitionValue;
+        }
+        //result.put("aveEntropy", cn.aircas.fileManager.web.utils.FileUtils.setScale(totalEntropy / entropys.size(), 2));
+        //result.put("abeTransition", cn.aircas.fileManager.web.utils.FileUtils.setScale(totalTransition / entropys.size(), 2));
+        result.put("aveEntropy",totalEntropy / entropys.size());
+        result.put("abeTransition", totalTransition / entropys.size());
+        return result;
+    }
+
+
+    /**
+     * 计算图像信息熵
+     * @param imagePaths
+     * @return
+     */
+    @Override
+    public List<JSONObject> getEntropy(List<String> imagePaths) {
+        List<JSONObject> entropys = new ArrayList<>();
+        for (String imagePath : imagePaths) {
+            String path = FileUtils.getStringPath(this.rootPath, imagePath);
+            JSONObject entropyAndProbability = cn.aircas.fileManager.web.utils.FileUtils.getEntropyAndProbability(path);
+            entropys.add(entropyAndProbability);
+        }
+        return entropys;
     }
 }

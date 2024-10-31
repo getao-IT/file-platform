@@ -9,14 +9,19 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.XML;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+
+import static java.lang.Math.log;
 
 /**
  * 文件md5值
@@ -102,7 +107,7 @@ public class FileUtils {
             if (replace){
                 org.apache.commons.io.FileUtils.forceDelete(destSubFile);
             }else {
-                log.error("文件夹：{}下已经存在文件：{}",destFile.getAbsolutePath(),srcFile.getName());
+                FileUtils.log.error("文件夹：{}下已经存在文件：{}",destFile.getAbsolutePath(),srcFile.getName());
                 return;
             }
         }
@@ -304,10 +309,83 @@ public class FileUtils {
 
     }
 
-    public static void main(String[] args) throws IOException {
-        moveSubDirectoryToDirectory(new File("D:\\Data\\标注\\1.可见光图像舰船类目标识别数据集 - 副本"),new File("D:\\Data\\标注\\新建文件夹"),false);
+    /**
+     * 获取图像图像信息熵和稳态概率
+     * @throws Exception
+     */
+    public static JSONObject getEntropyAndProbability(String image) {
+        File file = new File(image);
+        BufferedImage bi = null;
+        try {
+            bi = ImageIO.read(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int width = bi.getWidth();
+        int height = bi.getHeight();
+        int minx = bi.getMinX();
+        int miny = bi.getMinY();
+        FileUtils.log.info("图片路径：" + image + "，width=" + width + "，height=" + height);
+
+        JSONObject probability = new JSONObject();
+        double totalPblty = 0;
+        Map<Integer, Double> rgbs = new HashMap<>();
+        for (int i = minx; i < width; i++) {
+            for (int j = miny; j < height; j++) {
+                if (i % 10 != 0) {
+                    continue;
+                }
+                int pixel = bi.getRGB(i, j);
+                if (rgbs.containsKey(pixel)) {
+                    rgbs.put(pixel, rgbs.get(pixel)+1);
+                } else {
+                    rgbs.put(pixel, 1.0);
+                }
+                totalPblty += (pixel < 0 ? (16777216 + pixel) : pixel);
+            }
+        }
+        double avePblty = totalPblty / (width * height);
+
+        double imageEntropy = getImageEntropy(width, height, rgbs);
+        probability.put("path", image);
+        //probability.put("avePblty", setScale(avePblty, 2));
+        //probability.put("imageEntropy", setScale(imageEntropy, 2));
+        probability.put("avePblty", avePblty);
+        probability.put("imageEntropy", imageEntropy);
+        return probability;
+    }
+
+    /**
+     * 计算一张图的图像信息熵
+     *
+     * @throws Exception
+     */
+    public static double getImageEntropy(int width, int height, Map<Integer, Double> rgbs) {
+        double result = 0.0;
+        long imageSize= width * height;
+        for (Integer key : rgbs.keySet()) {
+            double rate = (1.0 * rgbs.get(key)) / imageSize;
+            result = result - rate * (log(rate) / log(2.0));
+        }
+
+        return result;
+    }
+
+    /**
+     * 返回小数点后固定位数的数字
+     * @param value
+     * @param scale
+     * @return
+     */
+    public static String setScale(double value, int scale) {
+        BigDecimal decimal = new BigDecimal(value);
+        decimal = decimal.setScale(scale, RoundingMode.HALF_UP);
+        return decimal.toString();
     }
 
 
+    public static void main(String[] args) throws IOException {
+        moveSubDirectoryToDirectory(new File("D:\\Data\\标注\\1.可见光图像舰船类目标识别数据集 - 副本"),new File("D:\\Data\\标注\\新建文件夹"),false);
+    }
 
 }
