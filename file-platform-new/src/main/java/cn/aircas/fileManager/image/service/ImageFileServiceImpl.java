@@ -109,10 +109,13 @@ public class ImageFileServiceImpl extends ServiceImpl<ImageMapper, Image> implem
     @Override
     public void updateFileInfoByIds(List<Integer> fileIdList, FileInfo fileInfo) {
         UpdateWrapper<Image> updateWrapper = new UpdateWrapper<>();
-        if (fileInfo.getDescription() != null || fileInfo.getKeywords() != null || fileInfo.getSource() != null) {
+        if (fileInfo.getDescription() != null || fileInfo.getKeywords() != null || fileInfo.getSource() != null
+                || fileInfo.getIsPublic() != null) {
             updateWrapper.set(fileInfo.getDescription() != null, "description", fileInfo.getDescription())
                     .set(fileInfo.getKeywords() != null, "keywords", fileInfo.getKeywords())
-                    .set(fileInfo.getSource() != null, "source", fileInfo.getSource()).in("id", fileIdList);
+                    .set(fileInfo.getSource() != null, "source", fileInfo.getSource())
+                    .set(fileInfo.getIsPublic() != null, "is_public", fileInfo.getIsPublic())
+                    .in("id", fileIdList);
             this.update(updateWrapper);
         }
     }

@@ -83,9 +83,15 @@ public class ElecFileServiceImpl extends ServiceImpl<ElecMapper, ElecInfo> imple
     @Override
     public void updateFileInfoByIds(List<Integer> fileIdList, FileInfo fileInfo) {
         UpdateWrapper<ElecInfo> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.set(fileInfo.getKeywords()!=null,"keywords",fileInfo.getKeywords())
-                .set(fileInfo.getSource()!=null,"source",fileInfo.getSource()).in("id",fileIdList);
-        this.update(updateWrapper);
+        if (fileInfo.getDescription() != null || fileInfo.getKeywords() != null || fileInfo.getSource() != null
+                || fileInfo.getIsPublic() != null) {
+            updateWrapper.set(fileInfo.getDescription() != null, "description", fileInfo.getDescription())
+                    .set(fileInfo.getKeywords() != null, "keywords", fileInfo.getKeywords())
+                    .set(fileInfo.getSource() != null, "source", fileInfo.getSource())
+                    .set(fileInfo.getIsPublic() != null, "is_public", fileInfo.getIsPublic())
+                    .in("id", fileIdList);
+            this.update(updateWrapper);
+        }
     }
 
     /**
