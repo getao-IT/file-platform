@@ -10,6 +10,7 @@ import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.commons.entity.common.PageResult;
 import cn.aircas.fileManager.web.service.FileService;
+import cn.aircas.fileManager.web.utils.EncryptUtils;
 import cn.aircas.utils.file.FileUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -81,8 +82,8 @@ public class FileController {
     //@OperationLog(value = "分页查询影像信息")
     @DeleteMapping
     @ApiOperation("根据id批量删除文件")
-    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Integer> idList, FileType fileType) {
-        this.fileService.deleteFilesByIds(idList,fileType);
+    public CommonResult<String> deleteFileByIds(@RequestParam("idList") List<Object> idList, FileType fileType) {
+        this.fileService.deleteFilesByIds(EncryptUtils.decryptIdAndInt(idList),fileType);
         return new CommonResult<String>().success().message("根据id批量删除文件成功");
     }
 

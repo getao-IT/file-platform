@@ -179,6 +179,13 @@
             <classifier>integrated</classifier>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.gdal/gdal -->
+        <dependency>
+            <groupId>org.gdal</groupId>
+            <artifactId>gdal</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
     </dependencies>
 
     <!-- 设置 jitpack.io 仓库 -->
