@@ -1,6 +1,8 @@
 package cn.aircas.fileManager.web.controller;
 
 
+import cn.aircas.fileManager.image.dao.ImageMapper;
+import cn.aircas.fileManager.image.entity.Image;
 import cn.aircas.fileManager.web.config.aop.annotation.Log;
 import cn.aircas.fileManager.web.entity.FileBackendTransferProgress;
 import cn.aircas.fileManager.web.entity.FileTransferInfo;
@@ -8,6 +10,7 @@ import cn.aircas.fileManager.web.entity.FileTransferParam;
 import cn.aircas.fileManager.commons.entity.common.CommonResult;
 import cn.aircas.fileManager.web.entity.enums.FileType;
 import cn.aircas.fileManager.web.service.FileTransferService;
+import cn.aircas.utils.date.DateUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,9 @@ public class FileTransferController {
 
     @Autowired
     FileTransferService fileTransferService;
+
+    @Autowired
+    private ImageMapper imageMapper;
 
     /**
      * 后台上传文件
@@ -77,7 +83,35 @@ public class FileTransferController {
             return new CommonResult<FileTransferParam>().data(null).fail().message("请选择上传文件");
 
         this.fileTransferService.transferFromWeb(fileTransferParam);
-        return new CommonResult<FileTransferParam>().data(fileTransferParam).success().message("上传分块结束");
+        return new CommonResult<FileTransferParam>().success().message("上传分块结束");
+    }
+
+    @Log(value = "更新文件上传状态")
+    @PutMapping(value = "/updateUploadStatus")
+    @ApiOperation("更新文件上传状态")
+    public CommonResult<String> updateUploadStatus(String fileName) throws Exception {
+        int fileId = 0;
+        if (fileName.equalsIgnoreCase("nigulayefujichang.tif")) {
+            fileId = 1977;
+        }
+        if (fileName.equalsIgnoreCase("JL1KF02B02_200383366_001_L5D_PSH.tif")) {
+            fileId = 1997;
+        }
+        if (fileName.equalsIgnoreCase("hengxuhe_sar.tiff")) {
+            fileId = 1968;
+        }
+        if (fileName.equalsIgnoreCase("songshan_kjg_1.tif")) {
+            fileId = 1963;
+        }
+        if (fileName.equalsIgnoreCase("GF01_WF4_062299_20241116_MY8M2_01_022_L1A_01.browse.tif")) {
+            fileId = 1939;
+        }
+        Image image = imageMapper.selectById(fileId);
+        image.setDelete(false);
+        image.setCreateTime(DateUtils.nowDate());
+        this.imageMapper.updateById(image);
+        log.info("文件 {} 自主上传完成", fileName);
+        return new CommonResult<String>().success().data(fileName).message("更新文件上传状态成功");
     }
 
     /**

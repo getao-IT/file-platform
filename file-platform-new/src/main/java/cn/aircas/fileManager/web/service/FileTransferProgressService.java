@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface FileTransferProgressService extends IService<FileTransferProgressInfo>{
     void updateTransferProgress(int fileTransferInfoId, String md5, int chuncks);
+    void updateTransferProgressDemo(int fileTransferInfoId, String md5, int chuncks, String fullName);
     boolean checkAndSetUploadProgress(FileTransferParam fileTransferParam);
     FileTransferProgressInfo getFileTransferProgress(String fileMD5, int fileTransferId);
 }
